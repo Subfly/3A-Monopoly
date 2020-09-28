@@ -23,7 +23,7 @@ Features:
 * Single Player Mini Games to get First Start!
 * Two different modes:
 
-	—VANILLA—
+	<h1>—VANILLA—</h1>
 * Basically Vanilla Monopoly with above futures! YOLOPOLY!
 
 	—BANKMAN—
