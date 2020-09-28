@@ -1,7 +1,7 @@
-# 3A-Monopoly
+<h1>3A-Monopoly</h1>
 319 Term Project
 
-# Description of the game:
+<h2>Description of the game</h2>
 
 The aim of the project is to digitalize a well known board game, Monopoly, to make people play one of the most popular board game on their computer.   
 
@@ -23,10 +23,10 @@ Features:
 * Single Player Mini Games to get First Start!
 * Two different modes:
 
-	<h1>—VANILLA—</h1>
+	<h3>—VANILLA—</h3>
 * Basically Vanilla Monopoly with above futures! YOLOPOLY!
 
-	—BANKMAN—
+	<h3>—BANKMAN—</h3>
 * Bank interest on deposit money
 * Currency system on each turn
 * Get loan from bank
