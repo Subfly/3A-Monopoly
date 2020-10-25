@@ -12,4 +12,8 @@ public class Dice {
         this.dice1 = (int) (1 + Math.random() * 6);
         this.dice2 = (int) (1 + Math.random() * 6);
     }
+
+    public int getTotal(){
+        return this.dice1 + this.dice2;
+    }
 }
