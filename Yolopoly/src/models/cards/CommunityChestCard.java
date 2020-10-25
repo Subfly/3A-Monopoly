@@ -8,12 +8,13 @@ public class CommunityChestCard {
     private int looseMoney;
     private int goTo;
     private int shouldSave;
+    private boolean affectAll;
 
     //Variables for bankman
     private double multiplier;
 
     //Constructor
-    public CommunityChestCard(DrawableCard type, String message, int getMoney, int looseMoney, int goTo, int shouldSave, double multiplier) {
+    public CommunityChestCard(DrawableCard type, String message, int getMoney, int looseMoney, int goTo, int shouldSave, boolean affectAll, double multiplier) {
         this.type = type;
         this.message = message;
         this.getMoney = getMoney;
@@ -21,6 +22,7 @@ public class CommunityChestCard {
         this.goTo = goTo;
         this.shouldSave = shouldSave;
         this.multiplier = multiplier;
+        this.affectAll = affectAll;
     }
 
     //Getters and Setters

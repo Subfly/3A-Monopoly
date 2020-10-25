@@ -47,22 +47,13 @@ public class Player {
     }
 
     public boolean isOwned(PropertyCard card){
-        for (PropertyCard ownedPlace : this.ownedPlaces) {
-            if (ownedPlace.getId() == card.getId()) {
-                return true;
-            }
-        }
         return false;
     }
 
     public void own(PropertyCard card){
-        this.ownedPlaces.add(card);
     }
 
     public void sellProperty(PropertyCard card){
-        if(this.isOwned(card)){
-            this.ownedPlaces.remove(card);
-        }
     }
 
     //Getters and Setters
