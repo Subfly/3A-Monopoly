@@ -7,7 +7,6 @@ public class Game {
     //Variables
     private Engine engine;
     private boolean isOnline;
-    private int difficulty;
 
     //Constructor
     public Game() {
