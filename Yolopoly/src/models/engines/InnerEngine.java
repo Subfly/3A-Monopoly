@@ -1,8 +1,13 @@
-package models;
+package models.engines;
 
+import enumerations.Building;
+import models.*;
+
+import java.io.File;
 import java.util.ArrayList;
 
-public class Engine {
+public class InnerEngine {
+    //Oyun işleri
     //Variables
     private ArrayList<String> chat;
     private ArrayList<String> log;
@@ -11,9 +16,10 @@ public class Engine {
     private Board board;
     private Bank bank;
     private int currentPlayer;
+    private int squareIndex;
 
     //Constructor
-    public Engine(boolean isSavedGamePlaying) {
+    public InnerEngine(boolean isSavedGamePlaying) {
         startGame(isSavedGamePlaying);
     }
 
@@ -29,6 +35,8 @@ public class Engine {
     public void destructBuilding(Building buildingType, int buildingCount){}
     public void addToChat(String data, String userName){}
     public void addToLog(String logAction, String userName){}
+    public File getSettings(){return null;}
+    public void setSettings(){}
 
     //Getters and Setters
 

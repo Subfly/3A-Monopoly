@@ -1,6 +1,7 @@
-package models.squares;
+package models;
 
-import models.Building;
+import enumerations.Building;
+import enumerations.SquareType;
 
 public class Square {
     //Variables

@@ -1,4 +1,4 @@
-package models.cards;
+package enumerations;
 
 public enum DrawableCard {
     ChanceCard,

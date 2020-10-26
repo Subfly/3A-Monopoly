@@ -1,5 +1,7 @@
 package models.cards;
 
+import enumerations.DrawableCard;
+
 public class CommunityChestCard {
     //Variables
     private DrawableCard type;

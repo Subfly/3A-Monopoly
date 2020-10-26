@@ -1,4 +1,4 @@
-package models.squares;
+package enumerations;
 
 public enum SquareType {
     GoSquare, //0

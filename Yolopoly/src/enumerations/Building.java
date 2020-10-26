@@ -1,4 +1,4 @@
-package models;
+package enumerations;
 
 public enum Building {
     House,
