@@ -1,8 +1,9 @@
 package models.cards;
 
 import enumerations.DrawableCard;
+import interfaces.Holdable;
 
-public class ChanceCard {
+public class ChanceCard implements Holdable {
     //Variables
     private DrawableCard type;
     private String message;
@@ -10,6 +11,7 @@ public class ChanceCard {
     private int looseMoney;
     private int goTo;
     private int shouldSave;
+    private boolean toSomeone;
 
     //Variables for bankman
     private double multiplier;

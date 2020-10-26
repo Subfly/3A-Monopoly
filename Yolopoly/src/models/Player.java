@@ -1,6 +1,7 @@
 package models;
 
 import enumerations.Pawn;
+import interfaces.Holdable;
 import models.cards.PropertyCard;
 import java.util.ArrayList;
 
@@ -17,6 +18,7 @@ public class Player {
     private boolean isThreeTimesDoubled;
     private boolean isBankrupt;
     private ArrayList<PropertyCard> ownedPlaces;
+    private ArrayList<Holdable> savedCards;
 
     //Variables for bankman
     private int loan;
@@ -51,7 +53,7 @@ public class Player {
         return false;
     }
 
-    public void own(PropertyCard card){
+    public void ownProperty(PropertyCard card){
     }
 
     public void sellProperty(PropertyCard card){

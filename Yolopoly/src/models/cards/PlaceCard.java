@@ -5,10 +5,10 @@ import java.util.ArrayList;
 public class PlaceCard extends PropertyCard{
     private int housePrice;
     private int hotelPrice;
-    public PlaceCard(ArrayList<Integer> rentPrices, int mortagePrice, int sellPrice, int id, int housePrice, int hotelPrice) {
-        super(rentPrices, mortagePrice, sellPrice, id);
+    public PlaceCard(ArrayList<Integer> rentPrices, int mortagePrice, int id, int housePrice) {
+        super(rentPrices, mortagePrice, id);
         this.housePrice = housePrice;
-        this.hotelPrice = hotelPrice;
+        this.hotelPrice = housePrice * 5;
     }
 
     public int getHousePrice() {

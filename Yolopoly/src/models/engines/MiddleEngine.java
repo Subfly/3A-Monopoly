@@ -32,6 +32,8 @@ public class MiddleEngine {
     public void initializeGame(){}
     public File getSettings(){return null;}
     public void setSettings(){}
+    public boolean kickPlayer(String nick){return false;}
+    public boolean addBot(){return false;}
 
     //Getters and Setters
     public boolean isOnline() {

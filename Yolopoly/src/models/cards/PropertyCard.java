@@ -5,14 +5,12 @@ import java.util.ArrayList;
 public abstract class PropertyCard {
     private final ArrayList<Integer> rentPrices;
     private final int mortagePrice;
-    private final int sellPrice;
     private final int id;
     private int ownedBy;
 
-    public PropertyCard(ArrayList<Integer> rentPrices, int mortagePrice, int sellPrice, int id) {
+    public PropertyCard(ArrayList<Integer> rentPrices, int mortagePrice, int id) {
         this.rentPrices = rentPrices;
         this.mortagePrice = mortagePrice;
-        this.sellPrice = sellPrice;
         this.id = id;
         this.ownedBy = -1;
     }
@@ -23,10 +21,6 @@ public abstract class PropertyCard {
 
     public int getMortagePrice() {
         return mortagePrice;
-    }
-
-    public int getSellPrice() {
-        return sellPrice;
     }
 
     public int getId() {

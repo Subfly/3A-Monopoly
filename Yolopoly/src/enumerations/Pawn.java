@@ -7,5 +7,6 @@ public enum Pawn {
     Thimble,
     Shoe,
     WheelBarrow,
-    Iron
+    Iron,
+    Plane,
 }

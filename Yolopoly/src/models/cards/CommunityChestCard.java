@@ -1,8 +1,9 @@
 package models.cards;
 
 import enumerations.DrawableCard;
+import interfaces.Holdable;
 
-public class CommunityChestCard {
+public class CommunityChestCard implements Holdable {
     //Variables
     private DrawableCard type;
     private String message;
