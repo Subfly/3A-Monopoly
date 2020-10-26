@@ -1,5 +1,6 @@
 package models;
 
+import enumerations.Pawn;
 import models.cards.PropertyCard;
 import java.util.ArrayList;
 

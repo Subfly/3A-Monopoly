@@ -2,7 +2,7 @@ package models.engines;
 
 import enumerations.GameMode;
 import enumerations.GameTheme;
-import models.Pawn;
+import enumerations.Pawn;
 
 import java.io.File;
 import java.util.ArrayList;
