@@ -37,6 +37,7 @@ public class InnerEngine {
     public void addToLog(String logAction, String userName){}
     public File getSettings(){return null;}
     public void setSettings(){}
+    public boolean changePlayerToBot(){return false;}
 
     //Getters and Setters
 

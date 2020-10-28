@@ -9,7 +9,7 @@ public class Bank {
     private ArrayList<PropertyCard> propertyCards;
 
     //Variables for bankman
-    private ArrayList<ArrayList<Integer>> playerMoneys;
+    private ArrayList<Integer> playerLoans;
     private ArrayList<Double> currencyRates;
 
     //Constructor
@@ -20,6 +20,8 @@ public class Bank {
     public void changeCurrencies(){}
     public void sellProperty(int propertyPosition){}
     public void returnProperty(int propertyPosition){}
+    public boolean giveLoan(int amount, int playerId){return false;}
+    public boolean getLoan(int amount, int playerId){return false;}
 
     //Getters and Setters
     public ArrayList<PropertyCard> getPropertyCards() {
@@ -38,11 +40,11 @@ public class Bank {
         this.currencyRates = currencyRates;
     }
 
-    public ArrayList<ArrayList<Integer>> getPlayerMoneys() {
-        return playerMoneys;
+    public ArrayList<ArrayList<Integer>> getPlayerLoans() {
+        return playerLoans;
     }
 
-    public void setPlayerMoneys(ArrayList<ArrayList<Integer>> playerMoneys) {
-        this.playerMoneys = playerMoneys;
+    public void setPlayerLoans(ArrayList<ArrayList<Integer>> playerLoans) {
+        this.playerLoans = playerLoans;
     }
 }

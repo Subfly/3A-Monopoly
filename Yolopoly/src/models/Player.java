@@ -38,25 +38,24 @@ public class Player {
     }
 
     //Functions
-    public void addMoney(int amount){
-        this.money += amount;
+    public boolean addMoney(int amount){
+        return false;
     }
 
-    public void removeMoney(int amount){
-        this.money -= amount;
-        if(money <= 0){
-            this.isBankrupt = true;
-        }
+    public boolean removeMoney(int amount){
+        return false;
     }
 
     public boolean isOwned(PropertyCard card){
         return false;
     }
 
-    public void ownProperty(PropertyCard card){
+    public boolean ownProperty(int squareIndex){
+        return false;
     }
 
-    public void sellProperty(PropertyCard card){
+    public boolean sellProperty(int squareIndex){
+        return false;
     }
 
     //Getters and Setters
