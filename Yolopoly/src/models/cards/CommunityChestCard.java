@@ -20,7 +20,7 @@ public class CommunityChestCard implements Holdable {
     private double multiplier;
 
     public CommunityChestCard(DrawableCard type, String message, int moneyOthers, int moneyBank, boolean getOutTicket, boolean isPositionChanger, int positionChange, int moneyForHouses, int moneyForHotel, boolean pickACard, double multiplier) {
-        this.type = type;
+        this.type = DrawableCard.CommunityChestCard;
         this.message = message;
         this.moneyOthers = moneyOthers;
         this.moneyBank = moneyBank;
@@ -35,10 +35,6 @@ public class CommunityChestCard implements Holdable {
 
     public DrawableCard getType() {
         return type;
-    }
-
-    public void setType(DrawableCard type) {
-        this.type = type;
     }
 
     public String getMessage() {
