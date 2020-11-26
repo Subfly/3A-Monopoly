@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@MiddleController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="models.controllers.MiddleController">
+   <children>
+      <ImageView fitHeight="980.0" fitWidth="980.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-list-field.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="465.0" fitWidth="790.0" layoutX="1080.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/settings-field.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="465.0" fitWidth="370.0" layoutX="1080.0" layoutY="565.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/chat-n-log-field.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="465.0" fitWidth="370.0" layoutX="1500.0" layoutY="565.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/chat-n-log-field.png" />
+         </image>
+      </ImageView>
+      <TextField layoutX="1105.0" layoutY="963.0" prefHeight="42.0" prefWidth="260.0" />
+   </children>
+</AnchorPane>

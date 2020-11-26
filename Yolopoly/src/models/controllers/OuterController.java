@@ -1,15 +1,24 @@
 package models.controllers;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+
+import static sample.Main.changeScreen;
 
 public class OuterController {
 
     @FXML
     AnchorPane quit_game_ask;
 
-    @FXML
-    AnchorPane main_anchor;
+    public Stage primaryStage;
+
+    public void setPrimaryStage(Stage primaryStage){
+        this.primaryStage = primaryStage;
+    }
 
     @FXML
     private void quitGamePressed(){
@@ -27,6 +36,12 @@ public class OuterController {
         quit_game_ask.setStyle("-fx-opacity: 0;");
         quit_game_ask.setDisable(true);
     }
+
+    @FXML
+    public void lobbyScreen() throws Exception {
+        changeScreen("../models/controllers/MiddleController.fxml");
+    }
+
 
 
 
