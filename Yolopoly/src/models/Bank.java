@@ -40,11 +40,11 @@ public class Bank {
         this.currencyRates = currencyRates;
     }
 
-    public ArrayList<ArrayList<Integer>> getPlayerLoans() {
+    public ArrayList<Integer> getPlayerLoans() {
         return playerLoans;
     }
 
-    public void setPlayerLoans(ArrayList<ArrayList<Integer>> playerLoans) {
+    public void setPlayerLoans(ArrayList<Integer> playerLoans) {
         this.playerLoans = playerLoans;
     }
 }
