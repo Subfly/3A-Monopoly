@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
-
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@MiddleController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="models.controllers.MiddleController">
    <children>
@@ -29,5 +32,181 @@
          </image>
       </ImageView>
       <TextField layoutX="1105.0" layoutY="963.0" prefHeight="42.0" prefWidth="260.0" />
+      <ImageView fitHeight="42.0" fitWidth="50.0" layoutX="1375.0" layoutY="963.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/send-button.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="42.0" fitWidth="70.0" layoutX="1685.0" layoutY="438.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/roll-button.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="42.0" fitWidth="70.0" layoutX="1765.0" layoutY="438.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/ready-button.png" />
+         </image>
+      </ImageView>
+      <ImageView onMouseClicked="#closeButtonPressed" fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/close-button.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/settings-button.png" />
+         </image>
+      </ImageView>
+      <Text fill="WHITE" layoutX="110.0" layoutY="100.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Etophiana's Lobby - Player List" textOrigin="CENTER">
+         <font>
+            <Font name="System Bold" size="30.0" />
+         </font>
+      </Text>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1185.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1255.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1325.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1395.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1465.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1535.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1605.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/circle.png" />
+         </image>
+      </ImageView>
+      <ListView layoutX="110.0" layoutY="200.0" prefHeight="725.0" prefWidth="850.0" />
+      <ImageView fx:id="size2" fitHeight="30.0" fitWidth="55.0" layoutX="1242.0" layoutY="344.0" onMouseClicked="#size_2" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/2-green.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size3" fitHeight="30.0" fitWidth="55.0" layoutX="1307.0" layoutY="344.0" onMouseClicked="#size_3" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/3-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size4" fitHeight="30.0" fitWidth="55.0" layoutX="1372.0" layoutY="344.0" onMouseClicked="#size_4" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/4-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size5" fitHeight="30.0" fitWidth="55.0" layoutX="1437.0" layoutY="344.0" onMouseClicked="#size_5" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/5-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size6" fitHeight="30.0" fitWidth="55.0" layoutX="1502.0" layoutY="344.0" onMouseClicked="#size_6" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/6-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size7" fitHeight="30.0" fitWidth="55.0" layoutX="1567.0" layoutY="344.0" onMouseClicked="#size_7" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/7-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="size8" fitHeight="30.0" fitWidth="55.0" layoutX="1632.0" layoutY="344.0" onMouseClicked="#size_8" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/8-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="30.0" fitWidth="138.0" layoutX="1697.0" layoutY="344.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/add-bot.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="theme_vanilla" fitHeight="30.0" fitWidth="120.0" layoutX="1242.0" layoutY="284.0" onMouseClicked="#theme_vanilla" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/vanilla-green.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="theme_bilkent" fitHeight="30.0" fitWidth="120.0" layoutX="1372.0" layoutY="284.0" onMouseClicked="#theme_bilkent" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/bilkent-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="theme_ankara" fitHeight="30.0" fitWidth="120.0" layoutX="1502.0" layoutY="284.0" onMouseClicked="#theme_ankara" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/ankara-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="theme_halloween" fitHeight="30.0" fitWidth="120.0" layoutX="1632.0" layoutY="284.0" onMouseClicked="#theme_halloween" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/halloween-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="mode_vanilla" fitHeight="30.0" fitWidth="120.0" layoutX="1242.0" layoutY="224.0" onMouseClicked="#mode_vanilla" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/vanilla-green.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="mode_bankman" fitHeight="30.0" fitWidth="120.0" layoutX="1372.0" layoutY="224.0" onMouseClicked="#mode_bankman" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/bankman-red.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="30.0" fitWidth="184.0" layoutX="1242.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/pass-field.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="30.0" fitWidth="56.0" layoutX="1436.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/lobby-settings/password-save.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="1438.0" layoutY="91.0" text="Settings" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="20.0" />
+         </font>
+      </Label>
+      <Label layoutX="1115.0" layoutY="167.0" text="Password" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="1115.0" layoutY="227.0" text="Game Mode" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="1115.0" layoutY="287.0" text="Game Theme" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="1115.0" layoutY="347.0" text="Lobby Size" textAlignment="CENTER">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

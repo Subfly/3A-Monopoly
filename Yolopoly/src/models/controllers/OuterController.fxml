@@ -11,7 +11,7 @@
             <Image url="@sources/background.png" />
          </image>
       </ImageView>
-      <ImageView id="single-player" styleClass="shadowed" fitHeight="500.0" fitWidth="250.0" layoutX="695.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView id="single-player" onMouseClicked="#lobbyScreen" styleClass="shadowed" fitHeight="500.0" fitWidth="250.0" layoutX="695.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/singleplayer.png" />
          </image>
@@ -31,7 +31,7 @@
             <Image url="@sources/settings.png" />
          </image>
       </ImageView>
-      <ImageView styleClass="shadowed" onMouseClicked="#lobbyScreen" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="755.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView styleClass="shadowed" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="755.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/feedback.png" />
          </image>
