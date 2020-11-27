@@ -24,8 +24,12 @@ public class InnerEngine {
     }
 
     //Functions
-    public void startGame(boolean isSavedGamePlaying){}
-    public void playTurn(){}
+    public void startGame(boolean isSavedGamePlaying){
+    }
+
+    public void playTurn(){
+
+    }
     public boolean isGameOver(){return false;}
     public void drawCard(){}
     public void buyProperty(){}
@@ -33,11 +37,21 @@ public class InnerEngine {
     public void createAuction(){}
     public void buildBuilding(Building buildingType, int buildingCount){}
     public void destructBuilding(Building buildingType, int buildingCount){}
-    public void addToChat(String data, String userName){}
-    public void addToLog(String logAction, String userName){}
+
+    public void addToChat(String data, String userName){
+        chat.add(userName + ":\n" + data);
+    }
+
+    public void addToLog(String logAction, String userName){
+        log.add("Player " + userName + " has " + logAction);
+    }
+
     public File getSettings(){return null;}
     public void setSettings(){}
-    public boolean changePlayerToBot(){return false;}
+    public boolean changePlayerToBot(int index){
+        players.get(index).setHuman(false);
+        return true;
+    }
 
     //Getters and Setters
 

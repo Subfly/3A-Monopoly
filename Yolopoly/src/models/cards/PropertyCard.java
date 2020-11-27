@@ -6,7 +6,16 @@ public abstract class PropertyCard {
     private final ArrayList<Integer> rentPrices;
     private final int mortagePrice;
     private final int id;
+    private String name;
     private int ownedBy;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public PropertyCard(ArrayList<Integer> rentPrices, int mortagePrice, int id) {
         this.rentPrices = rentPrices;
