@@ -1,0 +1,15 @@
+#single-player {
+    -fx-image: url("sources/singleplayer.png");
+}
+
+#single-player:hover {
+    -fx-image: url("sources/singleplayer-hover.png");
+}
+
+#quit-game-ask{
+    -fx-opacity: 0;
+}
+
+.shadowed{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0);
+}

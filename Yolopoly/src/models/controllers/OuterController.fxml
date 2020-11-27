@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@OuterController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="models.controllers.OuterController">
+   <children>
+      <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true" styleClass="single-player">
+         <image>
+            <Image url="@sources/background.png" />
+         </image>
+      </ImageView>
+      <ImageView id="single-player" onMouseClicked="#lobbyScreen" styleClass="shadowed" fitHeight="500.0" fitWidth="250.0" layoutX="695.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/singleplayer.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" fitHeight="500.0" fitWidth="250.0" layoutX="975.0" layoutY="95.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/multiplayer.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="625.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/help.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" fitHeight="100.0" fitWidth="250.0" layoutX="975.0" layoutY="625.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/settings.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="755.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/feedback.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" fitHeight="100.0" fitWidth="250.0" layoutX="975.0" layoutY="755.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/credits.png" />
+         </image>
+      </ImageView>
+      <ImageView styleClass="shadowed" onMouseClicked="#quitGamePressed" fitHeight="100.0" fitWidth="530.0" layoutX="695.0" layoutY="885.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/quit-button.png" />
+         </image>
+      </ImageView>
+      <AnchorPane id="quit-game-ask" fx:id="quit_game_ask" disable="true" opacity="0.0" prefHeight="1080.0" prefWidth="1920.0">
+         <children>
+            <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/quit-ask-background.png" />
+               </image>
+            </ImageView>
+            <ImageView styleClass="shadowed" fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/quit-ask.png" />
+               </image>
+            </ImageView>
+            <ImageView styleClass="shadowed" onMouseClicked="#quitGameYesPressed"  fitHeight="100.0" fitWidth="250.0" layoutX="690.0" layoutY="510.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/quit-yes.png" />
+               </image>
+            </ImageView>
+            <ImageView styleClass="shadowed" onMouseClicked="#quitGameNoPressed" fitHeight="100.0" fitWidth="250.0" layoutX="980.0" layoutY="510.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/quit-no.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
