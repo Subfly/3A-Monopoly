@@ -3,9 +3,12 @@ package models.engines;
 import enumerations.GameMode;
 import enumerations.GameTheme;
 import enumerations.Pawn;
+import models.Bank;
+import models.Board;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class MiddleEngine {
     private InnerEngine innerEngine;
@@ -14,9 +17,13 @@ public class MiddleEngine {
     private GameMode gameMode;
     private GameTheme gameTheme;
     private String hosterNick;
+    private ArrayList<Integer> botNum;
     private ArrayList<Boolean> humanitySettings;
     private ArrayList<Pawn> pawns;
+    private Map<Pawn, Boolean> usedPawns;
+
     private ArrayList<Boolean> isAllReady;
+    private int playerCount;
     private int maxPlayerCount;
 
     //Lobi Ayarları
@@ -26,14 +33,50 @@ public class MiddleEngine {
     public MiddleEngine(boolean isOnline, String hosterNick) {
         this.isOnline = isOnline;
         this.hosterNick = hosterNick;
+        this.playerCount = 1;
+        humanitySettings.add(true);
+        isAllReady.add(false);
+        playerNicks.add(hosterNick);
+        for (int i = 0; i < 8; i++) {
+            botNum.add(i);
+        }
     }
 
     //Functions
-    public void initializeGame(){}
+    // Starts the game
+    public void initializeGame(){
+        innerEngine = new InnerEngine(false);
+        innerEngine.setBank(new Bank(gameTheme, gameMode));
+        innerEngine.setBoard(new Board(gameTheme));
+        innerEngine.setChat(new ArrayList<String>());
+        innerEngine.setLog(new ArrayList<String>());
+    }
+
     public File getSettings(){return null;}
     public void setSettings(){}
-    public boolean kickPlayer(String nick){return false;}
-    public boolean addBot(){return false;}
+
+    public boolean kickPlayer(String nick) {
+        int index = playerNicks.indexOf(nick);
+        if (index != -1) {
+            humanitySettings.remove(index);
+
+            return true;
+        }
+        return false;
+    }
+
+    public boolean addBot(){
+        if (playerCount < 8 && playerCount < maxPlayerCount) {
+            humanitySettings.add(false);
+            int num = botNum.get(0);
+            botNum.remove(num);
+            botNum.add(num);
+            playerNicks.add(("Bot" + num));
+            playerCount++;
+            return true;
+        }
+        return false;
+    }
 
     //Getters and Setters
     public boolean isOnline() {
@@ -99,4 +142,29 @@ public class MiddleEngine {
     public void setPawns(ArrayList<Pawn> pawns) {
         this.pawns = pawns;
     }
+
+    public ArrayList<Boolean> getIsAllReady() {
+        return isAllReady;
+    }
+
+    public void setIsAllReady(ArrayList<Boolean> isAllReady) {
+        this.isAllReady = isAllReady;
+    }
+
+    public int getPlayerCount() {
+        return playerCount;
+    }
+
+    public void setPlayerCount(int playerCount) {
+        this.playerCount = playerCount;
+    }
+
+    public int getMaxPlayerCount() {
+        return maxPlayerCount;
+    }
+
+    public void setMaxPlayerCount(int maxPlayerCount) {
+        this.maxPlayerCount = maxPlayerCount;
+    }
+
 }

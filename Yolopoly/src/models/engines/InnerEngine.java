@@ -6,7 +6,6 @@ import models.*;
 import java.io.File;
 import java.util.ArrayList;
 
-
 public class InnerEngine {
     //Oyun işleri
     //Variables
@@ -22,17 +21,31 @@ public class InnerEngine {
     //Constructor
     public InnerEngine(boolean isSavedGamePlaying) {
         startGame(isSavedGamePlaying);
-
     }
 
     //Functions
-    public void startGame(boolean isSavedGamePlaying){}
-    public void playTurn(){}
+    public void startGame(boolean isSavedGamePlaying){
+    }
+
+    public void playTurn(){
+
+    }
     public boolean isGameOver(){return false;}
     public void drawCard(){}
     public void buyProperty(){}
     public void sellProperty(){}
     public void createAuction(){}
+    public void buildBuilding(Building buildingType, int buildingCount){}
+    public void destructBuilding(Building buildingType, int buildingCount){}
+
+    public void addToChat(String data, String userName){
+        chat.add(userName + ":\n" + data);
+    }
+
+    public void addToLog(String logAction, String userName){
+        log.add("Player " + userName + " has " + logAction);
+    }
+
     public void buildBuilding(Building buildingType, int buildingCount){
         //ArrayList<Square> toBuild = board.getSquares();
     }
@@ -43,7 +56,10 @@ public class InnerEngine {
     public void addToLog(String logAction, String userName){}
     public File getSettings(){return null;}
     public void setSettings(){}
-    public boolean changePlayerToBot(){return false;}
+    public boolean changePlayerToBot(int index){
+        players.get(index).setHuman(false);
+        return true;
+    }
 
     //Getters and Setters
 
@@ -99,5 +115,7 @@ public class InnerEngine {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int currentPlayer) { this.currentPlayer = currentPlayer; }
+    public void setCurrentPlayer(int currentPlayer) {
+        this.currentPlayer = currentPlayer;
+    }
 }

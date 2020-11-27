@@ -1,5 +1,6 @@
 package models;
 
+import enumerations.GameTheme;
 import models.cards.ChanceCard;
 import models.cards.CommunityChestCard;
 
@@ -12,7 +13,7 @@ public class Board {
     private ArrayList<ChanceCard> chanceCards;
 
     //Constructor
-    public Board() {}
+    public Board(GameTheme gameTheme) {}
 
     //Getters and Setters
     public ArrayList<Square> getSquares() {
