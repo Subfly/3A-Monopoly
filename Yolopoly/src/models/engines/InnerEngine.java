@@ -27,7 +27,9 @@ public class InnerEngine {
     public void startGame(boolean isSavedGamePlaying){
     }
 
-    public void playTurn(){}
+    public void playTurn(){
+
+    }
     public boolean isGameOver(){return false;}
     public void drawCard(){}
     public void buyProperty(){}

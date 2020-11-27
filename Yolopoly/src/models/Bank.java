@@ -1,5 +1,7 @@
 package models;
 
+import enumerations.GameMode;
+import enumerations.GameTheme;
 import models.cards.PropertyCard;
 
 import java.util.ArrayList;
@@ -13,7 +15,7 @@ public class Bank {
     private ArrayList<Double> currencyRates;
 
     //Constructor
-    public Bank() {
+    public Bank(GameTheme gameTheme, GameMode gameMode) {
     }
 
     //Functions
