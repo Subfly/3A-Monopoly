@@ -5,23 +5,25 @@ import enumerations.SquareType;
 
 public class Square {
     //Variables
+
+    private int id;
     private SquareType type;
-    private boolean isBought;
-    private boolean hasHome;
-    private boolean hasHotel;
+    private String name;
     private int cost;
+    //private Color color;
+    private boolean isBought;
     private int houseCount;
     private int hotelCount;
-    private int id;
 
     //Constructor
-    public Square(SquareType type, int cost, int id) {
-        this.type = type;
-        this.cost = cost;
+
+    public Square(int id, SquareType type, String name, int cost /*, Color color */) {
         this.id = id;
+        this.type = type;
+        this.name = name;
+        this.cost = cost;
+        //this.color = color;
         this.isBought = false;
-        this.hasHome = false;
-        this.hasHotel = false;
         this.houseCount = 0;
         this.hotelCount = 0;
     }
@@ -45,30 +47,6 @@ public class Square {
 
     public void setBought(boolean bought) {
         isBought = bought;
-    }
-
-    public boolean isHasHome() {
-        return hasHome;
-    }
-
-    public void setHasHome(boolean hasHome) {
-        this.hasHome = hasHome;
-    }
-
-    public boolean isHasHotel() {
-        return hasHotel;
-    }
-
-    public void setHasHotel(boolean hasHotel) {
-        this.hasHotel = hasHotel;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     public int getHouseCount() {
