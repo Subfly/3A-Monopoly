@@ -10,4 +10,5 @@ public enum SquareType {
     TaxSquare, //6
     RailroadSquare, //7
     UtilitySquare, //8
+    NormalSquare, //9
 }
