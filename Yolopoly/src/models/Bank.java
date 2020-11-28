@@ -1,5 +1,7 @@
 package models;
 
+import enumerations.GameMode;
+import enumerations.GameTheme;
 import models.cards.PropertyCard;
 
 import java.util.ArrayList;

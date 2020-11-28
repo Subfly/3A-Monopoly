@@ -6,6 +6,7 @@ import models.*;
 import java.io.File;
 import java.util.ArrayList;
 
+
 public class InnerEngine {
     //Oyun işleri
     //Variables
@@ -21,6 +22,7 @@ public class InnerEngine {
     //Constructor
     public InnerEngine(boolean isSavedGamePlaying) {
         startGame(isSavedGamePlaying);
+
     }
 
     //Functions
@@ -35,8 +37,7 @@ public class InnerEngine {
     public void buyProperty(){}
     public void sellProperty(){}
     public void createAuction(){}
-    public void buildBuilding(Building buildingType, int buildingCount){}
-    public void destructBuilding(Building buildingType, int buildingCount){}
+
 
     public void addToChat(String data, String userName){
         chat.add(userName + ":\n" + data);
@@ -52,8 +53,7 @@ public class InnerEngine {
     public void destructBuilding(Building buildingType, int buildingCount){
 
     }
-    public void addToChat(String data, String userName){}
-    public void addToLog(String logAction, String userName){}
+
     public File getSettings(){return null;}
     public void setSettings(){}
     public boolean changePlayerToBot(int index){
@@ -115,7 +115,5 @@ public class InnerEngine {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
+    public void setCurrentPlayer(int currentPlayer) { this.currentPlayer = currentPlayer; }
 }

@@ -80,6 +80,12 @@ public class Player {
 
     //Functions
 
+    /*public int countPlayersColor(Square square){
+        ownedPlaces.stream().filter(s-> s.getId() == square.getId() ).
+        return 0;
+    }
+
+     */
     /**
      * Adds money to player.
      *

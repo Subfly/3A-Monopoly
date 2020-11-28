@@ -15,6 +15,11 @@ public class Board {
     //Constructor
     public Board(GameTheme gameTheme) {}
 
+    //Functions
+    public int countColors(Square square){
+        return (int) squares.stream().filter(s-> s.getColor() == square.getColor()).count();
+    }
+
     //Getters and Setters
     public ArrayList<Square> getSquares() {
         return squares;
