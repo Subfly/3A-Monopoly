@@ -6,6 +6,7 @@ import models.*;
 import java.io.File;
 import java.util.ArrayList;
 
+
 public class InnerEngine {
     //Oyun işleri
     //Variables
@@ -21,6 +22,7 @@ public class InnerEngine {
     //Constructor
     public InnerEngine(boolean isSavedGamePlaying) {
         startGame(isSavedGamePlaying);
+
     }
 
     //Functions
@@ -107,7 +109,5 @@ public class InnerEngine {
         return currentPlayer;
     }
 
-    public void setCurrentPlayer(int currentPlayer) {
-        this.currentPlayer = currentPlayer;
-    }
+    public void setCurrentPlayer(int currentPlayer) { this.currentPlayer = currentPlayer; }
 }
