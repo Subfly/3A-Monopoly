@@ -3,37 +3,39 @@ package models.cards;
 import java.util.ArrayList;
 
 public abstract class PropertyCard {
-    private final ArrayList<Integer> rentPrices;
-    private final int mortagePrice;
     private final int id;
-    private String name;
+    private final String name;
+    private final int cost;
+    private final ArrayList<Integer> rentPrices;
+    private final int mortgagePrice;
     private int ownedBy;
+
+    public PropertyCard(int id, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice) {
+        this.id = id;
+        this.name = name;
+        this.cost = cost;
+        this.rentPrices = rentPrices;
+        this.mortgagePrice = mortgagePrice;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public PropertyCard(ArrayList<Integer> rentPrices, int mortagePrice, int id) {
-        this.rentPrices = rentPrices;
-        this.mortagePrice = mortagePrice;
-        this.id = id;
-        this.ownedBy = -1;
+    public int getCost() {
+        return cost;
     }
 
     public ArrayList<Integer> getRentPrices() {
         return rentPrices;
     }
 
-    public int getMortagePrice() {
-        return mortagePrice;
-    }
-
-    public int getId() {
-        return id;
+    public int getMortgagePrice() {
+        return mortgagePrice;
     }
 
     public int getOwnedBy() {
