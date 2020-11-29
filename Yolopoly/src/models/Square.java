@@ -17,7 +17,6 @@ public class Square {
     private int hotelCount;
 
     //Constructor
-
     public Square(int id, SquareType type, String name, int cost, Colors color) {
         this.id = id;
         this.type = type;
