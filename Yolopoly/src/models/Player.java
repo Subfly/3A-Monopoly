@@ -2,8 +2,10 @@ package models;
 
 import enumerations.Pawn;
 import interfaces.Holdable;
+import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 /**
  * The type Player.
@@ -79,6 +81,26 @@ public class Player {
     }
 
     //Functions
+
+    public int countPlayersColor(Square square){
+
+        return (int) ownedPlaces.stream().filter(s-> s.getColor() == square.getColor()).count();
+    }
+
+    public PropertyCard getSpecificCard(int index){
+        int propertyIndex = -1;
+        int count = 0;
+        for ( PropertyCard s : ownedPlaces ) {
+
+            if ( s.getId() == index ){
+                propertyIndex = count;
+                return ownedPlaces.get(propertyIndex);
+            }
+            count++;
+        }
+        return null;
+    }
+
 
     /**
      * Adds money to player.
