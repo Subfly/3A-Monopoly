@@ -23,33 +23,34 @@ public class Square {
         this.type = type;
         this.name = name;
         this.cost = cost;
-        //this.color = color;
+        this.color = color;
         this.isBought = false;
         this.houseCount = 0;
         this.hotelCount = 0;
     }
 
     //Functions
-    public void build( Building buildingType, int count ){
+    public void build( Building buildingType){
         if( buildingType == Building.House ){
-            //if( houseCount < 4 && ( houseCount + count ) <= 4 ) { //inner enginede yapılacak
+
             houseCount++;
             System.out.println("House increased");
             System.out.println("Player has got home");
 
         }
         if( buildingType == Building.Hotel ){
-            //if( houseCount == 4 &&  hasHotel == false && count == 1 ){ //inner enginede yapılacak
+
             hotelCount++;
+            houseCount = 0;
             System.out.println("Hotel increased");
             System.out.println("Player has got hotel");
 
 
         }
     }
-    public void destroy(Building buildingType, int count){
+    public void destroy(Building buildingType){
 
-        if( buildingType == Building.House ) { //&& houseCount > 0 && ( houseCount - count ) >= 0 ){ //inner enginede yapılacak
+        if( buildingType == Building.House ) {
             houseCount--;
             System.out.println("House decreased");
 
@@ -57,8 +58,9 @@ public class Square {
                 System.out.println("Player hasn't got home");
             }
         }
-        if( buildingType == Building.Hotel ){ // && hasHotel == true ){ //inner enginede yapılacak
+        if( buildingType == Building.Hotel ){
             hotelCount--;
+            houseCount = 4;
             System.out.println("Hotel decreased");
             System.out.println("Player hasn't got hotel");
         }

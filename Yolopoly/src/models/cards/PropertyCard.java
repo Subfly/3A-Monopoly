@@ -1,21 +1,29 @@
 package models.cards;
 
+import enumerations.Colors;
+
 import java.util.ArrayList;
 
 public abstract class PropertyCard {
     private final int id;
+    private final Colors color;
     private final String name;
     private final int cost;
     private final ArrayList<Integer> rentPrices;
     private final int mortgagePrice;
     private int ownedBy;
 
-    public PropertyCard(int id, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice) {
+    public PropertyCard(int id, String name, int cost, Colors color, ArrayList<Integer> rentPrices, int mortgagePrice) {
         this.id = id;
+        this.color = color;
         this.name = name;
         this.cost = cost;
         this.rentPrices = rentPrices;
         this.mortgagePrice = mortgagePrice;
+    }
+
+    public Colors getColor() {
+        return color;
     }
 
     public int getId() {

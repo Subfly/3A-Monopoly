@@ -20,7 +20,15 @@ public class Board {
         return (int) squares.stream().filter(s-> s.getColor() == square.getColor()).count();
     }
 
+    public int countHousesOnSquaresOfaColor(Square square){
+        return (int) squares.stream().filter(s-> s.getColor() == square.getColor()).filter(s -> s.getHouseCount() > 0).count();
+    }
+    public Square getSpecificSquare(int index){
+        return squares.get(index);
+    }
+
     //Getters and Setters
+
     public ArrayList<Square> getSquares() {
         return squares;
     }
