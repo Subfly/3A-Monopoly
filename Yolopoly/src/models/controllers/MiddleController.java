@@ -109,5 +109,10 @@ public class MiddleController {
         changeScreen("../models/controllers/OuterController.fxml");
     }
 
+    @FXML
+    public void readyButtonPressed() throws Exception{
+        changeScreen("../models/controllers/InnerController.fxml");
+    }
+
 
 }
