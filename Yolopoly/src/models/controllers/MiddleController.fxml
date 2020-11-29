@@ -11,6 +11,11 @@
 
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@MiddleController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="models.controllers.MiddleController">
    <children>
+      <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/background-masked.png" />
+         </image>
+      </ImageView>
       <ImageView fitHeight="980.0" fitWidth="980.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/lobby-list-field.png" />
@@ -42,12 +47,12 @@
             <Image url="@sources/roll-button.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="42.0" fitWidth="70.0" layoutX="1765.0" layoutY="438.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView onMouseClicked="#readyButtonPressed" fitHeight="42.0" fitWidth="70.0" layoutX="1765.0" layoutY="438.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/ready-button.png" />
          </image>
       </ImageView>
-      <ImageView onMouseClicked="#closeButtonPressed" fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#closeButtonPressed" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/close-button.png" />
          </image>

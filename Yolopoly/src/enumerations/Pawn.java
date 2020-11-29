@@ -1,12 +1,12 @@
 package enumerations;
 
 public enum Pawn {
-    Dog,
-    Ship,
-    Hat,
-    Thimble,
-    Shoe,
-    WheelBarrow,
-    Iron,
+    Skate,
+    Formula,
     Plane,
+    Motorbike,
+    Sailboat,
+    Car,
+    Hat,
+    Shoe,
 }

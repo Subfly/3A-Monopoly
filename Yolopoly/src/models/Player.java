@@ -247,6 +247,7 @@ public class Player {
      * @param currentPosition the current position
      */
     public void setCurrentPosition(int currentPosition) {
+        currentPosition = currentPosition % 40; //PÜÜÜÜÜÜÜÜÜÜÜÜ
         this.currentPosition = currentPosition;
     }
 

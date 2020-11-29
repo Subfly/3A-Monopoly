@@ -27,9 +27,36 @@ public class InnerEngine {
     public void startGame(boolean isSavedGamePlaying){
     }
 
-    public void playTurn(){
-
+    public void turnManager(){
+        while (!isGameOver()){
+            if (players.get(currentPlayer).isHuman()){
+                playTurn();
+            }
+            else {
+                //online controller yapcak falan filan
+                System.out.println("else");
+            }
+            currentPlayer++;
+        }
     }
+
+    public void playTurn(){
+        dice.roll();
+        int dice1 = dice.getDice1();
+        int dice2 = dice.getDice2();
+        int totalDice = dice1 + dice2;
+        boolean sameDice = dice1 == dice2;
+        boolean diceGoToJail = squareIndex + totalDice == 10;
+
+
+        if (!diceGoToJail){
+            drawCard();
+            buyProperty();
+            sellProperty();
+            buildBuilding(Building.House, 1);
+        }
+    }
+
     public boolean isGameOver(){return false;}
     public void drawCard(){}
     public void buyProperty(){}
