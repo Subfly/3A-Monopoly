@@ -55,50 +55,75 @@
                 <Image url="@sources/settings-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index1" fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1185.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index2" fitHeight="60.0" fitWidth="60.0" layoutX="1185.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1255.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index3" fitHeight="60.0" fitWidth="60.0" layoutX="1255.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1325.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index4" fitHeight="60.0" fitWidth="60.0" layoutX="1325.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1395.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index5" fitHeight="60.0" fitWidth="60.0" layoutX="1395.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1465.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index6" fitHeight="60.0" fitWidth="60.0" layoutX="1465.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1535.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index7" fitHeight="60.0" fitWidth="60.0" layoutX="1535.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="60.0" fitWidth="60.0" layoutX="1605.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index8" fitHeight="60.0" fitWidth="60.0" layoutX="1605.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
       <AnchorPane layoutX="50.0" layoutY="50.0" prefHeight="980.0" prefWidth="980.0">
          <children>
+            <ImageView fitHeight="120.0" fitWidth="200.0" layoutX="390.0" layoutY="430.0" onMouseClicked="#roll_dice" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/dice/dice_pool.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="dice_1" fitHeight="70.0" fitWidth="70.0" layoutX="415.0" layoutY="455.0" onMouseClicked="#roll_dice" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/dice/dice_1.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="dice_2" fitHeight="70.0" fitWidth="70.0" layoutX="495.0" layoutY="455.0" onMouseClicked="#roll_dice" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/dice/dice_1.png" />
+               </image>
+            </ImageView>
             <ImageView fx:id="card_image" fitHeight="400.0" fitWidth="240.0" layoutX="370.0" layoutY="170.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="info_card" fitHeight="240.0" fitWidth="240.0" layoutX="370.0" layoutY="570.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="buy_button" fitHeight="60.0" fitWidth="60.0" layoutX="300.0" layoutY="620.0" pickOnBounds="true" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@sources/property-cards/buy_button.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="sell_button" fitHeight="60.0" fitWidth="60.0" layoutX="300.0" layoutY="700.0" pickOnBounds="true" preserveRatio="true" visible="false">
+               <image>
+                  <Image url="@sources/property-cards/sell_button.png" />
+               </image>
+            </ImageView>
             <ImageView fx:id="house_slot3" fitHeight="50.0" fitWidth="40.0" layoutX="400.0" layoutY="590.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="house_slot2" fitHeight="50.0" fitWidth="40.0" layoutX="400.0" layoutY="640.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="house_slot1" fitHeight="50.0" fitWidth="40.0" layoutX="400.0" layoutY="690.0" pickOnBounds="true" preserveRatio="true" />
@@ -123,46 +148,46 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <ImageView fx:id="index0" fitHeight="130.0" fitWidth="130.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index1" fitHeight="80.0" fitWidth="130.0" layoutY="770.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index2" fitHeight="80.0" fitWidth="130.0" layoutY="690.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index3" fitHeight="80.0" fitWidth="130.0" layoutY="610.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index4" fitHeight="80.0" fitWidth="130.0" layoutY="530.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index5" fitHeight="80.0" fitWidth="130.0" layoutY="450.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index6" fitHeight="80.0" fitWidth="130.0" layoutY="370.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index7" fitHeight="80.0" fitWidth="130.0" layoutY="290.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index8" fitHeight="80.0" fitWidth="130.0" layoutY="210.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index9" fitHeight="80.0" fitWidth="130.0" layoutY="130.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index10" fitHeight="130.0" fitWidth="130.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index11" fitHeight="130.0" fitWidth="80.0" layoutX="130.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index12" fitHeight="130.0" fitWidth="80.0" layoutX="210.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index13" fitHeight="130.0" fitWidth="80.0" layoutX="290.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index14" fitHeight="130.0" fitWidth="80.0" layoutX="370.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index15" fitHeight="130.0" fitWidth="80.0" layoutX="450.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index16" fitHeight="130.0" fitWidth="80.0" layoutX="530.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index17" fitHeight="130.0" fitWidth="80.0" layoutX="610.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index18" fitHeight="130.0" fitWidth="80.0" layoutX="690.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index19" fitHeight="130.0" fitWidth="80.0" layoutX="770.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index20" fitHeight="130.0" fitWidth="130.0" layoutX="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index21" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="130.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index22" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="210.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index23" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="290.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index24" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="370.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index25" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="450.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index26" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="530.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index27" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="610.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index28" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="690.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index29" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="770.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index30" fitHeight="130.0" fitWidth="130.0" layoutX="850.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index31" fitHeight="130.0" fitWidth="80.0" layoutX="770.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index32" fitHeight="130.0" fitWidth="80.0" layoutX="690.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index33" fitHeight="130.0" fitWidth="80.0" layoutX="610.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index34" fitHeight="130.0" fitWidth="80.0" layoutX="530.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index35" fitHeight="130.0" fitWidth="80.0" layoutX="450.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index36" fitHeight="130.0" fitWidth="80.0" layoutX="370.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index37" fitHeight="130.0" fitWidth="80.0" layoutX="290.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index38" fitHeight="130.0" fitWidth="80.0" layoutX="210.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
-            <ImageView fx:id="index39" fitHeight="130.0" fitWidth="80.0" layoutX="130.0" layoutY="850.0" onMouseEntered="#indexes" onMouseExited="#clear_indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index0" fitHeight="130.0" fitWidth="130.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index1" fitHeight="80.0" fitWidth="130.0" layoutY="770.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index2" fitHeight="80.0" fitWidth="130.0" layoutY="690.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index3" fitHeight="80.0" fitWidth="130.0" layoutY="610.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index4" fitHeight="80.0" fitWidth="130.0" layoutY="530.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index5" fitHeight="80.0" fitWidth="130.0" layoutY="450.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index6" fitHeight="80.0" fitWidth="130.0" layoutY="370.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index7" fitHeight="80.0" fitWidth="130.0" layoutY="290.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index8" fitHeight="80.0" fitWidth="130.0" layoutY="210.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index9" fitHeight="80.0" fitWidth="130.0" layoutY="130.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index10" fitHeight="130.0" fitWidth="130.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index11" fitHeight="130.0" fitWidth="80.0" layoutX="130.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index12" fitHeight="130.0" fitWidth="80.0" layoutX="210.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index13" fitHeight="130.0" fitWidth="80.0" layoutX="290.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index14" fitHeight="130.0" fitWidth="80.0" layoutX="370.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index15" fitHeight="130.0" fitWidth="80.0" layoutX="450.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index16" fitHeight="130.0" fitWidth="80.0" layoutX="530.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index17" fitHeight="130.0" fitWidth="80.0" layoutX="610.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index18" fitHeight="130.0" fitWidth="80.0" layoutX="690.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index19" fitHeight="130.0" fitWidth="80.0" layoutX="770.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index20" fitHeight="130.0" fitWidth="130.0" layoutX="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index21" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="130.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index22" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="210.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index23" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="290.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index24" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="370.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index25" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="450.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index26" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="530.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index27" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="610.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index28" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="690.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index29" fitHeight="80.0" fitWidth="130.0" layoutX="850.0" layoutY="770.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index30" fitHeight="130.0" fitWidth="130.0" layoutX="850.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index31" fitHeight="130.0" fitWidth="80.0" layoutX="770.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index32" fitHeight="130.0" fitWidth="80.0" layoutX="690.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index33" fitHeight="130.0" fitWidth="80.0" layoutX="610.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index34" fitHeight="130.0" fitWidth="80.0" layoutX="530.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index35" fitHeight="130.0" fitWidth="80.0" layoutX="450.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index36" fitHeight="130.0" fitWidth="80.0" layoutX="370.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index37" fitHeight="130.0" fitWidth="80.0" layoutX="290.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index38" fitHeight="130.0" fitWidth="80.0" layoutX="210.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="index39" fitHeight="130.0" fitWidth="80.0" layoutX="130.0" layoutY="850.0" onMouseClicked="#indexes" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="sq_bar1" fitHeight="80.0" fitWidth="23.0" layoutX="107.0" layoutY="770.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="sq_bar3" fitHeight="80.0" fitWidth="23.0" layoutX="107.0" layoutY="610.0" pickOnBounds="true" preserveRatio="true" />
             <ImageView fx:id="sq_bar6" fitHeight="80.0" fitWidth="23.0" layoutX="107.0" layoutY="370.0" pickOnBounds="true" preserveRatio="true" />

@@ -22,16 +22,10 @@ import static sample.Main.changeScreen;
 public class InnerController {
 
     @FXML
-    ImageView
-            index0, index1, index2, index3, index4, index5, index6, index7, index8, index9,
-            index10,index11,index12,index13,index14,index15,index16,index17,index18,index19,
-            index20,index21,index22,index23,index24,index25,index26,index27,index28,index29,
-            index30,index31,index32,index33,index34,index35,index36,index37,index38,index39;
+    ImageView index0, index1, index2, index3, index4, index5, index6, index7, index8, index9, index10,index11,index12,index13,index14,index15,index16,index17,index18,index19, index20,index21,index22,index23,index24,index25,index26,index27,index28,index29, index30,index31,index32,index33,index34,index35,index36,index37,index38,index39;
 
     @FXML
-    ImageView
-            sq_bar1,  sq_bar3,  sq_bar6,  sq_bar8,  sq_bar9,  sq_bar11, sq_bar13, sq_bar14, sq_bar16 ,sq_bar18, sq_bar19,
-            sq_bar21, sq_bar23, sq_bar24, sq_bar26, sq_bar27, sq_bar29, sq_bar31, sq_bar32, sq_bar34, sq_bar37, sq_bar39;
+    ImageView sq_bar1, sq_bar3, sq_bar6, sq_bar8, sq_bar9, sq_bar11, sq_bar13, sq_bar14, sq_bar16 ,sq_bar18, sq_bar19,sq_bar21, sq_bar23, sq_bar24, sq_bar26, sq_bar27, sq_bar29, sq_bar31, sq_bar32, sq_bar34, sq_bar37, sq_bar39;
 
     @FXML
     ImageView card_image, info_card, house_slot3, house_slot2, house_slot1, house_slot0;
@@ -45,7 +39,17 @@ public class InnerController {
     @FXML
     Label testTextField;
 
+    @FXML
+    ImageView dice_1, dice_2;
+
+    @FXML
+    ImageView player_index1, player_index2, player_index3, player_index4, player_index5, player_index6, player_index7, player_index8;
+
+    @FXML
+    ImageView buy_button, sell_button;
+
     ImageView[] pawnTest;
+    ImageView[] player_indexes;
     ArrayList<ImageView> pawnTeam1;
     ArrayList<ImageView> pawnTeam2;
 
@@ -57,94 +61,62 @@ public class InnerController {
 
     int pawntestint;
 
+    boolean pressedEndTurn = false;
 
     Player[] players;
 
     public InnerController() {
+        //Card Image and Info Card Variables Declaration
         card_image = new ImageView();
+        house_slot0 = new ImageView();house_slot1 = new ImageView();house_slot2 = new ImageView();house_slot3 = new ImageView();
+        owner_label = new Label();owner_nick = new Label();
+        price_rent_label = new Label();price_rent_value = new Label();
+        sell_button = new ImageView();buy_button = new ImageView();
 
-        house_slot0 = new ImageView();
-        house_slot1 = new ImageView();
-        house_slot2 = new ImageView();
-        house_slot3 = new ImageView();
+        //Hotel and House Bars
+        sq_bar1  = new ImageView();sq_bar3  = new ImageView();sq_bar6  = new ImageView();sq_bar8  = new ImageView();sq_bar9  = new ImageView();sq_bar11 = new ImageView();sq_bar13 = new ImageView();sq_bar14 = new ImageView();sq_bar16 = new ImageView();sq_bar18 = new ImageView();sq_bar19 = new ImageView();sq_bar21 = new ImageView();sq_bar23 = new ImageView();sq_bar24 = new ImageView();sq_bar26 = new ImageView();sq_bar27 = new ImageView();sq_bar29 = new ImageView();sq_bar31 = new ImageView();sq_bar32 = new ImageView();sq_bar34 = new ImageView();sq_bar37 = new ImageView();sq_bar39 = new ImageView();
 
-        owner_label = new Label();
-        owner_nick = new Label();
+        //Players Big Pawn Images
+        player_index1 = new ImageView();player_index2 = new ImageView();player_index3 = new ImageView();player_index4 = new ImageView();player_index5 = new ImageView();player_index6 = new ImageView();player_index7 = new ImageView();player_index8 = new ImageView();
 
-        price_rent_label = new Label();
-        price_rent_value = new Label();
+        //Pawns
+        pawn_1 = new ImageView();pawn_2 = new ImageView();pawn_3 = new ImageView();pawn_4 = new ImageView();pawn_5 = new ImageView();pawn_6 = new ImageView();pawn_7 = new ImageView();pawn_8 = new ImageView();
 
-        sq_bar1  = new ImageView();
-        sq_bar3  = new ImageView();
-        sq_bar6  = new ImageView();
-        sq_bar8  = new ImageView();
-        sq_bar9  = new ImageView();
-        sq_bar11 = new ImageView();
-        sq_bar13 = new ImageView();
-        sq_bar14 = new ImageView();
-        sq_bar16 = new ImageView();
-        sq_bar18 = new ImageView();
-        sq_bar19 = new ImageView();
-        sq_bar21 = new ImageView();
-        sq_bar23 = new ImageView();
-        sq_bar24 = new ImageView();
-        sq_bar26 = new ImageView();
-        sq_bar27 = new ImageView();
-        sq_bar29 = new ImageView();
-        sq_bar31 = new ImageView();
-        sq_bar32 = new ImageView();
-        sq_bar34 = new ImageView();
-        sq_bar37 = new ImageView();
-        sq_bar39 = new ImageView();
+        //Dices
+        dice = new Dice();
+        dice_1 = new ImageView();dice_2 = new ImageView();
 
-        pawn_1 = new ImageView();
-        pawn_2 = new ImageView();
-        pawn_3 = new ImageView();
-        pawn_4 = new ImageView();
-        pawn_5 = new ImageView();
-        pawn_6 = new ImageView();
-        pawn_7 = new ImageView();
-        pawn_8 = new ImageView();
+        //For Debug Issues
+        testTextField = new Label();
+
+        //Players -- Debug -- It should not be there i guess
+        p1 = new Player("p1", false);p2 = new Player("p2", false);p3 = new Player("p3", true);p4 = new Player("p4", false);p5 = new Player("p5", false);p6 = new Player("p6", false);p7 = new Player("p7", false);p8 = new Player("p8", false);
+    }
+
+    @FXML
+    public void initialize() {
+        pressedEndTurn = true;
+        card_image.setVisible(false);
+
+        players = new Player[]{p1,p2,p3,p4,p5,p6,p7,p8};
+
+        pawnTest = new ImageView[]{pawn_1, pawn_2, pawn_3, pawn_4, pawn_5, pawn_6, pawn_7, pawn_8};
+
+        player_indexes = new ImageView[]{player_index1, player_index2, player_index3, player_index4, player_index5, player_index6, player_index7, player_index8};
+
+        pawnTeam1 = new ArrayList<>();
+        pawnTeam2 = new ArrayList<>();
+
+        pawnTeam1.add(pawn_1);pawnTeam1.add(pawn_2);pawnTeam1.add(pawn_5);pawnTeam1.add(pawn_6);
+
+        pawnTeam2.add(pawn_3);pawnTeam2.add(pawn_4);pawnTeam2.add(pawn_7);pawnTeam2.add(pawn_8);
 
         owner_label.setVisible(false);
         owner_nick.setVisible(false);
         price_rent_label.setVisible(false);
         price_rent_value.setVisible(false);
 
-        dice = new Dice();
-
-        testTextField = new Label();
-
-        p1 = new Player("p1", false);
-        p2 = new Player("p2", false);
-        p3 = new Player("p3", true);
-        p4 = new Player("p4", false);
-        p5 = new Player("p5", false);
-        p6 = new Player("p6", false);
-        p7 = new Player("p7", false);
-        p8 = new Player("p8", false);
-    }
-
-
-    @FXML
-    public void initialize() {
-
-        players = new Player[]{p1,p2,p3,p4,p5,p6,p7,p8};
-
-        pawnTest = new ImageView[]{pawn_1, pawn_2, pawn_3, pawn_4, pawn_5, pawn_6, pawn_7, pawn_8};
-
-        pawnTeam1 = new ArrayList<>();
-        pawnTeam2 = new ArrayList<>();
-
-        pawnTeam1.add(pawn_1);
-        pawnTeam1.add(pawn_2);
-        pawnTeam1.add(pawn_5);
-        pawnTeam1.add(pawn_6);
-
-        pawnTeam2.add(pawn_3);
-        pawnTeam2.add(pawn_4);
-        pawnTeam2.add(pawn_7);
-        pawnTeam2.add(pawn_8);
+        player_indexes[0].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
 
         updateScreen();
     }
@@ -153,20 +125,16 @@ public class InnerController {
 
     @FXML
     public void testFunction(){
-
-        dice.roll();
-        int dice1 = dice.getDice1();
-        int dice2 = dice.getDice2();
-        int total = dice.getTotal();
-
-        boolean tmpLonged = pawnTeam2.contains(pawnTest[turn]);
-
-        movePawn(players[turn], pawnTest[turn], total, tmpLonged);
-
-        testTextField.setText("dice1: " + dice1 + " dice2: " + dice2 + " total: " + total);
+        pressedEndTurn = true;
 
         turn++;
         turn = turn % 8;
+
+        for (int i = 0; i < player_indexes.length; i++){
+            player_indexes[i].setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
+        }
+        player_indexes[turn].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
+
         System.out.println(turn);
     }
 
@@ -175,8 +143,6 @@ public class InnerController {
 
         double pawnXtmp = tmpPawn.getLayoutX();
         double pawnYtmp = tmpPawn.getLayoutY();
-
-        //System.out.println("Before while - pawn longed " + pawnIsLonged + "  player " + tmpPlayer.getName() + " current pos " + tmpPlayer.getCurrentPosition() + " X:    " + pawnXtmp + "    Y: " + pawnYtmp);
 
         while (moveCount > 0){
 
@@ -237,39 +203,70 @@ public class InnerController {
             tt.setAutoReverse(false);
             tt.play();
 
-
             tmpPlayer.setCurrentPosition(tmpCrtPst);
-
-            //System.out.println("in   while   - pawn longed " + pawnIsLonged + "  player " + tmpPlayer.getName() + " current pos " + tmpPlayer.getCurrentPosition() + " X:    " + pawnXtmp + "    Y: " + pawnYtmp);
         }
-        //System.out.println("After  while - pawn longed " + pawnIsLonged + "  player " + tmpPlayer.getName() + " current pos " + tmpPlayer.getCurrentPosition() + " X:    " + pawnXtmp + "    Y: " + pawnYtmp);
-        //System.out.println();
     }
+
+    @FXML
+    public void roll_dice(){
+        if (pressedEndTurn){
+            dice.roll();
+            int dice1 = dice.getDice1();
+            int dice2 = dice.getDice2();
+            int total = dice.getTotal();
+
+            System.out.println("sources/dice/dice_" + dice1 + ".png");
+
+            dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
+            dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
+
+            boolean tmpLonged = pawnTeam2.contains(pawnTest[turn]);
+
+            movePawn(players[turn], pawnTest[turn], total, tmpLonged);
+
+            testTextField.setText("dice1: " + dice1 + " dice2: " + dice2 + " total: " + total + " current pos : " + players[turn].getCurrentPosition());
+            pressedEndTurn = false;
+        }
+        else {
+            testTextField.setText("Turu bitir önce");
+        }
+    }
+
+    int lastIndexOfCard = -1;
 
     @FXML
     public void indexes(MouseEvent e) throws NullPointerException {
         String tmpIndex = e.getSource().toString().substring(13,21).replace(',',' ').trim();
-        try {
-            card_image.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/" + tmpIndex + ".png")));
-            info_card.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/info-card.png")));
+        if(lastIndexOfCard != Integer.parseInt(tmpIndex.replace("index", ""))){
+            lastIndexOfCard = Integer.parseInt(tmpIndex.replace("index", ""));
+            card_image.setVisible(true);
+            try {
+                card_image.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/" + tmpIndex + ".png")));
+                info_card.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/info-card.png")));
+                buy_button.setVisible(true);
+                sell_button.setVisible(true);
+            }
+            catch (NullPointerException npe){
+                System.out.println("Error :" + npe.getMessage());
+            }
+            switch (tmpIndex) {
+                case "index39" -> {
+                    setInfoCard(3, "Etophiana", 1000000);
+                }
+                case "index37" -> {
+                    setInfoCard(2, "HolyGuard", 500000);
+                }
+                case "index3" -> {
+                    setInfoCard(5, "Subfly", 750000);
+                }
+                case "index6" -> {
+                    setInfoCard(0, "-", 150000);
+                }
+            }
         }
-        catch (NullPointerException npe){
-            System.out.println("Error :" + npe.getMessage());
-        }
-
-        switch (tmpIndex) {
-            case "index39" -> {
-                setInfoCard(3, "Etophiana", 1000000);
-            }
-            case "index37" -> {
-                setInfoCard(2, "HolyGuard", 500000);
-            }
-            case "index3" -> {
-                setInfoCard(5, "Subfly", 750000);
-            }
-            case "index6" -> {
-                setInfoCard(0, "-", 150000);
-            }
+        else {
+            lastIndexOfCard = -1;
+            clear_indexes();
         }
     }
 
@@ -282,23 +279,11 @@ public class InnerController {
         sq_bar21.setImage(new Image(getClass().getResourceAsStream("sources/squares/sq-hotel-v.png")));
     }
 
-    @FXML
     public void clear_indexes(){
-        card_image.setImage(null);
-        info_card.setImage(null);
-        house_slot0.setImage(null);
-        house_slot1.setImage(null);
-        house_slot2.setImage(null);
-        house_slot3.setImage(null);
-
-        owner_nick.setText(" ");
-        price_rent_label.setText(" ");
-        price_rent_value.setText("");
-
-        owner_label.setVisible(false);
-        owner_nick.setVisible(false);
-        price_rent_label.setVisible(false);
-        price_rent_value.setVisible(false);
+        card_image.setVisible(false);buy_button.setVisible(false);sell_button.setVisible(false);
+        card_image.setImage(null);info_card.setImage(null);house_slot0.setImage(null);house_slot1.setImage(null);house_slot2.setImage(null);house_slot3.setImage(null);
+        owner_nick.setText(" ");price_rent_label.setText(" ");price_rent_value.setText("");
+        owner_label.setVisible(false);owner_nick.setVisible(false);price_rent_label.setVisible(false);price_rent_value.setVisible(false);
     }
 
     public void setInfoCard(int houseCount, String owner, int pr_value){
@@ -363,6 +348,4 @@ public class InnerController {
     public void closeButtonPressed() throws Exception{
         changeScreen("../models/controllers/OuterController.fxml");
     }
-
-
 }

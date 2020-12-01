@@ -97,7 +97,7 @@ public class InnerEngine {
             }
             //If Go to Jail Square
             else if(square.getType() == SquareType.GoToJailSquare){
-                
+
             }
         }else{
             //Error occur!
