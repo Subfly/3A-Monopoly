@@ -3,6 +3,7 @@ package models;
 import enumerations.Building;
 import enumerations.Colors;
 import enumerations.SquareType;
+import models.cards.PropertyCard;
 
 public class Square {
     //Variables

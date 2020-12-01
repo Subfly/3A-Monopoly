@@ -8,8 +8,8 @@ public class PlaceCard extends PropertyCard{
     private int housePrice;
     private int hotelPrice;
 
-    public PlaceCard(int id, String name, int cost, Colors color, ArrayList<Integer> rentPrices, int mortgagePrice, int housePrice, int hotelPrice) {
-        super(id, name, cost, color, rentPrices, mortgagePrice);
+    public PlaceCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice, int housePrice, int hotelPrice) {
+        super(id, color, name, cost, rentPrices, mortgagePrice);
         this.housePrice = housePrice;
         this.hotelPrice = hotelPrice;
     }

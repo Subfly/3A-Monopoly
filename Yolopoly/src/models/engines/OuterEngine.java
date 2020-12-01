@@ -1,6 +1,7 @@
 package models.engines;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class OuterEngine {
     //Variables
@@ -18,8 +19,8 @@ public class OuterEngine {
     public void multiPlayGame(){}
 
     public File getHelp(){return null;}
-    public File getSettings(){return null;}
-    public void setSettings(){}
+    public ArrayList<Integer> getSettings(){return null;}
+    public boolean setSettings(){return false;}
     public File getCredits(){return null;}
     public boolean quit(){return false;}
 }

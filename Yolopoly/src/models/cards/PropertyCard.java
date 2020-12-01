@@ -11,15 +11,18 @@ public abstract class PropertyCard {
     private final int cost;
     private final ArrayList<Integer> rentPrices;
     private final int mortgagePrice;
+    private boolean isMortgaged;
     private int ownedBy;
 
-    public PropertyCard(int id, String name, int cost, Colors color, ArrayList<Integer> rentPrices, int mortgagePrice) {
+    public PropertyCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice) {
         this.id = id;
         this.color = color;
         this.name = name;
         this.cost = cost;
         this.rentPrices = rentPrices;
         this.mortgagePrice = mortgagePrice;
+        this.isMortgaged = false;
+        this.ownedBy = -1;
     }
 
     public Colors getColor() {

@@ -12,7 +12,7 @@ public class Bank {
 
     //Variables for bankman
     private ArrayList<Integer> playerLoans;
-    private ArrayList<Double> currencyRates;
+    private ArrayList<Currency> currencyRates;
 
     //Constructor
     public Bank(GameTheme gameTheme, GameMode gameMode) {
@@ -24,9 +24,9 @@ public class Bank {
         // for each currency, generate a random number between -1 and 1
         // and change the currency rate accordingly
         for (int i = 0; i < currencyCount; i++) {
-            double currentRate = currencyRates.get(i);
+            double currentRate = currencyRates.get(i).getRate();
             double change = ((Math.random() * (1 - (-1))) + (-1));
-            currencyRates.set(i, (change * currentRate));
+            currencyRates.get(i).setRate(change * currentRate);
         }
     }
 
@@ -36,6 +36,15 @@ public class Bank {
             return true;
         }
         return false;
+    }
+
+    public final PropertyCard lookUpProperty(int id){
+        for(PropertyCard p: propertyCards){
+            if(p.getId() == id){
+                return p;
+            }
+        }
+        return null;
     }
 
     public boolean returnProperty(PropertyCard card){
@@ -65,11 +74,11 @@ public class Bank {
         this.propertyCards = propertyCards;
     }
 
-    public ArrayList<Double> getCurrencyRates() {
+    public ArrayList<Currency> getCurrencyRates() {
         return currencyRates;
     }
 
-    public void setCurrencyRates(ArrayList<Double> currencyRates) {
+    public void setCurrencyRates(ArrayList<Currency> currencyRates) {
         this.currencyRates = currencyRates;
     }
 

@@ -1,6 +1,8 @@
 package models.engines;
 
 import enumerations.Building;
+import enumerations.DrawableCardType;
+import enumerations.SquareType;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
@@ -26,7 +28,6 @@ public class InnerEngine {
     //Constructor
     public InnerEngine(boolean isSavedGamePlaying) {
         startGame(isSavedGamePlaying);
-
     }
 
     //Functions
@@ -34,37 +35,233 @@ public class InnerEngine {
     }
 
     public void turnManager(){
-        while (!isGameOver()){
-            if (players.get(currentPlayer).isHuman()){
-                playTurn();
-            }
-            else {
-                //online controller yapcak falan filan
-                System.out.println("else");
-            }
-            currentPlayer++;
-        }
+
     }
 
-    public void playTurn(){
+    public boolean startTurn(){
+        /*
+        Basic structure of a turn is consists of:
+            Rolling the dice
+            Moving the Pawn where the dice show
+                If Draw Card Square -> Draw according Card
+                If Tax Square -> Pay Tax
+                If Go To Jail Square -> Go to Jail
+                If Free Park -> Pass
+                If Property Square
+                    If not bought -> Buy or Pass
+                    If bought -> Pay Rent
+             After Movement, Player is released for actions but these calculations needs to be done:
+                If player doubled -> double count incremented && recall startTurn
+                If player passed GO! Square without the help of a card, pay 2000000
+                Return true as turn completed
+         */
+
+        //Start with getting player
+        var player = players.get(currentPlayerId);
+
+        //Roll the dice
         dice.roll();
         int dice1 = dice.getDice1();
         int dice2 = dice.getDice2();
         int totalDice = dice1 + dice2;
-        boolean sameDice = dice1 == dice2;
-        boolean diceGoToJail = squareIndex + totalDice == 10;
 
+        //Moving the Pawn where the dice show
+        player.setCurrentPosition(player.getCurrentPosition() + totalDice);
 
-        if (!diceGoToJail){
-            drawCard();
-            buyProperty();
-            sellProperty();
-            buildBuilding(Building.House, 1);
+        //Get tge square where pawn landed
+        var square = board.getSpecificSquare(player.getCurrentPosition());
+
+        //Start If's
+        //If chance square
+        if(player.getCurrentPosition() == square.getId()){
+            if(square.getType() == SquareType.ChanceSquare){
+                drawCard(DrawableCardType.Chance);
+                players.set(currentPlayerId, player);
+                return true;
+            }
+            //If Community Chest Square
+            else if(square.getType() == SquareType.CommunityChestSquare){
+                drawCard(DrawableCardType.Community);
+                players.set(currentPlayerId, player);
+                return true;
+            }
+            //If Tax Square
+            else if(square.getType() == SquareType.TaxSquare){
+                //Get the property card
+                var prop = bank.lookUpProperty(square.getId());
+                assert prop != null;
+                //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                player.removeMoney(prop.getRentPrices().get(0), new Currency("tl", 1.0));
+                players.set(currentPlayerId, player);
+                return true;
+            }
+        }else{
+            //Error occur!
+            return false;
         }
+        return false;
+    }
+
+    public boolean endTurn(){
+        return true;
     }
 
     public boolean isGameOver(){return false;}
-    public void drawCard(){}
+
+    public int drawCard(DrawableCardType cardType){
+        if(cardType == DrawableCardType.Chance){
+            var cardDrawn = board.drawChanceCard();
+            var player = players.get(currentPlayerId);
+            //Algorithm
+            addToLog("drawn a chance card including message: " + cardDrawn.getMessage(), player.getName());
+            if(cardDrawn.isGOOJC()){
+                //If card is a GOOJC, save to inventory of the current player
+                player.addToSavedCards(cardDrawn);
+                players.set(currentPlayerId, player);
+                return 1;
+            }else if(cardDrawn.isGTJC()){
+                //If card is a GTJC, move player to jail
+                player.setCurrentPosition(10);
+                players.set(currentPlayerId, player);
+                return 2;
+            }else{
+                if(cardDrawn.isComposed()){
+                    //If the card has more than one operation
+                    if(cardDrawn.isMoving()){
+                        //If requires moving, look for movement
+                        int moveToIndex = cardDrawn.getMoveToIndex();
+                        int moveInCounts = cardDrawn.getMoveInCounts();
+                        if(moveToIndex == -1 && moveInCounts != -1){
+                            //If card specifies to move forward
+                            player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
+                            players.set(currentPlayerId, player);
+                            return 3;
+                        }else if(moveToIndex != -1 && moveInCounts == -1){
+                            //If card specifies to move to another square
+                            if(cardDrawn.isGettingMoney()){
+                                //If passed GO! Square during move
+                                int currentPosition = player.getCurrentPosition();
+                                if(currentPosition > moveToIndex){
+                                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                                    player.addMoney(2000000, new Currency("tl", 1.0));
+                                }
+                            }
+                            player.setCurrentPosition(moveToIndex);
+                            players.set(currentPlayerId, player);
+                            return 4;
+                        }
+                    }else if(cardDrawn.isRelatedToBuildings()){
+                        //If not moving but paying for each building owned
+                        var owned = player.getOwnedPlaces();
+                        int housesOwned = 0;
+                        int hotelsOwned = 0;
+                        for(PropertyCard c : owned){
+                            for(Square s : board.getSquares()){
+                                if(c.getId() == s.getId()){
+                                    housesOwned += s.getHouseCount();
+                                    hotelsOwned += s.getHotelCount();
+                                }
+                            }
+                        }
+                        //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                        player.removeMoney(housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels(), new Currency("tl", 1.0));
+                        players.set(currentPlayerId, player);
+                        return 5;
+                    }
+                }else{
+                    //If not composed or moving, hence paying money
+                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                    player.removeMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                    players.set(currentPlayerId, player);
+                    return 6;
+                }
+            }
+        }else{
+            var cardDrawn = board.drawCommunityChestCard();
+            var player = players.get(currentPlayerId);
+            //Algorithm
+            addToLog("drawn a community chest card including message: " + cardDrawn.getMessage(), player.getName());
+            if(cardDrawn.isGOOJC()){
+                //If card is a GOOJC, save to inventory of the current player
+                player.addToSavedCards(cardDrawn);
+                players.set(currentPlayerId, player);
+                return 1;
+            }else if(cardDrawn.isGTJC()){
+                //If card is a GTJC, move player to jail
+                player.setCurrentPosition(10);
+                players.set(currentPlayerId, player);
+                return 2;
+            }else if(cardDrawn.isDrawingChanceCard()){
+                //Needed to be handled in front-end.
+                return 7;
+            }else{
+                if(cardDrawn.isComposed()){
+                    //If the card has more than one operation
+                    if(cardDrawn.isMoving()){
+                        //If requires moving, look for movement
+                        int moveToIndex = cardDrawn.getMoveToIndex();
+                        int moveInCounts = cardDrawn.getMoveInCounts();
+                        if(moveToIndex == -1 && moveInCounts != -1){
+                            //If card specifies to move forward
+                            player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
+                            players.set(currentPlayerId, player);
+                            return 3;
+                        }else if(moveToIndex != -1 && moveInCounts == -1){
+                            //If card specifies to move to another square
+                            if(cardDrawn.isGettingMoney()){
+                                //If passed GO! Square during move
+                                int currentPosition = player.getCurrentPosition();
+                                if(currentPosition > moveToIndex){
+                                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                                    player.addMoney(2000000, new Currency("tl", 1.0));
+                                }
+                            }
+                            player.setCurrentPosition(moveToIndex);
+                            players.set(currentPlayerId, player);
+                            return 4;
+                        }
+                    }else if(cardDrawn.isRelatedToBuildings()){
+                        //If not moving but paying for each building owned
+                        var owned = player.getOwnedPlaces();
+                        int housesOwned = 0;
+                        int hotelsOwned = 0;
+                        for(PropertyCard c : owned){
+                            for(Square s : board.getSquares()){
+                                if(c.getId() == s.getId()){
+                                    housesOwned += s.getHouseCount();
+                                    hotelsOwned += s.getHotelCount();
+                                }
+                            }
+                        }
+                        //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                        player.removeMoney(housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels(), new Currency("tl", 1.0));
+                        players.set(currentPlayerId, player);
+                        return 5;
+                    }else if(cardDrawn.isEachPlayerIncluded()){
+                        //Or paying money to other players
+                        player.removeMoney(cardDrawn.getMoneyOwe() * players.size()-1, new Currency("tl", 1.0));
+                        players.set(currentPlayerId, player);
+                        for (int i = 0; i < players.size(); i++) {
+                            if(i != currentPlayerId){
+                                var otherPlayer = players.get(i);
+                                otherPlayer.addMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                                players.set(i, otherPlayer);
+                            }
+                        }
+                        return 8;
+                    }
+                }else{
+                    //If not composed or moving, hence paying money
+                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
+                    player.removeMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                    players.set(currentPlayerId, player);
+                    return 6;
+                }
+            }
+        }
+        return 0;
+    }
+
     public void buyProperty(){}
     public void sellProperty(){}
     public void createAuction(){}
@@ -77,6 +274,7 @@ public class InnerEngine {
     public void addToLog(String logAction, String userName){
         log.add("Player " + userName + " has " + logAction);
     }
+
     public Map<Boolean, Integer> checkBuildBuilding(Building buildingType){
 
         Map<Boolean, Integer> checkAndCountHouses = new HashMap<>();
@@ -186,7 +384,9 @@ public class InnerEngine {
     }
 
     public File getSettings(){return null;}
+
     public void setSettings(){}
+
     public boolean changePlayerToBot(int index){
         players.get(index).setHuman(false);
         return true;
