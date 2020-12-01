@@ -22,22 +22,31 @@ public class MiddleEngine {
     private ArrayList<Pawn> pawns;
     private ArrayList<Player> players;
 
+    private ArrayList<Player> playerArrayList;
     private ArrayList<Boolean> isAllReady;
     private int playerCount;
     private int maxPlayerCount;
+    private int botCount;
 
     //Lobi Ayarları
     private String lobbyPassword;
 
-    public MiddleEngine(boolean isOnline, String hosterNick) {
-        this.isOnline = isOnline;
+    Player mainPlayer;
+
+    public MiddleEngine(String hosterNick) {
+        this.playerArrayList = new ArrayList<>();
+        this.mainPlayer = new Player(hosterNick, true);
+        this.playerArrayList.add(this.mainPlayer);
         this.hosterNick = hosterNick;
         this.playerCount = 1;
-        this.isAllReady = new ArrayList<>();
-        isAllReady.add(false);
-        for (int i = 0; i < 8; i++) {
-            botIds.add(i);
-        }
+        this.maxPlayerCount = 2;
+        this.botCount = 0;
+        //humanitySettings.add(true);
+        //isAllReady.add(false);
+        //playerNicks.add(hosterNick);
+        //for (int i = 0; i < 8; i++) {
+        //    botNum.add(i);
+        //}
     }
 
     //Functions
@@ -68,18 +77,33 @@ public class MiddleEngine {
     }
 
     public boolean addBot(){
-        /*
+        
         if (playerCount < 8 && playerCount < maxPlayerCount) {
-            humanitySettings.add(false);
-            int num = botNum.get(0);
-            botNum.remove(num);
-            botNum.add(num);
-            playerNicks.add(("Bot" + num));
+            //humanitySettings.add(false);
+            //int num = botNum.get(0);
+            //botNum.remove(num);
+            //botNum.add(num);
+            //playerNicks.add(("Bot" + num));
             playerCount++;
+            botCount++;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean deleteBot(){
+        if (botCount > 0) {
+            //humanitySettings.add(false);
+            //int num = botNum.get(0);
+            //botNum.remove(num);
+            //botNum.add(num);
+            //playerNicks.add(("Bot" + num));
+            playerCount--;
+            botCount--;
             return true;
         }
 
-         */
+         
         return false;
     }
 

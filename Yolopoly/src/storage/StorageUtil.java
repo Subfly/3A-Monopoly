@@ -16,10 +16,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case Vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case Ankara -> file = new File("src/data/themes/debug_theme.json");
-            case Bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case Halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/debug_theme.json");
+            case ankara -> file = new File("src/data/themes/debug_theme.json");
+            case bilkent -> file = new File("src/data/themes/debug_theme.json");
+            case halloween -> file = new File("src/data/themes/debug_theme.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -79,10 +79,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case Vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case Ankara -> file = new File("src/data/themes/debug_theme.json");
-            case Bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case Halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/debug_theme.json");
+            case ankara -> file = new File("src/data/themes/debug_theme.json");
+            case bilkent -> file = new File("src/data/themes/debug_theme.json");
+            case halloween -> file = new File("src/data/themes/debug_theme.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -126,10 +126,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case Vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case Ankara -> file = new File("src/data/themes/debug_theme.json");
-            case Bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case Halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/debug_theme.json");
+            case ankara -> file = new File("src/data/themes/debug_theme.json");
+            case bilkent -> file = new File("src/data/themes/debug_theme.json");
+            case halloween -> file = new File("src/data/themes/debug_theme.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -173,10 +173,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case Vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case Ankara -> file = new File("src/data/themes/debug_theme.json");
-            case Bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case Halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/debug_theme.json");
+            case ankara -> file = new File("src/data/themes/debug_theme.json");
+            case bilkent -> file = new File("src/data/themes/debug_theme.json");
+            case halloween -> file = new File("src/data/themes/debug_theme.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -307,10 +307,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case Vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case Ankara -> file = new File("src/data/themes/debug_theme.json");
-            case Bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case Halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/debug_theme.json");
+            case ankara -> file = new File("src/data/themes/debug_theme.json");
+            case bilkent -> file = new File("src/data/themes/debug_theme.json");
+            case halloween -> file = new File("src/data/themes/debug_theme.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 

@@ -95,6 +95,10 @@ public class InnerEngine {
                 players.set(currentPlayerId, player);
                 return true;
             }
+            //If Go to Jail Square
+            else if(square.getType() == SquareType.GoToJailSquare){
+                
+            }
         }else{
             //Error occur!
             return false;
