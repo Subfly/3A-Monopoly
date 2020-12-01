@@ -1,14 +1,17 @@
 package models.cards;
 
+import enumerations.Colors;
+
 import java.util.ArrayList;
 
 public class PlaceCard extends PropertyCard{
     private int housePrice;
     private int hotelPrice;
-    public PlaceCard(ArrayList<Integer> rentPrices, int mortagePrice, int id, int housePrice) {
-        super(rentPrices, mortagePrice, id);
+
+    public PlaceCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice, int housePrice, int hotelPrice) {
+        super(id, color, name, cost, rentPrices, mortgagePrice);
         this.housePrice = housePrice;
-        this.hotelPrice = housePrice * 5;
+        this.hotelPrice = hotelPrice;
     }
 
     public int getHousePrice() {

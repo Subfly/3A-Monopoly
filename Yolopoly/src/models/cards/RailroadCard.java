@@ -1,9 +1,11 @@
 package models.cards;
 
+import enumerations.Colors;
+
 import java.util.ArrayList;
 
 public class RailroadCard extends PropertyCard{
-    public RailroadCard(ArrayList<Integer> rentPrices, int mortagePrice, int id) {
-        super(rentPrices, mortagePrice, id);
+    public RailroadCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice) {
+        super(id, color, name, cost, rentPrices, mortgagePrice);
     }
 }

@@ -1,9 +1,13 @@
 package models;
 
 import enumerations.Pawn;
-import interfaces.Holdable;
+import models.cards.DrawableCard;
+import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * The type Player.
@@ -17,6 +21,7 @@ public class Player {
 
     //In variables
     private int doublesCount;
+    //private Map<Currency, Integer> money;
     private int money;
     private int currentPosition;
     private int railroadsOwned;
@@ -25,13 +30,13 @@ public class Player {
     private boolean isThreeTimesDoubled;
     private boolean isBankrupt;
     private ArrayList<PropertyCard> ownedPlaces;
-    private ArrayList<Holdable> savedCards;
+    private ArrayList<DrawableCard> savedCards;
 
-    public boolean isGetLoansCurrently() {
+    public boolean isGetLoanCurrently() {
         return getLoansCurrently;
     }
 
-    public void setGetLoansCurrently(boolean getLoansCurrently) {
+    public void setGetLoanCurrently(boolean getLoansCurrently) {
         this.getLoansCurrently = getLoansCurrently;
     }
 
@@ -82,6 +87,38 @@ public class Player {
     }
 
     //Functions
+    public boolean addToSavedCards(DrawableCard card){
+        this.savedCards.add(card);
+        return true;
+    }
+
+    public boolean removeFromSavedCards(){
+        //As only the GOFJ Cards can be present here
+        try{
+            this.savedCards.remove(0);
+            return true;
+        }catch (IndexOutOfBoundsException e){
+            System.out.println("No saved cards found.");
+            return false;
+        }
+    }
+
+
+
+    public PropertyCard getSpecificCard(int index){
+        int propertyIndex = -1;
+        int count = 0;
+        for ( PropertyCard s : ownedPlaces ) {
+
+            if ( s.getId() == index ){
+                propertyIndex = count;
+                return ownedPlaces.get(propertyIndex);
+            }
+            count++;
+        }
+        return null;
+    }
+
 
     /**
      * Adds money to player.
@@ -89,8 +126,7 @@ public class Player {
      * @param amount the amount to be added
      * @return the boolean if the operation is succedeed
      */
-    public boolean addMoney(int amount){
-        money = money + amount;
+    public boolean addMoney(int amount, Currency currency){
         return true;
     }
 
@@ -104,12 +140,8 @@ public class Player {
      * @param amount the amount to be removed from the player
      * @return if the operation is succedeed
      */
-    public boolean removeMoney(int amount){
-        if (money >= amount) {
-            money = money - amount;
+    public boolean removeMoney(int amount, Currency currency){
             return true;
-        }
-        return false;
     }
 
     /**
@@ -180,12 +212,61 @@ public class Player {
         return true;
     }
 
+    public int getDoublesCount() {
+        return doublesCount;
+    }
+
+    public void setDoublesCount(int doublesCount) {
+        this.doublesCount = doublesCount;
+    }
+
+    public int getMoney() {
+        return money;
+    }
+
+    public void setMoney(int money) {
+        this.money = money;
+    }
+
+    public ArrayList<PropertyCard> getOwnedPlaces() {
+        return ownedPlaces;
+    }
+
+    public void setOwnedPlaces(ArrayList<PropertyCard> ownedPlaces) {
+        this.ownedPlaces = ownedPlaces;
+    }
+
+    public ArrayList<DrawableCard> getSavedCards() {
+        return savedCards;
+    }
+
+    public void setSavedCards(ArrayList<DrawableCard> savedCards) {
+        this.savedCards = savedCards;
+    }
+
+    public boolean isGetLoansCurrently() {
+        return getLoansCurrently;
+    }
+
+    public void setGetLoansCurrently(boolean getLoansCurrently) {
+        this.getLoansCurrently = getLoansCurrently;
+    }
+
+    public ArrayList<Integer> getMoneyOnBank() {
+        return moneyOnBank;
+    }
+
+    public void setMoneyOnBank(ArrayList<Integer> moneyOnBank) {
+        this.moneyOnBank = moneyOnBank;
+    }
+
     /**
      * Gets name.
      *
      * @return the name
      */
     //Getters and Setters
+
     public String getName() {
         return name;
     }
@@ -215,24 +296,6 @@ public class Player {
      */
     public void setPawn(Pawn pawn) {
         this.pawn = pawn;
-    }
-
-    /**
-     * Gets money.
-     *
-     * @return the money
-     */
-    public int getMoney() {
-        return money;
-    }
-
-    /**
-     * Sets money.
-     *
-     * @param money the money
-     */
-    public void setMoney(int money) {
-        this.money = money;
     }
 
     /**
