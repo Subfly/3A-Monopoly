@@ -9,15 +9,18 @@ import java.util.ArrayList;
  * The type Player.
  */
 public class Player {
-    //Variables
+
+    //Pre Variables
     private String name;
     private Pawn pawn;
+    private boolean isHuman;
+
+    //In variables
     private int doublesCount;
     private int money;
     private int currentPosition;
     private int railroadsOwned;
     private int utilitiesOwned;
-    private boolean isHuman;
     private boolean isInJail;
     private boolean isThreeTimesDoubled;
     private boolean isBankrupt;

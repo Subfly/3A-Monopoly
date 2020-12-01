@@ -3,7 +3,7 @@
 }
 
 #chat-field:focused {
-    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
 }
 
 .shadowed-little{
@@ -12,4 +12,8 @@
 
 .shadowed{
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0);
+}
+
+#scroll_pane{
+    -fx-background-color: #FFFFFF;
 }
