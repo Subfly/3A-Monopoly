@@ -56,7 +56,7 @@ public class MiddleController {
 
 
     public MiddleController() {
-        this.nickname = "Ali Taha Falan"; //TODO
+        this.nickname = "Etophiana"; //TODO
         this.player_count = 1;
         this.bot_count = 0;
 

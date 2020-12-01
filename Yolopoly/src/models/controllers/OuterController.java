@@ -20,6 +20,11 @@ public class OuterController {
             //Get Nick //TODO
             changeScreen("../models/controllers/MiddleController.fxml");
         }
+        else if (e.getCode().equals(KeyCode.ESCAPE)){
+            nick_handler.setStyle("-fx-opacity: 0;");
+            nick_handler.setDisable(true);
+            set_menu_enable_disable();
+        }
     }
 
     @FXML

@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.control.ScrollPane?>
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@InnerController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="models.controllers.InnerController">
     <children>
         <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
@@ -253,5 +254,14 @@
          </image>
       </ImageView>
       <Label fx:id="testTextField" layoutX="1301.0" layoutY="274.0" text="Label" />
+        <ScrollPane id="scroll_pane" hbarPolicy="NEVER" layoutX="1530.0" layoutY="595.0" pannable="true" prefHeight="405.0" prefWidth="310.0">
+            <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="310.0">
+                    <children>
+                        <Label fx:id="test_label" text="Label" />
+                    </children>
+                </AnchorPane>
+            </content>
+        </ScrollPane>
     </children>
 </AnchorPane>
