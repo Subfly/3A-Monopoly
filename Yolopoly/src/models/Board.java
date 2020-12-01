@@ -21,8 +21,11 @@ public class Board {
         return (int) squares.stream().filter(s-> s.getColor() == square.getColor()).count();
     }
 
-    public int countHousesOnSquaresOfaColor(Square square){
-        return (int) squares.stream().filter(s-> s.getColor() == square.getColor()).filter(s -> s.getHouseCount() > 0).count();
+    public boolean hasHouseAllSquares(Square square){
+        if (squares.stream().filter(s-> s.getColor() == square.getColor()).filter(s -> s.isHouseCheck() == true ).count() == countColors( square ) ) {
+            return true;
+        }
+        return false;
     }
     public Square getSpecificSquare(int index){
         return squares.get(index);

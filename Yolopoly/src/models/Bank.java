@@ -7,9 +7,6 @@ import models.cards.PropertyCard;
 import java.util.ArrayList;
 
 public class Bank {
-    //Variables
-    private ArrayList<PropertyCard> propertyCards;
-
     //Variables for bankman
     private ArrayList<Integer> playerLoans;
     private ArrayList<Currency> currencyRates;
@@ -30,39 +27,6 @@ public class Bank {
         }
     }
 
-    public boolean sellProperty(PropertyCard card){
-        if (propertyCards.contains(card)) {
-            propertyCards.remove(card);
-            return true;
-        }
-        return false;
-    }
-
-    public final PropertyCard lookUpProperty(int id){
-        for(PropertyCard p: propertyCards){
-            if(p.getId() == id){
-                return p;
-            }
-        }
-        return null;
-    }
-
-    public final int getBuyer(int squareId){
-        for(PropertyCard p: propertyCards){
-            if(squareId == p.getId()){
-                return p.getOwnedBy();
-            }
-        }
-        return -1;
-    }
-
-    public boolean returnProperty(PropertyCard card){
-        if (!propertyCards.contains(card)) {
-            propertyCards.add(card);
-        }
-        return false;
-    }
-
     public boolean giveLoan(int amount, Player player){
         player.setLoan(amount);
         player.setLoanTurn(5);
@@ -75,14 +39,6 @@ public class Bank {
     }
 
     //Getters and Setters
-    public ArrayList<PropertyCard> getPropertyCards() {
-        return propertyCards;
-    }
-
-    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
-        this.propertyCards = propertyCards;
-    }
-
     public ArrayList<Currency> getCurrencyRates() {
         return currencyRates;
     }

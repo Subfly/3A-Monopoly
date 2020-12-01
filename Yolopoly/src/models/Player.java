@@ -103,9 +103,7 @@ public class Player {
         }
     }
 
-    public int countPlayersColor(Square square){
-        return (int) ownedPlaces.stream().filter(s-> s.getColor() == square.getColor()).count();
-    }
+
 
     public PropertyCard getSpecificCard(int index){
         int propertyIndex = -1;

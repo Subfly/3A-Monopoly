@@ -16,6 +16,7 @@ public class Square {
     private boolean isBought;
     private int houseCount;
     private int hotelCount;
+    private boolean houseCheck;
 
     //Constructor
     public Square(int id, SquareType type, String name, int cost, Colors color) {
@@ -27,6 +28,7 @@ public class Square {
         this.isBought = false;
         this.houseCount = 0;
         this.hotelCount = 0;
+        this.houseCheck = false;
     }
 
     //Functions
@@ -41,6 +43,7 @@ public class Square {
         if( buildingType == Building.House ){
 
             houseCount++;
+            houseCheck = true;
             System.out.println("House increased");
             System.out.println("Player has got home");
 
@@ -75,6 +78,8 @@ public class Square {
     }
 
 
+
+
     //Getters and Setters
     public SquareType getType() {
         return type;
@@ -83,6 +88,15 @@ public class Square {
     public void setType(SquareType type) {
         this.type = type;
     }
+
+    public boolean isHouseCheck() {
+        return houseCheck;
+    }
+
+    public void setHouseCheck(boolean houseCheck) {
+        this.houseCheck = houseCheck;
+    }
+
     public Colors getColor() {
         return color;
     }
