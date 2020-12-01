@@ -30,6 +30,13 @@ public class Square {
     }
 
     //Functions
+    public int getRentMultiplier(){
+        int total = houseCount;
+        if(hotelCount != 0){
+            total += hotelCount;
+        }
+        return total;
+    }
     public void build( Building buildingType){
         if( buildingType == Building.House ){
 

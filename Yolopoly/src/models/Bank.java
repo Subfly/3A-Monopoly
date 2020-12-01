@@ -47,6 +47,15 @@ public class Bank {
         return null;
     }
 
+    public final int getBuyer(int squareId){
+        for(PropertyCard p: propertyCards){
+            if(squareId == p.getId()){
+                return p.getOwnedBy();
+            }
+        }
+        return -1;
+    }
+
     public boolean returnProperty(PropertyCard card){
         if (!propertyCards.contains(card)) {
             propertyCards.add(card);

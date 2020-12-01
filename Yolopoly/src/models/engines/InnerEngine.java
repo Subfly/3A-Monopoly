@@ -3,6 +3,7 @@ package models.engines;
 import enumerations.Building;
 import enumerations.DrawableCardType;
 import enumerations.SquareType;
+import javafx.beans.property.Property;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
@@ -38,7 +39,7 @@ public class InnerEngine {
 
     }
 
-    public boolean startTurn(){
+    public int startTurn(){
         /*
         Basic structure of a turn is consists of:
             Rolling the dice
@@ -51,7 +52,7 @@ public class InnerEngine {
                     If not bought -> Buy or Pass
                     If bought -> Pay Rent
              After Movement, Player is released for actions but these calculations needs to be done:
-                If player doubled -> double count incremented && recall startTurn
+                If player doubled -> double count incremented
                 If player passed GO! Square without the help of a card, pay 2000000
                 Return true as turn completed
          */
@@ -64,26 +65,33 @@ public class InnerEngine {
         int dice1 = dice.getDice1();
         int dice2 = dice.getDice2();
         int totalDice = dice1 + dice2;
+        if(dice1 == dice2){
+            player.incrementDoublesCount();
+        }
 
         //Moving the Pawn where the dice show
+        int oldPosition = player.getCurrentPosition();
         player.setCurrentPosition(player.getCurrentPosition() + totalDice);
 
-        //Get tge square where pawn landed
+        if(oldPosition > player.getCurrentPosition()){
+            //Passed GO! Square
+            player.addMoney(2000000, new Currency("tl", 1.0));
+        }
+
+        //Get the square where pawn landed
         var square = board.getSpecificSquare(player.getCurrentPosition());
 
         //Start If's
         //If chance square
         if(player.getCurrentPosition() == square.getId()){
             if(square.getType() == SquareType.ChanceSquare){
-                drawCard(DrawableCardType.Chance);
                 players.set(currentPlayerId, player);
-                return true;
+                return 1;
             }
             //If Community Chest Square
             else if(square.getType() == SquareType.CommunityChestSquare){
-                drawCard(DrawableCardType.Community);
                 players.set(currentPlayerId, player);
-                return true;
+                return 2;
             }
             //If Tax Square
             else if(square.getType() == SquareType.TaxSquare){
@@ -93,17 +101,55 @@ public class InnerEngine {
                 //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
                 player.removeMoney(prop.getRentPrices().get(0), new Currency("tl", 1.0));
                 players.set(currentPlayerId, player);
-                return true;
+                addToLog("pad tax of " + (prop.getRentPrices().get(0)).toString(), player.getName());
+                return 0;
             }
             //If Go to Jail Square
             else if(square.getType() == SquareType.GoToJailSquare){
+                player.setCurrentPosition(10); //Move to jail hardcode
+                player.setInJail(true);
+                player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
+                players.set(currentPlayerId, player);
+                addToLog("sent to the jail", player.getName());
+                return 3;
+            }
+            //If Free Parking Square, do nothing...
+            else if(square.getType() == SquareType.FreeParkingSquare){
+                players.set(currentPlayerId, player);
+                return 0;
+            }else{
+                //If pawn of the player landed on a property square :D Hardest part coming...
+                if(square.isBought()){
+                    //Find the player who bought that square
+                    int buyerId = bank.getBuyer(square.getId());
 
+                    //Create a dummy player holder to change players data in the end
+                    var payingPlayer = players.get(buyerId);
+
+                    //Find rent amount
+                    var prop = bank.lookUpProperty(square.getId());
+                    assert prop != null;
+                    int rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
+
+                    //Remove money from current player
+                    player.removeMoney(rentAmount, new Currency("tl", 1.0));
+                    //Add money to other player
+                    payingPlayer.addMoney(rentAmount, new Currency("tl", 1.0));
+
+                    //Set players
+                    players.set(currentPlayerId, player);
+                    players.set(buyerId, player);
+                }else{
+                    //Not bought, this part left to frontend
+                    players.set(currentPlayerId, player);
+                    return 4;
+                }
             }
         }else{
             //Error occur!
-            return false;
+            return -1;
         }
-        return false;
+        return -1;
     }
 
     public boolean endTurn(){
