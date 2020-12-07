@@ -10,6 +10,7 @@ import storage.StorageUtil;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Board {
     //Variables
@@ -30,6 +31,16 @@ public class Board {
     }
 
     //Functions
+    public void returnSavedCard(DrawableCard card){
+        if(card instanceof ChanceCard){
+            chanceCards.add((ChanceCard) card);
+            Collections.shuffle(chanceCards);
+        }else{
+            commCards.add((CommunityChestCard) card);
+            Collections.shuffle(commCards);
+        }
+    }
+
     public DrawableCard drawChanceCard(){
         var cardDrawn = this.chanceCards.get(0);
         this.chanceCards.remove(0);
@@ -96,5 +107,21 @@ public class Board {
 
     public void setSquares(ArrayList<Square> squares) {
         this.squares = squares;
+    }
+
+    public ArrayList<CommunityChestCard> getCommCards() {
+        return commCards;
+    }
+
+    public void setCommCards(ArrayList<CommunityChestCard> commCards) {
+        this.commCards = commCards;
+    }
+
+    public ArrayList<ChanceCard> getChanceCards() {
+        return chanceCards;
+    }
+
+    public void setChanceCards(ArrayList<ChanceCard> chanceCards) {
+        this.chanceCards = chanceCards;
     }
 }

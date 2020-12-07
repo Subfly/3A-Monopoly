@@ -56,4 +56,12 @@ public abstract class PropertyCard {
     public void setOwnedBy(int ownedBy) {
         this.ownedBy = ownedBy;
     }
+
+    public boolean isMortgaged() {
+        return isMortgaged;
+    }
+
+    public void setMortgaged(boolean mortgaged) {
+        isMortgaged = mortgaged;
+    }
 }

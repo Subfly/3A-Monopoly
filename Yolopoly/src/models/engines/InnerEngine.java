@@ -26,6 +26,15 @@ public class InnerEngine {
     private int currentPlayerId;
     private GameState state;
 
+    //Auction Related
+    private int currentBid;
+    private int auctionPropertyIndex;
+    private int currentPlayerAuctioning;
+    private ArrayList<Player> participants;
+
+    //Broken player related
+    private ArrayList<Player> brokenPlayers;
+
     //************
     // Constructor
     //************
@@ -47,18 +56,49 @@ public class InnerEngine {
             bank = new Bank(theme, mode);
             currentPlayerId = 0;
             state = GameState.Linear;
+            currentBid = 0;
+            auctionPropertyIndex = -1;
+            currentPlayerAuctioning = -1;
+            brokenPlayers = new ArrayList<>();
         }
     }
 
     //************
     // Functions
     //************
+    public int saveAndExit(){
+        StorageUtil util = new StorageUtil();
+        try{
+            return util.saveGame(this) ? 1 : 0;
+        }catch (IOException e){
+            System.out.println("ERROR (3001) SAVE FAILED");
+        }
+        return 0;
+    }
+    public int finishGameForParticularPlayer(){
+        Player brokenPlayer = brokenPlayers.get(0);
+        for (Player player : players) {
+            if (brokenPlayer.getName().equals(player.getName())) {
+                for (PropertyCard p : propertyCards) {
+                    if (player.isOwned(p)) {
+                        p.setOwnedBy(-1);
+                    }
+                }
+                var goojc = player.getSavedCards().get(0);
+                board.returnSavedCard(goojc);
+                players.remove(player);
+                break;
+            }
+        }
+        if(brokenPlayer.isHuman()){
+            return 1; //To show "you lost screen"
+        }else{
+            return 0; //To remove bot from the game
+        }
+    }
 
     //TODO: NAME IS INCONVINIENT AND PURPOSE OF THE FUNCTION IS UNDETERMINED
     public int checkGameStatus(){
-        if(players.size() == 1){
-            return 1001; //Somebody won the game
-        }
         boolean isAnyoneBroke = false;
         int curId = -1;
         for (Player p : players) {
@@ -69,8 +109,12 @@ public class InnerEngine {
                 break;
             }
         }
-        if(isAnyoneBroke){
+        if(isAnyoneBroke && !brokenPlayers.contains(players.get(curId))){
+            brokenPlayers.add(players.get(curId));
             return curId;
+        }
+        if(players.size() == 1){
+            return 1001; //Last player won the game
         }
         return -1; //Everything is fine
     }
@@ -107,6 +151,40 @@ public class InnerEngine {
 
     public void addToLog(String logAction, String userName){
         log.add("Player " + userName + " has " + logAction);
+    }
+
+    public int handleBrokeStatus(){
+        Player player = brokenPlayers.get(0);
+        boolean hasBuildings = false;
+        for(PropertyCard p : player.getOwnedPlaces()){
+            var square = board.getSpecificSquare(p.getId());
+            if(square.getHotelCount() != 0 || square.getHouseCount() != 0){
+                hasBuildings = true;
+                break;
+            }
+        }
+        if(hasBuildings){
+            return 1; //Pursue player to sell buildings
+        }else{
+            //TODO: Implement mortgage status after Kutsal finish
+            boolean hasAnyNonMortgagedProperty = false;
+            if(player.getOwnedPlaces().size() != 0){
+                return 2; //Pursue player to mortgage
+            }
+        }
+        return -1; //Nothing found to mortgage or sell, player is completely broke
+    }
+
+    //************
+    // Bot Handlers
+    //************
+    public boolean isCurrentPlayerHuman(){
+        return this.players.get(currentPlayerId).isHuman();
+    }
+
+    public int makeDecision(int possibilityCount){
+        return (int) (Math.random() * possibilityCount + 1);
+        //Rest of the function is just a switch case in frontend
     }
 
     //************
@@ -288,6 +366,59 @@ public class InnerEngine {
 
     public void createAuction(){
         this.state = GameState.Auction;
+        this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
+        PropertyCard card = propertyCards.get(this.auctionPropertyIndex);
+        this.currentBid = card.getCost();
+        for(Player p : players){
+            if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
+                participants.add(p);
+            }
+        }
+        this.currentPlayerAuctioning = 0;
+    }
+
+    public void continueAuction(int bidIncrease){
+        this.currentPlayerAuctioning += 1;
+        if(this.currentPlayerAuctioning > participants.size()){
+            this.currentPlayerAuctioning = 0;
+        }
+        this.currentBid += bidIncrease;
+    }
+
+    //TODO: POSSIBLE LOGIC ERROR (but I think I solved it :D - Ali the Lele)
+    public void pullOffAuction(){
+        participants.remove(currentPlayerAuctioning);
+        if(currentPlayerAuctioning == this.participants.size() - 1){
+            //If last player
+            this.currentPlayerAuctioning = -1;
+        }else{
+            this.currentPlayerAuctioning -= 1;
+        }
+        continueAuction(0);
+    }
+
+    public void endAuction(){
+        if(checkAuctionStatus()){
+            Player currentPlayer = participants.get(currentPlayerAuctioning);
+            Square square = board.getSpecificSquare(auctionPropertyIndex);
+            PropertyCard card = propertyCards.get(square.getId());
+
+            //Make changes on data
+            card.setOwnedBy(currentPlayerAuctioning);
+            currentPlayer.ownProperty(propertyCards.get(square.getId()));
+
+            //Save changes on data
+            int winnerIndex = -1;
+            for(int i = 0; i < players.size(); i++){
+                if(currentPlayer.getName().equals(players.get(i).getName())){
+                    winnerIndex = i;
+                }
+            }
+            players.set(winnerIndex, currentPlayer);
+            propertyCards.set(square.getId(), card);
+            board.buySquare(square.getId());
+        }
+        this.state = GameState.Linear;
     }
 
     public void buildBuilding(Building buildingType) {
@@ -490,6 +621,20 @@ public class InnerEngine {
     //************
     // Checker Functions
     //************
+
+    public boolean checkBrokenStatus(){
+        if(brokenPlayers.size() == 0){
+            this.state = GameState.Linear;
+            return false;
+        }else{
+            return true;
+        }
+    }
+
+    public boolean checkAuctionStatus(){
+        return participants.size() == 1;
+    }
+
     public boolean checkBuyProperty(){
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
@@ -660,13 +805,6 @@ public class InnerEngine {
     }
 
     //Getters and Setters
-    public ArrayList<PropertyCard> getPropertyCards() {
-        return propertyCards;
-    }
-
-    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
-        this.propertyCards = propertyCards;
-    }
 
     public ArrayList<String> getChat() {
         return chat;
@@ -690,6 +828,14 @@ public class InnerEngine {
 
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
+    }
+
+    public ArrayList<PropertyCard> getPropertyCards() {
+        return propertyCards;
+    }
+
+    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
+        this.propertyCards = propertyCards;
     }
 
     public Dice getDice() {
@@ -720,5 +866,55 @@ public class InnerEngine {
         return currentPlayerId;
     }
 
-    public void setCurrentPlayerId(int currentPlayerId) { this.currentPlayerId = currentPlayerId; }
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public int getCurrentBid() {
+        return currentBid;
+    }
+
+    public void setCurrentBid(int currentBid) {
+        this.currentBid = currentBid;
+    }
+
+    public int getAuctionPropertyIndex() {
+        return auctionPropertyIndex;
+    }
+
+    public void setAuctionPropertyIndex(int auctionPropertyIndex) {
+        this.auctionPropertyIndex = auctionPropertyIndex;
+    }
+
+    public int getCurrentPlayerAuctioning() {
+        return currentPlayerAuctioning;
+    }
+
+    public void setCurrentPlayerAuctioning(int currentPlayerAuctioning) {
+        this.currentPlayerAuctioning = currentPlayerAuctioning;
+    }
+
+    public ArrayList<Player> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(ArrayList<Player> participants) {
+        this.participants = participants;
+    }
+
+    public ArrayList<Player> getBrokenPlayers() {
+        return brokenPlayers;
+    }
+
+    public void setBrokenPlayers(ArrayList<Player> brokenPlayers) {
+        this.brokenPlayers = brokenPlayers;
+    }
 }
