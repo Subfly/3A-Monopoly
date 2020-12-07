@@ -26,6 +26,15 @@ public class InnerEngine {
     private int currentPlayerId;
     private GameState state;
 
+    //Auction Related
+    private int currentBid;
+    private int auctionPropertyIndex;
+    private int currentPlayerAuctioning;
+    private ArrayList<Player> participants;
+
+    //Borken player related
+    private ArrayList<Player> brokenPlayers;
+
     //************
     // Constructor
     //************
@@ -47,6 +56,10 @@ public class InnerEngine {
             bank = new Bank(theme, mode);
             currentPlayerId = 0;
             state = GameState.Linear;
+            currentBid = 0;
+            auctionPropertyIndex = -1;
+            currentPlayerAuctioning = -1;
+            brokenPlayers = new ArrayList<>();
         }
     }
 
@@ -70,6 +83,7 @@ public class InnerEngine {
             }
         }
         if(isAnyoneBroke){
+            brokenPlayers.add(players.get(curId));
             return curId;
         }
         return -1; //Everything is fine
@@ -107,6 +121,29 @@ public class InnerEngine {
 
     public void addToLog(String logAction, String userName){
         log.add("Player " + userName + " has " + logAction);
+    }
+
+    //************
+    // Handlers
+    //************
+    public int handleBrokeStatus(){
+        Player player = brokenPlayers.get(0);
+        boolean hasBuildings = false;
+        for(PropertyCard p : player.getOwnedPlaces()){
+            var square = board.getSpecificSquare(p.getId());
+            if(square.getHotelCount() != 0 || square.getHouseCount() != 0){
+                hasBuildings = true;
+                break;
+            }
+        }
+        if(hasBuildings){
+            return 1; //Pursue player to sell buildings
+        }else{
+            if(player.getOwnedPlaces().size() != 0){
+                return 2; //Pursue player to mortgage
+            }
+        }
+        return -1; //Nothing found to mortgage or sell
     }
 
     //************
@@ -288,6 +325,59 @@ public class InnerEngine {
 
     public void createAuction(){
         this.state = GameState.Auction;
+        this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
+        PropertyCard card = propertyCards.get(this.auctionPropertyIndex);
+        this.currentBid = card.getCost();
+        for(Player p : players){
+            if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
+                participants.add(p);
+            }
+        }
+        this.currentPlayerAuctioning = 0;
+    }
+
+    public void continueAuction(int bidIncrease){
+        this.currentPlayerAuctioning += 1;
+        if(this.currentPlayerAuctioning > participants.size()){
+            this.currentPlayerAuctioning = 0;
+        }
+        this.currentBid += bidIncrease;
+    }
+
+    //TODO: POSSIBLE LOGIC ERROR (but I think I solved it :D - Ali the Lele)
+    public void pullOffAuction(){
+        participants.remove(currentPlayerAuctioning);
+        if(currentPlayerAuctioning == this.participants.size() - 1){
+            //If last player
+            this.currentPlayerAuctioning = -1;
+        }else{
+            this.currentPlayerAuctioning -= 1;
+        }
+        continueAuction(0);
+    }
+
+    public void endAuction(){
+        if(checkAuctionStatus()){
+            Player currentPlayer = participants.get(currentPlayerAuctioning);
+            Square square = board.getSpecificSquare(auctionPropertyIndex);
+            PropertyCard card = propertyCards.get(square.getId());
+
+            //Make changes on data
+            card.setOwnedBy(currentPlayerAuctioning);
+            currentPlayer.ownProperty(propertyCards.get(square.getId()));
+
+            //Save changes on data
+            int winnerIndex = -1;
+            for(int i = 0; i < players.size(); i++){
+                if(currentPlayer.getName().equals(players.get(i).getName())){
+                    winnerIndex = i;
+                }
+            }
+            players.set(winnerIndex, currentPlayer);
+            propertyCards.set(square.getId(), card);
+            board.buySquare(square.getId());
+        }
+        this.state = GameState.Linear;
     }
 
     public void buildBuilding(Building buildingType) {
@@ -490,6 +580,11 @@ public class InnerEngine {
     //************
     // Checker Functions
     //************
+
+    public boolean checkAuctionStatus(){
+        return participants.size() == 1;
+    }
+
     public boolean checkBuyProperty(){
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
