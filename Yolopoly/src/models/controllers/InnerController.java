@@ -1,12 +1,9 @@
 package models.controllers;
 
 import enumerations.Pawn;
-import javafx.animation.AnimationTimer;
-import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -15,7 +12,6 @@ import models.Dice;
 import models.Player;
 
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static sample.Main.changeScreen;
 
@@ -58,8 +54,6 @@ public class InnerController {
     Pawn pw1, pw2, pw3, pw4;
 
     Dice dice;
-
-    int pawntestint;
 
     boolean pressedEndTurn = false;
 
@@ -130,8 +124,8 @@ public class InnerController {
         turn++;
         turn = turn % 8;
 
-        for (int i = 0; i < player_indexes.length; i++){
-            player_indexes[i].setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
+        for (ImageView player_index : player_indexes) {
+            player_index.setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
         }
         player_indexes[turn].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
 
