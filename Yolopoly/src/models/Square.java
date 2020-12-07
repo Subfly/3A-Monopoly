@@ -1,34 +1,84 @@
 package models;
 
 import enumerations.Building;
+import enumerations.Colors;
 import enumerations.SquareType;
+import models.cards.PropertyCard;
 
 public class Square {
     //Variables
+
+    private int id;
     private SquareType type;
-    private boolean isBought;
-    private boolean hasHome;
-    private boolean hasHotel;
+    private String name;
     private int cost;
+    private Colors color;
+    private boolean isBought;
     private int houseCount;
     private int hotelCount;
-    private int id;
+    private boolean houseCheck;
 
     //Constructor
-    public Square(SquareType type, int cost, int id) {
-        this.type = type;
-        this.cost = cost;
+    public Square(int id, SquareType type, String name, int cost, Colors color) {
         this.id = id;
+        this.type = type;
+        this.name = name;
+        this.cost = cost;
+        this.color = color;
         this.isBought = false;
-        this.hasHome = false;
-        this.hasHotel = false;
         this.houseCount = 0;
         this.hotelCount = 0;
+        this.houseCheck = false;
     }
 
     //Functions
-    public void build(Building buildingType, int count){}
-    public void destroy(Building buildingType, int count){}
+    public int getRentMultiplier(){
+        int total = houseCount;
+        if(hotelCount != 0){
+            total += hotelCount;
+        }
+        return total;
+    }
+    public void build( Building buildingType){
+        if( buildingType == Building.House ){
+
+            houseCount++;
+            houseCheck = true;
+            System.out.println("House increased");
+            System.out.println("Player has got home");
+
+        }
+        if( buildingType == Building.Hotel ){
+
+            hotelCount++;
+            houseCount = 0;
+            System.out.println("Hotel increased");
+            System.out.println("Player has got hotel");
+
+
+        }
+    }
+    public void destroy(Building buildingType){
+
+        if( buildingType == Building.House ) {
+            houseCount--;
+            System.out.println("House decreased");
+
+            if( houseCount == 0 ){
+                System.out.println("Player hasn't got home");
+            }
+        }
+        if( buildingType == Building.Hotel ){
+            hotelCount--;
+            houseCount = 4;
+            System.out.println("Hotel decreased");
+            System.out.println("Player hasn't got hotel");
+        }
+
+    }
+
+
+
 
     //Getters and Setters
     public SquareType getType() {
@@ -39,36 +89,28 @@ public class Square {
         this.type = type;
     }
 
+    public boolean isHouseCheck() {
+        return houseCheck;
+    }
+
+    public void setHouseCheck(boolean houseCheck) {
+        this.houseCheck = houseCheck;
+    }
+
+    public Colors getColor() {
+        return color;
+    }
+
+    public void setType(Colors color) {
+        this.color = color;
+    }
+
     public boolean isBought() {
         return isBought;
     }
 
     public void setBought(boolean bought) {
         isBought = bought;
-    }
-
-    public boolean isHasHome() {
-        return hasHome;
-    }
-
-    public void setHasHome(boolean hasHome) {
-        this.hasHome = hasHome;
-    }
-
-    public boolean isHasHotel() {
-        return hasHotel;
-    }
-
-    public void setHasHotel(boolean hasHotel) {
-        this.hasHotel = hasHotel;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     public int getHouseCount() {

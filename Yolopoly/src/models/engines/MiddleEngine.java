@@ -18,10 +18,8 @@ public class MiddleEngine {
     private GameMode gameMode;
     private GameTheme gameTheme;
     private String hosterNick;
-    private ArrayList<Integer> botNum;
-    private ArrayList<Boolean> humanitySettings;
+    private ArrayList<Integer> botIds;
     private ArrayList<Pawn> pawns;
-    private Map<Pawn, Boolean> usedPawns;
 
     private ArrayList<Player> playerArrayList;
     private ArrayList<Boolean> isAllReady;
@@ -31,7 +29,6 @@ public class MiddleEngine {
 
     //Lobi Ayarları
     private String lobbyPassword;
-    private ArrayList<String> playerNicks;
 
     Player mainPlayer;
 
@@ -43,20 +40,14 @@ public class MiddleEngine {
         this.playerCount = 1;
         this.maxPlayerCount = 2;
         this.botCount = 0;
-        //humanitySettings.add(true);
-        //isAllReady.add(false);
-        //playerNicks.add(hosterNick);
-        //for (int i = 0; i < 8; i++) {
-        //    botNum.add(i);
-        //}
     }
 
     //Functions
     // Starts the game
     public void initializeGame(){
-        innerEngine = new InnerEngine(false);
+        innerEngine = new InnerEngine(false, gameMode, gameTheme, playerArrayList);
         innerEngine.setBank(new Bank(gameTheme, gameMode));
-        innerEngine.setBoard(new Board(gameTheme));
+        innerEngine.setBoard(new Board(gameMode, gameTheme));
         innerEngine.setChat(new ArrayList<String>());
         innerEngine.setLog(new ArrayList<String>());
     }
@@ -65,6 +56,7 @@ public class MiddleEngine {
     public void setSettings(){}
 
     public boolean kickPlayer(String nick) {
+        /*
         int index = playerNicks.indexOf(nick);
         if (index != -1) {
             humanitySettings.remove(index);
@@ -72,9 +64,13 @@ public class MiddleEngine {
             return true;
         }
         return false;
+
+         */
+        return false;
     }
 
     public boolean addBot(){
+        
         if (playerCount < 8 && playerCount < maxPlayerCount) {
             //humanitySettings.add(false);
             //int num = botNum.get(0);
@@ -99,6 +95,8 @@ public class MiddleEngine {
             botCount--;
             return true;
         }
+
+         
         return false;
     }
 
@@ -141,22 +139,6 @@ public class MiddleEngine {
 
     public void setLobbyPassword(String lobbyPassword) {
         this.lobbyPassword = lobbyPassword;
-    }
-
-    public ArrayList<String> getPlayerNicks() {
-        return playerNicks;
-    }
-
-    public void setPlayerNicks(ArrayList<String> playerNicks) {
-        this.playerNicks = playerNicks;
-    }
-
-    public ArrayList<Boolean> getHumanitySettings() {
-        return humanitySettings;
-    }
-
-    public void setHumanitySettings(ArrayList<Boolean> humanitySettings) {
-        this.humanitySettings = humanitySettings;
     }
 
     public ArrayList<Pawn> getPawns() {

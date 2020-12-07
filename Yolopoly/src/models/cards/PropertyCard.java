@@ -1,39 +1,52 @@
 package models.cards;
 
+import enumerations.Colors;
+
 import java.util.ArrayList;
 
 public abstract class PropertyCard {
-    private final ArrayList<Integer> rentPrices;
-    private final int mortagePrice;
     private final int id;
-    private String name;
+    private final Colors color;
+    private final String name;
+    private final int cost;
+    private final ArrayList<Integer> rentPrices;
+    private final int mortgagePrice;
+    private boolean isMortgaged;
     private int ownedBy;
+
+    public PropertyCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice) {
+        this.id = id;
+        this.color = color;
+        this.name = name;
+        this.cost = cost;
+        this.rentPrices = rentPrices;
+        this.mortgagePrice = mortgagePrice;
+        this.isMortgaged = false;
+        this.ownedBy = -1;
+    }
+
+    public Colors getColor() {
+        return color;
+    }
+
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public PropertyCard(ArrayList<Integer> rentPrices, int mortagePrice, int id) {
-        this.rentPrices = rentPrices;
-        this.mortagePrice = mortagePrice;
-        this.id = id;
-        this.ownedBy = -1;
+    public int getCost() {
+        return cost;
     }
 
     public ArrayList<Integer> getRentPrices() {
         return rentPrices;
     }
 
-    public int getMortagePrice() {
-        return mortagePrice;
-    }
-
-    public int getId() {
-        return id;
+    public int getMortgagePrice() {
+        return mortgagePrice;
     }
 
     public int getOwnedBy() {
