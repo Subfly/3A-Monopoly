@@ -66,6 +66,15 @@ public class InnerEngine {
     //************
     // Functions
     //************
+    public int saveAndExit(){
+        StorageUtil util = new StorageUtil();
+        try{
+            return util.saveGame(this) ? 1 : 0;
+        }catch (IOException e){
+            System.out.println("ERROR (3001) SAVE FAILED");
+        }
+        return 0;
+    }
     public int finishGameForParticularPlayer(){
         Player brokenPlayer = brokenPlayers.get(0);
         for (Player player : players) {
@@ -796,13 +805,6 @@ public class InnerEngine {
     }
 
     //Getters and Setters
-    public ArrayList<PropertyCard> getPropertyCards() {
-        return propertyCards;
-    }
-
-    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
-        this.propertyCards = propertyCards;
-    }
 
     public ArrayList<String> getChat() {
         return chat;
@@ -826,6 +828,14 @@ public class InnerEngine {
 
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
+    }
+
+    public ArrayList<PropertyCard> getPropertyCards() {
+        return propertyCards;
+    }
+
+    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
+        this.propertyCards = propertyCards;
     }
 
     public Dice getDice() {
@@ -856,5 +866,55 @@ public class InnerEngine {
         return currentPlayerId;
     }
 
-    public void setCurrentPlayerId(int currentPlayerId) { this.currentPlayerId = currentPlayerId; }
+    public void setCurrentPlayerId(int currentPlayerId) {
+        this.currentPlayerId = currentPlayerId;
+    }
+
+    public GameState getState() {
+        return state;
+    }
+
+    public void setState(GameState state) {
+        this.state = state;
+    }
+
+    public int getCurrentBid() {
+        return currentBid;
+    }
+
+    public void setCurrentBid(int currentBid) {
+        this.currentBid = currentBid;
+    }
+
+    public int getAuctionPropertyIndex() {
+        return auctionPropertyIndex;
+    }
+
+    public void setAuctionPropertyIndex(int auctionPropertyIndex) {
+        this.auctionPropertyIndex = auctionPropertyIndex;
+    }
+
+    public int getCurrentPlayerAuctioning() {
+        return currentPlayerAuctioning;
+    }
+
+    public void setCurrentPlayerAuctioning(int currentPlayerAuctioning) {
+        this.currentPlayerAuctioning = currentPlayerAuctioning;
+    }
+
+    public ArrayList<Player> getParticipants() {
+        return participants;
+    }
+
+    public void setParticipants(ArrayList<Player> participants) {
+        this.participants = participants;
+    }
+
+    public ArrayList<Player> getBrokenPlayers() {
+        return brokenPlayers;
+    }
+
+    public void setBrokenPlayers(ArrayList<Player> brokenPlayers) {
+        this.brokenPlayers = brokenPlayers;
+    }
 }

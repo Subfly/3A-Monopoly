@@ -108,4 +108,20 @@ public class Board {
     public void setSquares(ArrayList<Square> squares) {
         this.squares = squares;
     }
+
+    public ArrayList<CommunityChestCard> getCommCards() {
+        return commCards;
+    }
+
+    public void setCommCards(ArrayList<CommunityChestCard> commCards) {
+        this.commCards = commCards;
+    }
+
+    public ArrayList<ChanceCard> getChanceCards() {
+        return chanceCards;
+    }
+
+    public void setChanceCards(ArrayList<ChanceCard> chanceCards) {
+        this.chanceCards = chanceCards;
+    }
 }

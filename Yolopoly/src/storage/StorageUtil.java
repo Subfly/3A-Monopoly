@@ -2,6 +2,7 @@ package storage;
 import enumerations.*;
 import models.Square;
 import models.cards.*;
+import models.engines.InnerEngine;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -375,11 +376,27 @@ public class StorageUtil {
         return true;
     }
 
-    public boolean saveGame(){
-        return false;
+    public boolean saveGame(InnerEngine engine) throws IOException {
+        File file = new File("../" + UUID.randomUUID().toString() + ".json");
+        FileWriter writer = new FileWriter(file);
+        writer.write("");
+        JSONObject jo = new JSONObject();
+        jo.put("squares", engine.getBoard().getSquares());
+        jo.put("chances", engine.getBoard().getChanceCards());
+        jo.put("comms", engine.getBoard().getCommCards());
+        jo.put("chat", engine.getChat());
+        jo.put("curPlayerId", engine.getCurrentPlayerId());
+        jo.put("log", engine.getLog());
+        jo.put("players", engine.getPlayers());
+        jo.put("propertyCards", engine.getPropertyCards());
+        jo.put("state", engine.getState());
+        writer.write(jo.toString());
+        writer.close();
+        return true;
     }
 
     public boolean loadGame(){
+        //TODO: WAITING FOR SAVE GAME STATUS
         return false;
     }
 }
