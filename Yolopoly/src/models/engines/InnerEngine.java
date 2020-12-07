@@ -1,13 +1,10 @@
 package models.engines;
 
 import enumerations.*;
-import javafx.beans.property.Property;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import storage.StorageUtil;
-
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -493,11 +490,11 @@ public class InnerEngine {
     //************
     // Checker Functions
     //************
-    public boolean checkBuyProperty(Square squareToBuy){
-        int squareToBuyId = squareToBuy.getId();
+    public boolean checkBuyProperty(){
         Player currentPlayer = players.get(currentPlayerId);
-        PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuyId);
-        if (currentPlayer.getCurrentPosition() == squareToBuyId){
+        Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
+        PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
+        if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 assert toGetCostOfPropertyCard != null;
                 if (currentPlayer.getMoney() >= toGetCostOfPropertyCard.getCost()){
