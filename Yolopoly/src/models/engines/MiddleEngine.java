@@ -20,7 +20,6 @@ public class MiddleEngine {
     private String hosterNick;
     private ArrayList<Integer> botIds;
     private ArrayList<Pawn> pawns;
-    private ArrayList<Player> players;
 
     private ArrayList<Player> playerArrayList;
     private ArrayList<Boolean> isAllReady;
@@ -41,20 +40,14 @@ public class MiddleEngine {
         this.playerCount = 1;
         this.maxPlayerCount = 2;
         this.botCount = 0;
-        //humanitySettings.add(true);
-        //isAllReady.add(false);
-        //playerNicks.add(hosterNick);
-        //for (int i = 0; i < 8; i++) {
-        //    botNum.add(i);
-        //}
     }
 
     //Functions
     // Starts the game
     public void initializeGame(){
-        innerEngine = new InnerEngine(false);
+        innerEngine = new InnerEngine(false, gameMode, gameTheme, playerArrayList);
         innerEngine.setBank(new Bank(gameTheme, gameMode));
-        innerEngine.setBoard(new Board(gameTheme));
+        innerEngine.setBoard(new Board(gameMode, gameTheme));
         innerEngine.setChat(new ArrayList<String>());
         innerEngine.setLog(new ArrayList<String>());
     }

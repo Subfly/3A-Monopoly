@@ -1,14 +1,15 @@
 package models.engines;
 
-import enumerations.Building;
-import enumerations.DrawableCardType;
-import enumerations.SquareType;
+import enumerations.*;
 import javafx.beans.property.Property;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
+import storage.StorageUtil;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,29 +27,80 @@ public class InnerEngine {
     private Board board;
     private Bank bank;
     private int currentPlayerId;
-    private int squareIndex;
+    private GameState state;
 
     //************
     // Constructor
     //************
-    public InnerEngine(boolean isSavedGamePlaying) {
-        startGame(isSavedGamePlaying);
+    public InnerEngine(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
+        if(isSavedGamePlaying){
+            //TODO: IMPLEMENT SAVED GAME
+        }else{
+            StorageUtil util = new StorageUtil();
+            chat = new ArrayList<>();
+            log = new ArrayList<>();
+            this.players = players;
+            try{
+                propertyCards = util.getPropertyCards(mode, theme);
+            }catch (FileNotFoundException e){
+                System.out.println("ERROR (1001): INVALID FILE");
+            }
+            dice = new Dice();
+            board = new Board(mode, theme);
+            bank = new Bank(theme, mode);
+            currentPlayerId = 0;
+            state = GameState.Linear;
+        }
     }
 
     //************
     // Functions
     //************
-    public void startGame(boolean isSavedGamePlaying){
+
+    //TODO: NAME IS INCONVINIENT AND PURPOSE OF THE FUNCTION IS UNDETERMINED
+    public int checkGameStatus(){
+        if(players.size() == 1){
+            return 1001; //Somebody won the game
+        }
+        boolean isAnyoneBroke = false;
+        int curId = -1;
+        for (Player p : players) {
+            if(p.isBankrupt()){
+                isAnyoneBroke = true;
+                this.state = GameState.Broken;
+                curId = players.indexOf(p);
+                break;
+            }
+        }
+        if(isAnyoneBroke){
+            return curId;
+        }
+        return -1; //Everything is fine
     }
 
-    public boolean isGameOver(){return false;}
+    public ArrayList<Integer> getSettings(){
+        StorageUtil util = new StorageUtil();
+        try{
+            return util.getSettings();
+        } catch (IOException e){
+            System.out.println("ERROR (1001): INVALID FILE");
+        }
+        return null;
+    }
 
-    public File getSettings(){return null;}
-
-    public void setSettings(){}
+    public void setSettings(int audio, int music){
+        StorageUtil util = new StorageUtil();
+        try{
+            util.setSettings(audio, music);
+        }catch (IOException e){
+            System.out.println("ERROR (1002): INVALID WRITE TO FILE");
+        }
+    }
 
     public boolean changePlayerToBot(int index){
-        players.get(index).setHuman(false);
+        var player = players.get(index);
+        player.setHuman(false);
+        players.set(index, player);
         return true;
     }
 
@@ -88,9 +140,12 @@ public class InnerEngine {
     //************
     // Turn Related Functions
     //************
-    public void turnManager(){}
+    public Dice rollDice(){
+        dice.roll();
+        return this.dice;
+    }
 
-    public int startTurn(){
+    public int startTurn(int diceResult, boolean hasRolledDouble){
         /*
         Basic structure of a turn is consists of:
             Rolling the dice
@@ -111,18 +166,20 @@ public class InnerEngine {
         //Start with getting player
         var player = players.get(currentPlayerId);
 
-        //Roll the dice
-        dice.roll();
-        int dice1 = dice.getDice1();
-        int dice2 = dice.getDice2();
-        int totalDice = dice1 + dice2;
-        if(dice1 == dice2){
+        if(hasRolledDouble){
             player.incrementDoublesCount();
+        }
+
+        if(player.isThreeTimesDoubled()){
+            player.setInJail(true);
+            player.setCurrentPosition(10);
+            players.set(currentPlayerId, player);
+            return 5;
         }
 
         //Moving the Pawn where the dice show
         int oldPosition = player.getCurrentPosition();
-        player.setCurrentPosition(player.getCurrentPosition() + totalDice);
+        player.setCurrentPosition(player.getCurrentPosition() + diceResult);
 
         if(oldPosition > player.getCurrentPosition()){
             //Passed GO! Square
@@ -159,7 +216,7 @@ public class InnerEngine {
             else if(square.getType() == SquareType.GoToJailSquare){
                 player.setCurrentPosition(10); //Move to jail hardcode
                 player.setInJail(true);
-                player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
+                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
                 players.set(currentPlayerId, player);
                 addToLog("sent to the jail", player.getName());
                 return 3;
@@ -189,7 +246,9 @@ public class InnerEngine {
 
                     //Set players
                     players.set(currentPlayerId, player);
-                    players.set(buyerId, player);
+                    players.set(buyerId, payingPlayer);
+                    addToLog("paid " + String.valueOf(rentAmount) + " as rent", player.getName());
+                    addToLog("received " + String.valueOf(rentAmount) + " as rent income", payingPlayer.getName());
                 }else{
                     //Not bought, this part left to frontend
                     players.set(currentPlayerId, player);
@@ -204,28 +263,41 @@ public class InnerEngine {
     }
 
     public boolean endTurn(){
+        this.currentPlayerId += 1;
+        if(this.currentPlayerId > players.size() - 1){
+            this.currentPlayerId = 0;
+        }
         return true;
     }
 
     //************
     // Action Related Functions
     //************
-    public void buyProperty( Player currentPlayer, Square square){
-        int squareId = square.getId();
+    public void buyProperty(){
+        //Get changing data
+        Player currentPlayer = players.get(currentPlayerId);
+        Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
+        PropertyCard card = propertyCards.get(square.getId());
 
-        currentPlayer.ownProperty(propertyCards.get(squareId));
-        square.setBought(true);
-        propertyCards.get(squareId).setOwnedBy(currentPlayerId);
+        //Make changes on data
+        card.setOwnedBy(currentPlayerId);
+        currentPlayer.ownProperty(propertyCards.get(square.getId()));
 
+        //Save changes on data
+        players.set(currentPlayerId, currentPlayer);
+        propertyCards.set(square.getId(), card);
+        board.buySquare(square.getId());
     }
 
-    public void createAuction(){}
+    public void createAuction(){
+        this.state = GameState.Auction;
+    }
 
-    public void buildBuilding(Building buildingType, Square squareToBuild) {
+    public void buildBuilding(Building buildingType) {
         Player player = players.get(currentPlayerId);
 
-        int squareToBuildIndex = squareToBuild.getId();
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToBuildIndex);
+        Square squareToBuild = board.getSpecificSquare(player.getCurrentPosition());
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToBuild.getId());
 
         int money;
         if ( buildingType == Building.House ){
@@ -234,18 +306,20 @@ public class InnerEngine {
         else{
             money = currentPlace.getHotelPrice();
         }
-        squareToBuild.build(buildingType);
+
+        board.build(buildingType, squareToBuild.getId());
+
         player.removeMoney(money, new Currency("tl", 1.0));
+
         addToLog("built structures on the property: " + propertyCards.get(squareToBuild.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
     }
 
-
-    public void destructBuilding(Building buildingType, Square squareToDestruct){
+    public void destructBuilding(Building buildingType){
         Player player = players.get(currentPlayerId);
 
-        int squareToDestructId = squareToDestruct.getId();
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToDestructId);
+        Square squareToDestruct = board.getSpecificSquare(player.getCurrentPosition());
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToDestruct.getId());
 
         int money;
         if ( buildingType == Building.House ){
@@ -254,7 +328,9 @@ public class InnerEngine {
         else{
             money = currentPlace.getHotelPrice();
         }
-        squareToDestruct.build(buildingType);
+
+        board.destroy(buildingType, squareToDestruct.getId());
+
         player.addMoney(money, new Currency("tl", 1.0));
         addToLog("built structures on the property: " + propertyCards.get(squareToDestruct.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
@@ -417,14 +493,14 @@ public class InnerEngine {
     //************
     // Checker Functions
     //************
-    public boolean checkBuyProperty(Square squareToBuy, Player currentPlayer){
+    public boolean checkBuyProperty(Square squareToBuy){
         int squareToBuyId = squareToBuy.getId();
+        Player currentPlayer = players.get(currentPlayerId);
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuyId);
         if (currentPlayer.getCurrentPosition() == squareToBuyId){
             if (!squareToBuy.isBought()){
                 assert toGetCostOfPropertyCard != null;
                 if (currentPlayer.getMoney() >= toGetCostOfPropertyCard.getCost()){
-
                     System.out.println("Player can buy this property ");
                     return true;
                 }
