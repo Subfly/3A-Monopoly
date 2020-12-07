@@ -5,6 +5,9 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import models.engines.InnerEngine;
+import models.engines.MiddleEngine;
+import models.engines.OuterEngine;
 
 public class Main extends Application {
 
@@ -13,10 +16,43 @@ public class Main extends Application {
 
     static Stage primaryStage;
 
+    static OuterEngine oe;
+    static MiddleEngine me;
+    static InnerEngine ie;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        Main.oe = new OuterEngine();
+        Main.me = new MiddleEngine();
+        Main.ie = new InnerEngine();
+
         Main.primaryStage = primaryStage;
         changeScreen("../models/controllers/OuterController.fxml");
+    }
+
+    public static OuterEngine getOuterEngine() {
+        return oe;
+    }
+
+    public static MiddleEngine getMiddleEngine() {
+        return me;
+    }
+
+    public static InnerEngine getInnerEngine() {
+        return ie;
+    }
+
+    public static void getSettings(){
+
+    }
+
+    public static void setNickName(String nickName){
+        oe.setHosterNick(nickName);
+    }
+
+    public static String getNickName(){
+        return oe.getHosterNick();
     }
 
     public static void changeScreen(String source) throws Exception{

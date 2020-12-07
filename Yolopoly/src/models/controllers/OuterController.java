@@ -1,9 +1,13 @@
 package models.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import models.engines.OuterEngine;
+import sample.Main;
+
 
 import static sample.Main.changeScreen;
 
@@ -12,12 +16,18 @@ public class OuterController {
     @FXML
     AnchorPane quit_game_ask, menu, coming_soon, nick_handler;
 
+    @FXML
+    TextArea nick_handler_field;
+
     boolean menu_is_enable = true;
 
     @FXML
     public void nick_handler(KeyEvent e) throws Exception {
         if (e.getCode().equals(KeyCode.ENTER)){
             //Get Nick //TODO
+
+            Main.setNickName(nick_handler_field.getText());
+
             changeScreen("../models/controllers/MiddleController.fxml");
         }
     }

@@ -115,10 +115,25 @@ public class InnerController {
         updateScreen();
     }
 
+    private void initializeSettings(){
+        /*
+
+        arraylist of players
+        saved game
+        game theme
+        game
+
+
+         */
+
+
+
+    }
+
     int turn = 0;
 
     @FXML
-    public void testFunction(){
+    public void actionButtonPressed(){
         pressedEndTurn = true;
 
         turn++;

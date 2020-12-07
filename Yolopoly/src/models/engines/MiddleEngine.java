@@ -32,11 +32,10 @@ public class MiddleEngine {
 
     Player mainPlayer;
 
-    public MiddleEngine(String hosterNick) {
+    public MiddleEngine() {
         this.playerArrayList = new ArrayList<>();
         this.mainPlayer = new Player(hosterNick, true);
         this.playerArrayList.add(this.mainPlayer);
-        this.hosterNick = hosterNick;
         this.playerCount = 1;
         this.maxPlayerCount = 2;
         this.botCount = 0;

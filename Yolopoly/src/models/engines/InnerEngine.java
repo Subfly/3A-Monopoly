@@ -63,6 +63,10 @@ public class InnerEngine {
         }
     }
 
+    public InnerEngine(){
+
+    }
+
     //************
     // Functions
     //************

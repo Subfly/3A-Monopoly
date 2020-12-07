@@ -11,6 +11,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.text.Text;
 import models.Player;
 import models.engines.MiddleEngine;
+import sample.Main;
 
 import static sample.Main.changeScreen;
 
@@ -62,7 +63,9 @@ public class MiddleController {
 
         player_list_grid = new GridPane();
 
-        me = new MiddleEngine(nickname);
+        me = new MiddleEngine();
+
+
     }
 
     final String LOBBY_SETTINGS = "sources/lobby-settings/";
@@ -77,6 +80,8 @@ public class MiddleController {
         nick_player_labels = new Label[]{nick_player_0, nick_player_1, nick_player_2, nick_player_3, nick_player_4, nick_player_5, nick_player_6, nick_player_7};
         kick_player_buttons = new ImageView[]{kick_player_1, kick_player_2, kick_player_3, kick_player_4, kick_player_5, kick_player_6, kick_player_7};
         pawn_players = new ImageView[]{pawn_player_0, pawn_player_1, pawn_player_2, pawn_player_3, pawn_player_4, pawn_player_5, pawn_player_6, pawn_player_7};
+
+        System.out.println(Main.getNickName());
 
         set_all_images();
     }
