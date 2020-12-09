@@ -1,10 +1,15 @@
 package sample;
 
+import enumerations.GameMode;
+import enumerations.GameTheme;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import models.Square;
+import models.cards.PropertyCard;
+import storage.StorageUtil;
 
 import java.io.IOException;
 
@@ -34,6 +39,11 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) throws IOException {
+        StorageUtil util = new StorageUtil();
+        var data = util.getPropertyCards(GameMode.vanilla, GameTheme.vanilla);
+        for(PropertyCard p : data){
+            System.out.println(p.getId());
+        }
         launch(args);
     }
 

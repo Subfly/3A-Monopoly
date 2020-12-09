@@ -71,7 +71,7 @@ public class StorageUtil {
             Square square = new Square(id, type, name, price, color);
             squares.add(square);
         }
-
+        squares.sort(Comparator.comparingInt(Square::getId));
         return squares;
     }
 
@@ -299,6 +299,8 @@ public class StorageUtil {
             UtilityCard utilityCard = new UtilityCard(id, color, name, cost, rentPrices, mortgagePrice);
             propertyCards.add(utilityCard);
         }
+
+        propertyCards.sort(Comparator.comparingInt(PropertyCard::getId));
 
         return propertyCards;
     }
