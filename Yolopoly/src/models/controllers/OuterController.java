@@ -5,6 +5,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import models.engines.MiddleEngine;
 import models.engines.OuterEngine;
 import sample.Main;
 
@@ -21,13 +22,18 @@ public class OuterController {
 
     boolean menu_is_enable = true;
 
+    MiddleEngine me;
+    OuterEngine oe;
+
+    public OuterController(){
+        me = Main.getMiddleEngine();
+        oe = Main.getOuterEngine();
+    }
+
     @FXML
     public void nick_handler(KeyEvent e) throws Exception {
         if (e.getCode().equals(KeyCode.ENTER)){
-            //Get Nick //TODO
-
-            Main.setNickName(nick_handler_field.getText());
-
+            oe.setHosterNick(nick_handler_field.getText().substring(0, nick_handler_field.getText().length()-1));
             changeScreen("../models/controllers/MiddleController.fxml");
         }
     }

@@ -9,15 +9,16 @@ import models.Player;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class MiddleEngine {
-    private InnerEngine innerEngine;
     //Sunucu kurma/Lobi bu classta
     private boolean isOnline;
     private GameMode gameMode;
     private GameTheme gameTheme;
-    private String hosterNick;
+    private Player admin;
+    final private String adminDummyName = "Dummy Admin";
     private ArrayList<Integer> botIds;
     private ArrayList<Pawn> pawns;
 
@@ -30,52 +31,36 @@ public class MiddleEngine {
     //Lobi Ayarları
     private String lobbyPassword;
 
-    Player mainPlayer;
-
     public MiddleEngine() {
         this.playerArrayList = new ArrayList<>();
-        this.mainPlayer = new Player(hosterNick, true);
-        this.playerArrayList.add(this.mainPlayer);
+        this.admin = new Player(adminDummyName, true);
+        this.playerArrayList.add(this.admin);
         this.playerCount = 1;
         this.maxPlayerCount = 2;
         this.botCount = 0;
     }
 
-    //Functions
-    // Starts the game
-    public void initializeGame(){
-        innerEngine = new InnerEngine(false, gameMode, gameTheme, playerArrayList);
-        innerEngine.setBank(new Bank(gameTheme, gameMode));
-        innerEngine.setBoard(new Board(gameMode, gameTheme));
-        innerEngine.setChat(new ArrayList<String>());
-        innerEngine.setLog(new ArrayList<String>());
+    public ArrayList<Player> getPlayerArrayList() {
+        return playerArrayList;
     }
 
     public File getSettings(){return null;}
     public void setSettings(){}
 
-    public boolean kickPlayer(String nick) {
-        /*
-        int index = playerNicks.indexOf(nick);
-        if (index != -1) {
-            humanitySettings.remove(index);
-
+    public boolean kickPlayer(int index) {
+        if (playerArrayList.remove(index) != null){
+            playerCount--;
             return true;
         }
-        return false;
-
-         */
-        return false;
+        else
+            return false;
     }
 
     public boolean addBot(){
         
         if (playerCount < 8 && playerCount < maxPlayerCount) {
-            //humanitySettings.add(false);
-            //int num = botNum.get(0);
-            //botNum.remove(num);
-            //botNum.add(num);
-            //playerNicks.add(("Bot" + num));
+            playerArrayList.add(new Player("Bot " + (botCount + 1), false));
+
             playerCount++;
             botCount++;
             return true;
@@ -83,20 +68,21 @@ public class MiddleEngine {
         return false;
     }
 
+
+
     public boolean deleteBot(){
         if (botCount > 0) {
-            //humanitySettings.add(false);
-            //int num = botNum.get(0);
-            //botNum.remove(num);
-            //botNum.add(num);
-            //playerNicks.add(("Bot" + num));
+
             playerCount--;
             botCount--;
+            playerArrayList.remove(playerCount);
             return true;
         }
-
-         
         return false;
+    }
+
+    public String deneme(){
+        return "Mod = " + gameMode + ", Theme = " + gameTheme + " Player Count = " + playerCount;
     }
 
     //Getters and Setters
@@ -122,14 +108,6 @@ public class MiddleEngine {
 
     public void setGameTheme(GameTheme gameTheme) {
         this.gameTheme = gameTheme;
-    }
-
-    public String getHosterNick() {
-        return hosterNick;
-    }
-
-    public void setHosterNick(String hosterNick) {
-        this.hosterNick = hosterNick;
     }
 
     public String getLobbyPassword() {
@@ -172,4 +150,11 @@ public class MiddleEngine {
         this.maxPlayerCount = maxPlayerCount;
     }
 
+    public Player getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Player admin) {
+        this.admin = admin;
+    }
 }

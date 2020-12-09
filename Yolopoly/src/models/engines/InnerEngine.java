@@ -38,7 +38,7 @@ public class InnerEngine {
     //************
     // Constructor
     //************
-    public InnerEngine(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
+    public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
         if(isSavedGamePlaying){
             //TODO: IMPLEMENT SAVED GAME
         }else{
@@ -46,10 +46,12 @@ public class InnerEngine {
             chat = new ArrayList<>();
             log = new ArrayList<>();
             this.players = players;
+            propertyCards = new ArrayList<>();
             try{
                 propertyCards = util.getPropertyCards(mode, theme);
             }catch (FileNotFoundException e){
-                System.out.println("ERROR (1001): INVALID FILE");
+                e.printStackTrace();
+                System.out.println("ERROR (1001): INVALID FILE " + e.getMessage() + " ");
             }
             dice = new Dice();
             board = new Board(mode, theme);

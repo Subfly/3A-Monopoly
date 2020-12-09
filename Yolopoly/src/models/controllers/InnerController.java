@@ -1,5 +1,7 @@
 package models.controllers;
 
+import enumerations.GameMode;
+import enumerations.GameTheme;
 import enumerations.Pawn;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -10,6 +12,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import models.Dice;
 import models.Player;
+import models.engines.InnerEngine;
+import models.engines.MiddleEngine;
+import sample.Main;
 
 import java.util.ArrayList;
 
@@ -113,21 +118,34 @@ public class InnerController {
         player_indexes[0].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
 
         updateScreen();
+
+        ie = Main.getInnerEngine();
+        me = Main.getMiddleEngine();
+
+        initializeSettings();
+
+        for (Player i: playerArrayList){
+            System.out.println(i.getName());
+        }
+
+        System.out.println(playerArrayList.size());
+
+        System.out.println(me.getAdmin().getPawnIndex());
+
+        System.out.println(me.deneme());
     }
 
+    InnerEngine ie;
+    MiddleEngine me;
+
+    ArrayList<Player> playerArrayList;
+    int playerCount;
+    GameMode gameMode;
+    GameTheme gameTheme;
+
     private void initializeSettings(){
-        /*
-
-        arraylist of players
-        saved game
-        game theme
-        game
-
-
-         */
-
-
-
+        playerCount = me.getPlayerCount();
+        playerArrayList = me.getPlayerArrayList();
     }
 
     int turn = 0;

@@ -43,18 +43,6 @@ public class Main extends Application {
         return ie;
     }
 
-    public static void getSettings(){
-
-    }
-
-    public static void setNickName(String nickName){
-        oe.setHosterNick(nickName);
-    }
-
-    public static String getNickName(){
-        return oe.getHosterNick();
-    }
-
     public static void changeScreen(String source) throws Exception{
         Parent root = FXMLLoader.load(Main.class.getResource(source));
         primaryStage.setScene(new Scene(root, width , height));
