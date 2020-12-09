@@ -427,10 +427,10 @@ public class InnerEngine {
         this.state = GameState.Linear;
     }
 
-    public void buildBuilding(Building buildingType) {
+    public void buildBuilding(Building buildingType, int squareIndex) {
         Player player = players.get(currentPlayerId);
 
-        Square squareToBuild = board.getSpecificSquare(player.getCurrentPosition());
+        Square squareToBuild = board.getSpecificSquare(squareIndex);
         PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToBuild.getId());
 
         int money;
@@ -449,10 +449,10 @@ public class InnerEngine {
         players.set(currentPlayerId, player);
     }
 
-    public void destructBuilding(Building buildingType){
+    public void destructBuilding(Building buildingType, int squareIndex){
         Player player = players.get(currentPlayerId);
 
-        Square squareToDestruct = board.getSpecificSquare(player.getCurrentPosition());
+        Square squareToDestruct = board.getSpecificSquare(squareIndex);
         PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareToDestruct.getId());
 
         int money;

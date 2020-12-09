@@ -32,4 +32,8 @@ public class Dice {
     public void setDice2(int dice2) {
         this.dice2 = dice2;
     }
+
+    public boolean isDouble(){
+        return this.dice1 == this.dice2;
+    }
 }
