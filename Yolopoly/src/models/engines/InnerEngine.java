@@ -72,6 +72,15 @@ public class InnerEngine {
     //************
     // Functions
     //************
+    public Player getOwner(int squareIndex){
+        var prop = getSpecificProperty(squareIndex);
+        assert prop != null;
+        if(prop.getOwnedBy() != -1){
+            return players.get(prop.getOwnedBy());
+        }
+        return null;
+    }
+
     public int saveAndExit(){
         StorageUtil util = new StorageUtil();
         try{
