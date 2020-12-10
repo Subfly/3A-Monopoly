@@ -17,8 +17,10 @@ public class Square {
     private int houseCount;
     private int hotelCount;
     private boolean houseCheck;
+    private int level;
 
     //Constructor
+
     public Square(int id, SquareType type, String name, int cost, Colors color) {
         this.id = id;
         this.type = type;
@@ -29,9 +31,17 @@ public class Square {
         this.houseCount = 0;
         this.hotelCount = 0;
         this.houseCheck = false;
+        this.level = 0;
     }
 
     //Functions
+
+    public void increaseLevel(){
+        level++;
+    }
+    public void decreaseLevel(){
+        level--;
+    }
     public int getRentMultiplier(){
         int total = houseCount;
         if(hotelCount != 0){
@@ -44,6 +54,7 @@ public class Square {
 
             houseCount++;
             houseCheck = true;
+            increaseLevel();
             System.out.println("House increased");
             System.out.println("Player has got home");
 
@@ -51,6 +62,7 @@ public class Square {
         if( buildingType == Building.Hotel ){
 
             hotelCount++;
+            increaseLevel();
             houseCount = 0;
             System.out.println("Hotel increased");
             System.out.println("Player has got hotel");
@@ -62,6 +74,7 @@ public class Square {
 
         if( buildingType == Building.House ) {
             houseCount--;
+            decreaseLevel();
             System.out.println("House decreased");
 
             if( houseCount == 0 ){
@@ -70,6 +83,7 @@ public class Square {
         }
         if( buildingType == Building.Hotel ){
             hotelCount--;
+            decreaseLevel();
             houseCount = 4;
             System.out.println("Hotel decreased");
             System.out.println("Player hasn't got hotel");
@@ -135,5 +149,13 @@ public class Square {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

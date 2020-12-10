@@ -33,6 +33,7 @@ public class Player {
     private ArrayList<DrawableCard> savedCards;
     private int pawnIndex;
 
+
     public boolean isGetLoanCurrently() {
         return getLoansCurrently;
     }
@@ -127,6 +128,8 @@ public class Player {
         }
         return null;
     }
+
+
 
 
     /**

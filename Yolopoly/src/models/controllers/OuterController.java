@@ -36,6 +36,11 @@ public class OuterController {
             oe.setHosterNick(nick_handler_field.getText().substring(0, nick_handler_field.getText().length()-1));
             changeScreen("../models/controllers/MiddleController.fxml");
         }
+        else if (e.getCode().equals(KeyCode.ESCAPE)){
+            nick_handler.setStyle("-fx-opacity: 0;");
+            nick_handler.setDisable(true);
+            set_menu_enable_disable();
+        }
     }
 
     @FXML

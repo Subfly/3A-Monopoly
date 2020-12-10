@@ -391,6 +391,22 @@ public class InnerEngine {
         }
         this.currentPlayerAuctioning = 0;
     }
+    public void mortgagePlace(Player player, Square square ) {
+
+        player.getOwnedPlaces().get(square.getId()).setMortgaged(true);
+        square.setLevel(-1);
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(square.getId());
+        int moneyToAdd = currentPlace.getMortgagePrice();
+        player.addMoney(moneyToAdd, new Currency("tl", 1.0));
+
+    }
+    public void dismortgagePlace(Player player, Square square) {
+        player.getOwnedPlaces().get(square.getId()).setMortgaged(false);
+        square.setLevel(0);
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(square.getId());
+        int moneyToRemove = currentPlace.getMortgagePrice();
+        player.removeMoney(moneyToRemove, new Currency("tl", 1.0));
+    }
 
     public void continueAuction(int bidIncrease){
         this.currentPlayerAuctioning += 1;
@@ -650,10 +666,50 @@ public class InnerEngine {
         return participants.size() == 1;
     }
 
+    public boolean checkMortgage( Player currentPlayer, Square squareToMortgage ){
+
+        int squareId = squareToMortgage.getId();
+        int squareLevel = squareToMortgage.getLevel();
+        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+
+        if ( currentPlayer.isOwned(currentPlace ) && squareLevel == 0 ) {
+            System.out.println("Player can mortgage this place");
+            return true;
+        }
+        System.out.println("Player cannot mortgage this place");
+        return false;
+    }
+
+    public boolean checkDismortgage( Player currentPlayer, Square squareToDismortgage){
+        int squareId = squareToDismortgage.getId();
+        int squareLevel = squareToDismortgage.getLevel();
+        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+        int dismortgageMoney = (int) (currentPlace.getMortgagePrice() * 1.10);
+
+        if (currentPlayer.isOwned(currentPlace)) {
+            if (squareLevel == -1){
+                if (currentPlayer.getMoney() >= dismortgageMoney){
+                    System.out.println("Player can dismortgage");
+                    return true;
+                }
+                else {
+                    System.out.println("player does not have enough money to dismortgage");
+                }
+            }
+            else {
+                System.out.println("This square is not mortgaged");
+            }
+        }
+        else{
+            System.out.println("Player does not have this place");
+        }
+        return false;
+    }
     public boolean checkBuyProperty(){
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
+        //TODO: Mortgage için düzeltme lazım
         if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 assert toGetCostOfPropertyCard != null;
@@ -691,6 +747,7 @@ public class InnerEngine {
         int houseCountOnSquare = squareToBuild.getHouseCount();
         int hotelCountOnSquare = squareToBuild.getHotelCount();
         int currentMoney = currentPlayer.getMoney();
+        int squareLevel = squareToBuild.getLevel();
 
         PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToBuildIndex);
 
@@ -702,9 +759,9 @@ public class InnerEngine {
                 if (squareToBuild.isHouseCheck()){  // Checks the square has a house or not
 
                     if (board.hasHouseAllSquares(squareToBuild)){   // Checks other squares have houses or not
-                        int  availableHouses = 4 - houseCountOnSquare;
+                        int availableHouses = 4 - houseCountOnSquare;
                         int count = 0;
-                        for (int i = 1; i <= availableHouses; i++) {    // Calculates how many houses can be bought with player's money
+                        for ( int i = 1; i <= availableHouses; i++ ) {    // Calculates how many houses can be bought with player's money
                             if (currentMoney >= i * priceOfAHouse){
                                 count++;
                             }
@@ -746,7 +803,7 @@ public class InnerEngine {
                 return checkAndCountHouses;
             }
             if ( buildingType == Building.Hotel ){
-                if ( houseCountOnSquare == 4 && hotelCountOnSquare == 0) { // checks square has 4 houses
+                if ( (houseCountOnSquare == 4 && hotelCountOnSquare == 0) || squareLevel == 4) { // checks square has 4 houses
                     int priceOfAHotel = currentPlace.getHotelPrice();
                     if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
                         checkAndCountHotel.put(true, 1);
@@ -818,6 +875,7 @@ public class InnerEngine {
         return checkAndCountHousesDestruct;
 
     }
+    
 
     //Getters and Setters
 
