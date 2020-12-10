@@ -25,6 +25,7 @@ public class InnerEngine {
     private Bank bank;
     private int currentPlayerId;
     private GameState state;
+    private int turnCount;
 
     //Auction Related
     private int currentBid;
@@ -60,6 +61,7 @@ public class InnerEngine {
             auctionPropertyIndex = -1;
             currentPlayerAuctioning = -1;
             brokenPlayers = new ArrayList<>();
+            turnCount = 0;
         }
     }
 
@@ -347,11 +349,16 @@ public class InnerEngine {
     }
 
     public boolean endTurn(){
+        this.turnCount += 1;
         this.currentPlayerId += 1;
         if(this.currentPlayerId > players.size() - 1){
             this.currentPlayerId = 0;
         }
         return true;
+    }
+
+    public int getTurn(){
+        return this.turnCount;
     }
 
     //************
