@@ -1,5 +1,7 @@
 package models.controllers;
 
+import enumerations.GameMode;
+import enumerations.GameTheme;
 import enumerations.Pawn;
 import javafx.animation.AnimationTimer;
 import javafx.animation.Timeline;
@@ -13,6 +15,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 import models.Dice;
 import models.Player;
+import models.engines.InnerEngine;
+import models.engines.MiddleEngine;
+import sample.Main;
 
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
@@ -48,9 +53,6 @@ public class InnerController {
     @FXML
     ImageView buy_button, sell_button;
 
-    @FXML
-    Label test_label;
-
     ImageView[] pawnTest;
     ImageView[] player_indexes;
     ArrayList<ImageView> pawnTeam1;
@@ -80,10 +82,10 @@ public class InnerController {
         sq_bar1  = new ImageView();sq_bar3  = new ImageView();sq_bar6  = new ImageView();sq_bar8  = new ImageView();sq_bar9  = new ImageView();sq_bar11 = new ImageView();sq_bar13 = new ImageView();sq_bar14 = new ImageView();sq_bar16 = new ImageView();sq_bar18 = new ImageView();sq_bar19 = new ImageView();sq_bar21 = new ImageView();sq_bar23 = new ImageView();sq_bar24 = new ImageView();sq_bar26 = new ImageView();sq_bar27 = new ImageView();sq_bar29 = new ImageView();sq_bar31 = new ImageView();sq_bar32 = new ImageView();sq_bar34 = new ImageView();sq_bar37 = new ImageView();sq_bar39 = new ImageView();
 
         //Players Big Pawn Images
-        player_index1 = new ImageView();player_index2 = new ImageView();player_index3 = new ImageView();player_index4 = new ImageView();//player_index5 = new ImageView();player_index6 = new ImageView();player_index7 = new ImageView();player_index8 = new ImageView();
+        player_index1 = new ImageView();player_index2 = new ImageView();player_index3 = new ImageView();player_index4 = new ImageView();player_index5 = new ImageView();player_index6 = new ImageView();player_index7 = new ImageView();player_index8 = new ImageView();
 
         //Pawns
-        pawn_1 = new ImageView();pawn_2 = new ImageView();pawn_3 = new ImageView();pawn_4 = new ImageView();//pawn_5 = new ImageView();pawn_6 = new ImageView();pawn_7 = new ImageView();pawn_8 = new ImageView();
+        pawn_1 = new ImageView();pawn_2 = new ImageView();pawn_3 = new ImageView();pawn_4 = new ImageView();pawn_5 = new ImageView();pawn_6 = new ImageView();pawn_7 = new ImageView();pawn_8 = new ImageView();
 
         //Dices
         dice = new Dice();
@@ -93,46 +95,26 @@ public class InnerController {
         testTextField = new Label();
 
         //Players -- Debug -- It should not be there i guess
-        p1 = new Player("p1", false);
-        p2 = new Player("p2", false);
-        p3 = new Player("p3", true);
-        p4 = new Player("p4", false);
-        //p5 = new Player("p5", false);
-        //p6 = new Player("p6", false);
-        //p7 = new Player("p7", false);
-        //p8 = new Player("p8", false);
+        p1 = new Player("p1", false);p2 = new Player("p2", false);p3 = new Player("p3", true);p4 = new Player("p4", false);p5 = new Player("p5", false);p6 = new Player("p6", false);p7 = new Player("p7", false);p8 = new Player("p8", false);
     }
 
     @FXML
     public void initialize() {
-
-        testTextField.setVisible(false);
-
         pressedEndTurn = true;
         card_image.setVisible(false);
 
-        players = new Player[]{p1,p2,p3,p4};//,p5,p6,p7,p8};
+        players = new Player[]{p1,p2,p3,p4,p5,p6,p7,p8};
 
-        pawnTest = new ImageView[]{pawn_1, pawn_2, pawn_3, pawn_4};//, pawn_5, pawn_6, pawn_7, pawn_8};
+        pawnTest = new ImageView[]{pawn_1, pawn_2, pawn_3, pawn_4, pawn_5, pawn_6, pawn_7, pawn_8};
 
-        player_indexes = new ImageView[]{player_index1, player_index2, player_index3, player_index4};//, player_index5, player_index6, player_index7, player_index8};
-
-        player_index5.setStyle("-fx-opacity: 0.5");
-        player_index6.setStyle("-fx-opacity: 0.5");
-        player_index7.setStyle("-fx-opacity: 0.5");
-        player_index8.setStyle("-fx-opacity: 0.5");
-
-        pawn_5.setVisible(false);
-        pawn_6.setVisible(false);
-        pawn_7.setVisible(false);
-        pawn_8.setVisible(false);
+        player_indexes = new ImageView[]{player_index1, player_index2, player_index3, player_index4, player_index5, player_index6, player_index7, player_index8};
 
         pawnTeam1 = new ArrayList<>();
         pawnTeam2 = new ArrayList<>();
 
-        pawnTeam1.add(pawn_1);pawnTeam1.add(pawn_2);//pawnTeam1.add(pawn_5);pawnTeam1.add(pawn_6);
+        pawnTeam1.add(pawn_1);pawnTeam1.add(pawn_2);pawnTeam1.add(pawn_5);pawnTeam1.add(pawn_6);
 
-        pawnTeam2.add(pawn_3);pawnTeam2.add(pawn_4);//pawnTeam2.add(pawn_7);pawnTeam2.add(pawn_8);
+        pawnTeam2.add(pawn_3);pawnTeam2.add(pawn_4);pawnTeam2.add(pawn_7);pawnTeam2.add(pawn_8);
 
         owner_label.setVisible(false);
         owner_nick.setVisible(false);
@@ -141,27 +123,52 @@ public class InnerController {
 
         player_indexes[0].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
 
-        test_label.setText("Welcome to Yolopoly!");
         updateScreen();
+
+        ie = Main.getInnerEngine();
+        me = Main.getMiddleEngine();
+
+        initializeSettings();
+
+        for (Player i: playerArrayList){
+            System.out.println(i.getName());
+        }
+
+        System.out.println(playerArrayList.size());
+
+        System.out.println(me.getAdmin().getPawnIndex());
+
+        System.out.println(me.deneme());
+    }
+
+    InnerEngine ie;
+    MiddleEngine me;
+
+    ArrayList<Player> playerArrayList;
+    int playerCount;
+    GameMode gameMode;
+    GameTheme gameTheme;
+
+    private void initializeSettings(){
+        playerCount = me.getPlayerCount();
+        playerArrayList = me.getPlayerArrayList();
     }
 
     int turn = 0;
 
     @FXML
-    public void testFunction(){
-        if (!pressedEndTurn){
-            pressedEndTurn = true;
+    public void actionButtonPressed(){
+        pressedEndTurn = true;
 
-            turn++;
-            turn = turn % 4;
+        turn++;
+        turn = turn % 8;
 
-            for (int i = 0; i < player_indexes.length; i++){
-                player_indexes[i].setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
-            }
-            player_indexes[turn].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
-            set_log("Player " + (turn+1) + "'s turn!");
-            System.out.println(turn);
+        for (ImageView player_index : player_indexes) {
+            player_index.setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
         }
+        player_indexes[turn].setImage(new Image(getClass().getResourceAsStream("sources/circle_active.png")));
+
+        System.out.println(turn);
     }
 
     public void movePawn(Player tmpPlayer, ImageView tmpPawn, int moveCount, boolean pawnIsLonged){
@@ -241,6 +248,8 @@ public class InnerController {
             int dice2 = dice.getDice2();
             int total = dice.getTotal();
 
+            System.out.println("sources/dice/dice_" + dice1 + ".png");
+
             dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
@@ -248,13 +257,11 @@ public class InnerController {
 
             movePawn(players[turn], pawnTest[turn], total, tmpLonged);
 
-            //testTextField.setText("dice1: " + dice1 + " dice2: " + dice2 + " total: " + total + " current pos : " + players[turn].getCurrentPosition());
-            set_log("Dice 1 : " + dice1 + " Dice 2 : " + dice2 + " Total : " + total + " Current position : " + players[turn].getCurrentPosition());
+            testTextField.setText("dice1: " + dice1 + " dice2: " + dice2 + " total: " + total + " current pos : " + players[turn].getCurrentPosition());
             pressedEndTurn = false;
         }
         else {
-            //testTextField.setText("Turu bitir önce");
-            set_log("First press action!");
+            testTextField.setText("Turu bitir önce");
         }
     }
 
@@ -275,39 +282,19 @@ public class InnerController {
             catch (NullPointerException npe){
                 System.out.println("Error :" + npe.getMessage());
             }
-            boolean free = true;
             switch (tmpIndex) {
                 case "index39" -> {
                     setInfoCard(3, "Etophiana", 1000000);
-                    free = false;
                 }
                 case "index37" -> {
                     setInfoCard(2, "HolyGuard", 500000);
-                    free = false;
                 }
                 case "index3" -> {
                     setInfoCard(5, "Subfly", 750000);
-                    free = false;
                 }
                 case "index6" -> {
-                    setInfoCard(0, "-", 15000);
-                    free = false;
+                    setInfoCard(0, "-", 150000);
                 }
-                case "index34" -> {
-                    setInfoCard(5, "Etophiana", 450000);
-                    free = false;
-                }
-                case "index32" -> {
-                    setInfoCard(3, "Subfly", 650000);
-                    free = false;
-                }
-                case "index21" -> {
-                    setInfoCard(5, "Holyguard", 450000);
-                    free = false;
-                }
-            }
-            if (free){
-                setInfoCard(0, "-", 25000);
             }
         }
         else {
@@ -388,11 +375,6 @@ public class InnerController {
                 house_slot3.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/hotel-top.png")));
             }
         }
-    }
-
-    private void set_log(String text){
-        String old_text = test_label.getText();
-        test_label.setText(old_text + "\n" + text);
     }
 
     @FXML

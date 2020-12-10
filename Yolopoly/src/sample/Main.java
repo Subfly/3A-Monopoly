@@ -6,8 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-
-import java.io.IOException;
+import models.engines.InnerEngine;
+import models.engines.MiddleEngine;
+import models.engines.OuterEngine;
 
 public class Main extends Application {
 
@@ -16,10 +17,31 @@ public class Main extends Application {
 
     static Stage primaryStage;
 
+    static OuterEngine oe;
+    static MiddleEngine me;
+    static InnerEngine ie;
+
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+        Main.oe = new OuterEngine();
+        Main.me = new MiddleEngine();
+        Main.ie = new InnerEngine();
+
         Main.primaryStage = primaryStage;
         changeScreen("../models/controllers/OuterController.fxml");
+    }
+
+    public static OuterEngine getOuterEngine() {
+        return oe;
+    }
+
+    public static MiddleEngine getMiddleEngine() {
+        return me;
+    }
+
+    public static InnerEngine getInnerEngine() {
+        return ie;
     }
 
     public static void changeScreen(String source) throws Exception{
@@ -34,7 +56,7 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         launch(args);
     }
 

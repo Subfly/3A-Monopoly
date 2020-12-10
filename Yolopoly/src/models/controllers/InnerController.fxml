@@ -41,7 +41,7 @@
                 <Image url="@sources/send-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="42.0" fitWidth="115.0" layoutX="1720.0" layoutY="438.0" onMouseClicked="#testFunction" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="42.0" fitWidth="115.0" layoutX="1720.0" layoutY="438.0" onMouseClicked="#actionButtonPressed" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/Action.png" />
             </image>

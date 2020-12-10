@@ -834,7 +834,7 @@
             "p0": {
                 "id": 1,
                 "color": 0,
-                "name": "Brown 2",
+                "name": "Brown 1",
                 "cost": 600000,
                 "rentPrices": [20000, 100000, 300000, 900000, 1600000, 2500000],
                 "mortgagePrice": 300000,
@@ -844,7 +844,7 @@
             "p1": {
                 "id": 3,
                 "color": 0,
-                "name": "Brown 1",
+                "name": "Brown 2",
                 "cost": 600000,
                 "rentPrices": [40000, 200000, 600000, 1800000, 3200000, 4500000],
                 "mortgagePrice": 300000,

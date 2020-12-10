@@ -230,7 +230,7 @@ public class StorageUtil {
         var railroadKeys = railroadJSON.keys();
         ArrayList<String> dummyRailroads = new ArrayList<>();
         while(railroadKeys.hasNext()){
-            dummyRailroads.add(placeKeys.next());
+            dummyRailroads.add(railroadKeys.next());
         }
         Collections.sort(dummyRailroads);
 
@@ -267,7 +267,7 @@ public class StorageUtil {
         var utilityKeys = utilityJSON.keys();
         ArrayList<String> dummyUtilities = new ArrayList<>();
         while(utilityKeys.hasNext()){
-            dummyUtilities.add(placeKeys.next());
+            dummyUtilities.add(utilityKeys.next());
         }
         Collections.sort(dummyUtilities);
 
