@@ -12,6 +12,7 @@ public class PlaceCard extends PropertyCard{
         super(id, color, name, cost, rentPrices, mortgagePrice);
         this.housePrice = housePrice;
         this.hotelPrice = hotelPrice;
+        mortgagePrice = (int)0.9 * housePrice;
     }
 
     public int getHousePrice() {

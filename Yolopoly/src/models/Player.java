@@ -32,6 +32,7 @@ public class Player {
     private ArrayList<PropertyCard> ownedPlaces;
     private ArrayList<DrawableCard> savedCards;
 
+
     public boolean isGetLoanCurrently() {
         return getLoansCurrently;
     }
@@ -118,6 +119,8 @@ public class Player {
         }
         return null;
     }
+
+
 
 
     /**
