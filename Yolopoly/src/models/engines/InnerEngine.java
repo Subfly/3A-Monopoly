@@ -700,7 +700,7 @@ public class InnerEngine {
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
-        //TODO: Mortgage için düzeltme lazım
+
         if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 assert toGetCostOfPropertyCard != null;
@@ -743,11 +743,11 @@ public class InnerEngine {
         PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToBuildIndex);
 
         if ( colorsCountOnBoard == colorsCountOnPlayer ){   // Checks player has all squares with same the color (is there a mortgage or not check it!!!)
-            if ( buildingType == Building.House ){
+            if ( buildingType == Building.House && squareLevel < 4 && squareLevel > -1 ){
 
                 int priceOfAHouse = currentPlace.getHousePrice();
 
-                if (squareToBuild.isHouseCheck()){  // Checks the square has a house or not
+                if (squareToBuild.isHouseCheck()  ){  // Checks the square has a house once or not
 
                     if (board.hasHouseAllSquares(squareToBuild)){   // Checks other squares have houses or not
                         int availableHouses = 4 - houseCountOnSquare;
@@ -793,8 +793,8 @@ public class InnerEngine {
                 }
                 return checkAndCountHouses;
             }
-            if ( buildingType == Building.Hotel ){
-                if ( (houseCountOnSquare == 4 && hotelCountOnSquare == 0) || squareLevel == 4) { // checks square has 4 houses
+            if ( buildingType == Building.Hotel && squareLevel == 4){
+                if ( (houseCountOnSquare == 4 && hotelCountOnSquare == 0)) { // checks square has 4 houses
                     int priceOfAHotel = currentPlace.getHotelPrice();
                     if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
                         checkAndCountHotel.put(true, 1);
@@ -811,6 +811,11 @@ public class InnerEngine {
                     System.out.println("not enough houses or there is an hotel");
                 }
                 return checkAndCountHotel;
+            }
+            else{
+
+                checkAndCountHouses.put(false, 0);
+                System.out.println("place is mortgaged");
             }
         }
         else{   // player does not have all squares with that color
