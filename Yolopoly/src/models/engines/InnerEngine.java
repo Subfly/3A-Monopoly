@@ -62,11 +62,15 @@ public class InnerEngine {
             auctionPropertyIndex = -1;
             currentPlayerAuctioning = -1;
             brokenPlayers = new ArrayList<>();
+
+
+            for (Player p : players){
+                p.setCurrentPosition(0);
+            }
         }
     }
 
     public InnerEngine(){
-
     }
 
     //************
@@ -74,7 +78,7 @@ public class InnerEngine {
     //************
     public Player getOwner(int squareIndex){
         var prop = getSpecificProperty(squareIndex);
-        assert prop != null;
+        System.out.println(prop.getOwnedBy() + " " + prop.getName());
         if(prop.getOwnedBy() != -1){
             return players.get(prop.getOwnedBy());
         }
@@ -205,7 +209,7 @@ public class InnerEngine {
     //************
     // Private Functions
     //************
-    private PropertyCard getSpecificProperty( int squareIndex ){
+    public PropertyCard getSpecificProperty( int squareIndex ){
         for(PropertyCard p: propertyCards){
             if(p.getId() == squareIndex){
                 return p;
@@ -236,6 +240,7 @@ public class InnerEngine {
     }
 
     public int startTurn(int diceResult, boolean hasRolledDouble){
+
         /*
         Basic structure of a turn is consists of:
             Rolling the dice
@@ -260,16 +265,25 @@ public class InnerEngine {
             player.incrementDoublesCount();
         }
 
-        if(player.isThreeTimesDoubled()){
-            player.setInJail(true);
-            player.setCurrentPosition(10);
-            players.set(currentPlayerId, player);
-            return 5;
-        }
+//        if(player.isThreeTimesDoubled()){
+//            player.setInJail(true);
+//            player.setCurrentPosition(10);
+//            players.set(currentPlayerId, player);
+//            return 5;
+//        }
 
         //Moving the Pawn where the dice show
+
+
         int oldPosition = player.getCurrentPosition();
-        player.setCurrentPosition(player.getCurrentPosition() + diceResult);
+        player.setCurrentPosition(oldPosition + diceResult);
+
+
+//        try {
+//            System.out.println(player.getCurrentPosition() + " new one " +  oldPosition +  " old one "  + player.getName() + " player name flan " + getSpecificProperty(player.getCurrentPosition()).getName());
+//        } catch (NullPointerException npe){
+//            System.out.println(npe.getMessage());
+//        }
 
         if(oldPosition > player.getCurrentPosition()){
             //Passed GO! Square
@@ -297,9 +311,9 @@ public class InnerEngine {
                 var prop = getSpecificProperty(square.getId());
                 assert prop != null;
                 //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                player.removeMoney(prop.getRentPrices().get(0), new Currency("tl", 1.0));
+                //player.removeMoney(prop.getRentPrices().get(0), new Currency("tl", 1.0));
                 players.set(currentPlayerId, player);
-                addToLog("pad tax of " + (prop.getRentPrices().get(0)).toString(), player.getName());
+                //addToLog("pad tax of " + (prop.getRentPrices().get(0)).toString(), player.getName());
                 return 0;
             }
             //If Go to Jail Square
@@ -367,16 +381,18 @@ public class InnerEngine {
         //Get changing data
         Player currentPlayer = players.get(currentPlayerId);
         Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
-        PropertyCard card = propertyCards.get(square.getId());
+        PropertyCard card = getSpecificProperty(square.getId());
 
         //Make changes on data
         card.setOwnedBy(currentPlayerId);
-        currentPlayer.ownProperty(propertyCards.get(square.getId()));
+        currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
         //Save changes on data
         players.set(currentPlayerId, currentPlayer);
         propertyCards.set(square.getId(), card);
         board.buySquare(square.getId());
+
+        addToLog("bought property named : " + card.getName(), currentPlayer.getName());
     }
 
     public void createAuction(){
@@ -436,7 +452,7 @@ public class InnerEngine {
 
             //Make changes on data
             card.setOwnedBy(currentPlayerAuctioning);
-            currentPlayer.ownProperty(propertyCards.get(square.getId()));
+            currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
             //Save changes on data
             int winnerIndex = -1;

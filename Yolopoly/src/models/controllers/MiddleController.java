@@ -60,9 +60,12 @@ public class MiddleController {
     int bot_count;
     String nickname;
 
-    private void finalSettings(){
+    final String LOBBY_SETTINGS = "sources/lobby-settings/";
+    final String LOBBY_PAWNS = "sources/lobby-settings/pawns/";
+    final String PNG = ".png";
 
-    }
+    ArrayList<Integer> availablePawns;
+    int oldPown = 1;
 
     public MiddleController() {
         me = Main.getMiddleEngine();
@@ -74,13 +77,10 @@ public class MiddleController {
         this.bot_count = 0;
 
         me.getAdmin().setName(nickname);
+        me.getAdmin().setPawnIndex(1);
 
         player_list_grid = new GridPane();
     }
-
-    final String LOBBY_SETTINGS = "sources/lobby-settings/";
-    final String LOBBY_PAWNS = "sources/lobby-settings/pawns/";
-    final String PNG = ".png";
 
     @FXML
     public void initialize() {
@@ -96,12 +96,11 @@ public class MiddleController {
         me.setGameMode(GameMode.vanilla);
 
         for (int i = 2;i<=8;i++){
-            availablePawns.add(((((((((((((((((((((((i)))))))))))))))))))))));
+            availablePawns.add(i);
         }
 
         set_all_images();
     }
-
 
     private void changePlayerList(){
         int max = 8;
@@ -119,9 +118,6 @@ public class MiddleController {
         }
     }
 
-    // HATA VAR BEYİNSİZ
-    // TODO
-
     @FXML
     private void kick_player(MouseEvent e){
         int index = Integer.parseInt(e.getPickResult().getIntersectedNode().getId().replace("kick_player_", ""));
@@ -135,14 +131,11 @@ public class MiddleController {
         setAvailablePawnsGUI();
     }
 
-    ArrayList<Integer> availablePawns;
-
     @FXML
     private void add_bot(){
         if (me.addBot()){
             Player tmpBot = me.getPlayerArrayList().get(player_count);
             int randomIndexForBotPawnFalan = (int)(Math.random()*(8 - player_count));
-            System.out.println();
             tmpBot.setPawnIndex(availablePawns.get(randomIndexForBotPawnFalan));
             set_image_helper(pawn_players[player_count], LOBBY_PAWNS, "pawn-" + availablePawns.get(randomIndexForBotPawnFalan));
             availablePawns.remove(randomIndexForBotPawnFalan);
@@ -158,8 +151,6 @@ public class MiddleController {
         }
     }
 
-    int oldPown = 1;
-
     @FXML
     public void change_pawn(MouseEvent e){
         availablePawns.add(oldPown);
@@ -169,10 +160,7 @@ public class MiddleController {
         me.getAdmin().setPawnIndex(chosen_pawn);
         availablePawns.remove((Integer)(chosen_pawn));
         oldPown = chosen_pawn;
-
-        for (int i: availablePawns){
-            System.out.println("pawn falan " +  i);
-        }
+        setAvailablePawnsGUI();
     }
 
     @FXML
@@ -204,14 +192,14 @@ public class MiddleController {
         for (int i = 0; i < pawn_buttons.length; i++){
             set_image_helper(pawn_buttons[i], LOBBY_PAWNS, pawn_image_name + (i+1));
             pawn_buttons[i].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 8, 0, 0, 0);");
-            pawn_buttons[i].setDisable(false);
+            pawn_buttons[i].setDisable(true);
         }
         for (Integer i : availablePawns){
             set_image_helper(pawn_buttons[i-1], LOBBY_PAWNS, pawn_image_name + i);
             pawn_buttons[i-1].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(217,24,40,0.6), 8, 0, 0, 0);");
-            pawn_buttons[i-1].setDisable(true);
+            pawn_buttons[i-1].setDisable(false);
         }
-        pawn_buttons[oldPown].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(86,191,132,0.6), 8, 0, 0, 0);");
+        pawn_buttons[oldPown - 1].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(86,191,132,0.6), 8, 0, 0, 0);");
     }
 
     private void pawn_GUI_helper(boolean initial, int chosen_pawn){
