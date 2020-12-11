@@ -5,6 +5,9 @@ import enumerations.Colors;
 import java.util.ArrayList;
 
 public abstract class PropertyCard {
+
+
+    private static final double MORTGAGE_PENALTY = 0.10;
     private final int id;
     private final Colors color;
     private final String name;
@@ -23,6 +26,10 @@ public abstract class PropertyCard {
         this.mortgagePrice = mortgagePrice;
         this.isMortgaged = false;
         this.ownedBy = -1;
+    }
+
+    public static double getMortgagePenalty() {
+        return MORTGAGE_PENALTY;
     }
 
     public Colors getColor() {

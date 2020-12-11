@@ -20,12 +20,12 @@ public class InnerEngine {
     private ArrayList<String> chat;
     private ArrayList<String> log;
     private ArrayList<Player> players;
-    private ArrayList<PropertyCard> propertyCards;
     private Dice dice;
     private Board board;
     private Bank bank;
     private int currentPlayerId;
     private GameState state;
+    private GameMode gameMode;
 
     //Auction Related
     private int currentBid;
@@ -43,26 +43,19 @@ public class InnerEngine {
         if(isSavedGamePlaying){
             //TODO: IMPLEMENT SAVED GAME
         }else{
-            StorageUtil util = new StorageUtil();
             chat = new ArrayList<>();
             log = new ArrayList<>();
             this.players = players;
-            propertyCards = new ArrayList<>();
-            try{
-                propertyCards = util.getPropertyCards(mode, theme);
-            }catch (FileNotFoundException e){
-                e.printStackTrace();
-                System.out.println("ERROR (1001): INVALID FILE " + e.getMessage() + " ");
-            }
+            bank = new Bank(theme, mode);
             dice = new Dice();
             board = new Board(mode, theme);
-            bank = new Bank(theme, mode);
             currentPlayerId = 0;
             state = GameState.Linear;
             currentBid = 0;
             auctionPropertyIndex = -1;
             currentPlayerAuctioning = -1;
             brokenPlayers = new ArrayList<>();
+            gameMode = mode;
 
 
             for (Player p : players){
@@ -99,7 +92,7 @@ public class InnerEngine {
         Player brokenPlayer = brokenPlayers.get(0);
         for (Player player : players) {
             if (brokenPlayer.getName().equals(player.getName())) {
-                for (PropertyCard p : propertyCards) {
+                for (PropertyCard p : bank.getPropertyCards()) {
                     if (player.isOwned(p)) {
                         p.setOwnedBy(-1);
                     }
@@ -211,7 +204,7 @@ public class InnerEngine {
     // Private Functions
     //************
     public PropertyCard getSpecificProperty( int squareIndex ){
-        for(PropertyCard p: propertyCards){
+        for(PropertyCard p: bank.getPropertyCards()){
             if(p.getId() == squareIndex){
                 return p;
             }
@@ -220,7 +213,7 @@ public class InnerEngine {
     }
 
     private int getBuyer(int squareIndex){
-        for(PropertyCard p: propertyCards){
+        for(PropertyCard p: bank.getPropertyCards()){
             if(squareIndex == p.getId()){
                 return p.getOwnedBy();
             }
@@ -240,7 +233,7 @@ public class InnerEngine {
         return this.dice;
     }
 
-    public int startTurn(int diceResult, boolean hasRolledDouble){
+    public int startTurn(int diceResult, boolean hasRolledDouble, double multiplier){
 
         /*
         Basic structure of a turn is consists of:
@@ -260,31 +253,22 @@ public class InnerEngine {
          */
 
         //Start with getting player
-        var player = players.get(currentPlayerId);
+        Player player = players.get(currentPlayerId);
 
         if(hasRolledDouble){
             player.incrementDoublesCount();
         }
 
-//        if(player.isThreeTimesDoubled()){
-//            player.setInJail(true);
-//            player.setCurrentPosition(10);
-//            players.set(currentPlayerId, player);
-//            return 5;
-//        }
+        if(player.isThreeTimesDoubled()){
+            player.setInJail(true);
+            player.setCurrentPosition(10);
+            players.set(currentPlayerId, player);
+            return 5;
+        }
 
         //Moving the Pawn where the dice show
-
-
         int oldPosition = player.getCurrentPosition();
         player.setCurrentPosition(oldPosition + diceResult);
-
-
-//        try {
-//            System.out.println(player.getCurrentPosition() + " new one " +  oldPosition +  " old one "  + player.getName() + " player name flan " + getSpecificProperty(player.getCurrentPosition()).getName());
-//        } catch (NullPointerException npe){
-//            System.out.println(npe.getMessage());
-//        }
 
         if(oldPosition > player.getCurrentPosition()){
             //Passed GO! Square
@@ -292,7 +276,7 @@ public class InnerEngine {
         }
 
         //Get the square where pawn landed
-        var square = board.getSpecificSquare(player.getCurrentPosition());
+        Square square = board.getSpecificSquare(player.getCurrentPosition());
 
         //Start If's
         //If chance square
@@ -341,23 +325,23 @@ public class InnerEngine {
                     int buyerId = getBuyer(square.getId());
 
                     //Create a dummy player holder to change players data in the end
-                    var payingPlayer = players.get(buyerId);
+                    Player paidToPlayer = players.get(buyerId);
 
                     //Find rent amount
-                    var prop = getSpecificProperty(square.getId());
+                    PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
                     int rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
 
                     //Remove money from current player
                     player.removeMoney(Constants.CURRENCY_NAMES[0], rentAmount);
                     //Add money to other player
-                    payingPlayer.addMoney(Constants.CURRENCY_NAMES[0], rentAmount);
+                    paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], rentAmount);
 
                     //Set players
                     players.set(currentPlayerId, player);
-                    players.set(buyerId, payingPlayer);
+                    players.set(buyerId, paidToPlayer);
                     addToLog("paid " + String.valueOf(rentAmount) + " as rent", player.getName());
-                    addToLog("received " + String.valueOf(rentAmount) + " as rent income", payingPlayer.getName());
+                    addToLog("received " + String.valueOf(rentAmount) + " as rent income", paidToPlayer.getName());
                 }else{
                     //Not bought, this part left to frontend
                     players.set(currentPlayerId, player);
@@ -372,10 +356,19 @@ public class InnerEngine {
     }
 
     public boolean endTurn(){
+        if (gameMode.equals(GameMode.bankman)) { // check loan for bankman mod
+            Player player = players.get(currentPlayerId);
+            player.decrementLoanTurn();
+            if (checkHasToPayLoanBack()) {
+                player.setDiscardedFromGame(true);
+                return false;
+            }
+        }
         this.currentPlayerId += 1;
         if(this.currentPlayerId > players.size() - 1){
             this.currentPlayerId = 0;
         }
+        changeCurrenciesOfBank();
         return true;
     }
 
@@ -394,7 +387,7 @@ public class InnerEngine {
 
         //Save changes on data
         players.set(currentPlayerId, currentPlayer);
-        propertyCards.set(square.getId(), card);
+        bank.getPropertyCards().set(square.getId(), card);
         board.buySquare(square.getId());
 
         addToLog("bought property named : " + card.getName(), currentPlayer.getName());
@@ -403,7 +396,7 @@ public class InnerEngine {
     public void createAuction(){
         this.state = GameState.Auction;
         this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
-        PropertyCard card = propertyCards.get(this.auctionPropertyIndex);
+        PropertyCard card = bank.getPropertyCards().get(this.auctionPropertyIndex);
         this.currentBid = card.getCost();
         for(Player p : players){
             if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
@@ -421,13 +414,17 @@ public class InnerEngine {
         player.addMoney(Constants.CURRENCY_NAMES[0], moneyToAdd);
 
     }
-    public void dismortgagePlace(int squareIndex) {
+    public boolean removeMortgageFromPlace(int squareIndex) {
         Player player = players.get(getCurrentPlayerId());
-        player.getSpecificCard(squareIndex).setMortgaged(false);
-        board.getSquares().get(squareIndex).setLevel(0);
         PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
-        int moneyToRemove = currentPlace.getMortgagePrice();
-        player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToRemove);
+        int mortgagePrice = currentPlace.getMortgagePrice();
+        int mortgagePenalty = (int) (mortgagePrice * PropertyCard.getMortgagePenalty());
+        if (player.removeMoney(Constants.CURRENCY_NAMES[0], mortgagePrice + mortgagePenalty)) {
+            player.getSpecificCard(squareIndex).setMortgaged(false);
+            board.getSquares().get(squareIndex).setLevel(0);
+            return true;
+        }
+        return false;
     }
 
     public void continueAuction(int bidIncrease){
@@ -454,7 +451,7 @@ public class InnerEngine {
         if(checkAuctionStatus()){
             Player currentPlayer = participants.get(currentPlayerAuctioning);
             Square square = board.getSpecificSquare(auctionPropertyIndex);
-            PropertyCard card = propertyCards.get(square.getId());
+            PropertyCard card = bank.getPropertyCards().get(square.getId());
 
             //Make changes on data
             card.setOwnedBy(currentPlayerAuctioning);
@@ -468,7 +465,7 @@ public class InnerEngine {
                 }
             }
             players.set(winnerIndex, currentPlayer);
-            propertyCards.set(square.getId(), card);
+            bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
         }
         this.state = GameState.Linear;
@@ -492,7 +489,7 @@ public class InnerEngine {
 
         player.removeMoney(Constants.CURRENCY_NAMES[0], money);
 
-        addToLog("built structures on the property: " + propertyCards.get(squareToBuild.getId()).getName(), player.getName());
+        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
     }
 
@@ -513,7 +510,7 @@ public class InnerEngine {
         board.destroy(buildingType, squareToDestruct.getId());
 
         player.addMoney(Constants.CURRENCY_NAMES[0], money);
-        addToLog("built structures on the property: " + propertyCards.get(squareToDestruct.getId()).getName(), player.getName());
+        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
     }
 
@@ -531,6 +528,7 @@ public class InnerEngine {
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
+                player.setInJail(true);
                 players.set(currentPlayerId, player);
                 return 2;
             }else{
@@ -671,7 +669,7 @@ public class InnerEngine {
         int level = square.getLevel();
 
         if (level == -1){
-            dismortgagePlace(squareIndex);
+            removeMortgageFromPlace(squareIndex);
         }
         else if (level == 0 && !square.isBought()){
             buyProperty();
@@ -716,6 +714,71 @@ public class InnerEngine {
             mortgagePlace(squareIndex);
         }
     }
+
+    //************
+    // Bankman Mode Functions
+    //************
+    public boolean giveLoan(int amount) {
+        Player player = players.get(currentPlayerId);
+        if (player.isGetLoanCurrently()) {
+            System.out.println("You need to pay your loan first");
+            return false;
+        }
+        System.out.println("Gave loan to the player " + player.getName());
+        addToLog("got loan in amount " + amount, player.getName());
+        bank.giveLoan(amount, player);
+        return true;
+    }
+
+    public boolean receiveLoanBackFromPlayer() {
+        Player player = players.get(currentPlayerId);
+        int amount = player.getLoan();
+        if (!player.isGetLoanCurrently()) {
+            System.out.println("The player is not on the loan currently");
+            return false;
+        }
+        System.out.println("Player paid his/her loan " + player.getName());
+        addToLog("paid loan back with amount of: " + amount, player.getName());
+        return true;
+    }
+
+    public boolean checkHasToPayLoanBack() {
+        Player player = players.get(currentPlayerId);
+        if (player.getLoanTurn() == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    public void changeCurrenciesOfBank() {
+        // call this function in the end of the each turn
+        this.bank.changeCurrencies();
+    }
+
+    public int exchangeCurrency(String fromCurrency, String toCurrency, int amount) {
+        Player player = players.get(currentPlayerId);
+        return this.bank.exchangeMoney(player, fromCurrency, toCurrency, amount);
+    }
+
+    public double generateChanceMultiplier(int diceResult) {
+        double result;
+        int randomResult = (int) ((Math.random() * (12 - 1)) + 1);
+        if (randomResult >= 1 && randomResult <= 3) {
+            result = 0.5;
+        }
+        else if (randomResult >= 4 && randomResult <= 6) {
+            result = 1;
+        }
+        else if (randomResult >= 7 && randomResult <= 9) {
+            result = 1.5;
+        }
+        else {
+            result = 2.0;
+        }
+        return result;
+    }
+
+
 
     //************
     // Checker Functions
@@ -1009,14 +1072,6 @@ public class InnerEngine {
 
     public void setPlayers(ArrayList<Player> players) {
         this.players = players;
-    }
-
-    public ArrayList<PropertyCard> getPropertyCards() {
-        return propertyCards;
-    }
-
-    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
-        this.propertyCards = propertyCards;
     }
 
     public Dice getDice() {

@@ -1,7 +1,10 @@
 package models.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
@@ -15,10 +18,16 @@ import static sample.Main.changeScreen;
 public class OuterController {
 
     @FXML
-    AnchorPane quit_game_ask, menu, coming_soon, nick_handler;
+    AnchorPane quit_game_ask, menu, coming_soon, nick_handler, settings;
+
+    @FXML
+    Slider music_slider = new Slider();
 
     @FXML
     TextArea nick_handler_field;
+
+    @FXML
+    TextField music_field;
 
     boolean menu_is_enable = true;
 
@@ -28,6 +37,14 @@ public class OuterController {
     public OuterController(){
         me = Main.getMiddleEngine();
         oe = Main.getOuterEngine();
+    }
+
+    public void initialize() {
+        music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println(newValue.doubleValue());
+            music_field.setText(String.valueOf(newValue.doubleValue()));
+        });
+
     }
 
     @FXML
@@ -60,6 +77,20 @@ public class OuterController {
     @FXML
     private void quitGameYesPressed(){
         System.exit(0);
+    }
+
+    @FXML
+    private void settings(){
+        settings.setStyle("-fx-opacity: 1;");
+        settings.setDisable(false);
+        set_menu_enable_disable();
+    }
+
+    @FXML
+    private void close_settings(){
+        settings.setStyle("-fx-opacity: 0;");
+        settings.setDisable(true);
+        set_menu_enable_disable();
     }
 
     @FXML

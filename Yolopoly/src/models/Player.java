@@ -33,18 +33,13 @@ public class Player {
     private ArrayList<PropertyCard> ownedPlaces;
     private ArrayList<DrawableCard> savedCards;
     private int pawnIndex;
+    private boolean discardedFromGame;
 
-
-    public boolean isGetLoanCurrently() {
-        return getLoansCurrently;
-    }
-
-    public void setGetLoanCurrently(boolean getLoansCurrently) {
-        this.getLoansCurrently = getLoansCurrently;
-    }
 
     //Variables for bankman
-    private boolean getLoansCurrently;
+    private boolean getLoanCurrently;
+    private int loanTurn;
+    private int loan;
 
     public int getLoanTurn() {
         return loanTurn;
@@ -54,7 +49,19 @@ public class Player {
         this.loanTurn = loanTurn;
     }
 
-    private int loanTurn;
+    public void resetLoan() {
+        setLoanTurn(0);
+        setGetLoanCurrently(false);
+        setLoan(0);
+    }
+
+    public boolean decrementLoanTurn() {
+        if(this.isGetLoanCurrently()) {
+            this.loanTurn--;
+            return true;
+        }
+        return false;
+    }
 
     public int getLoan() {
         return loan;
@@ -72,8 +79,6 @@ public class Player {
         this.pawnIndex = pawnIndex;
     }
 
-    private int loan;
-    private ArrayList<Integer> moneyOnBank;
 
     /**
      * Instantiates a new Player.
@@ -93,10 +98,12 @@ public class Player {
         this.isHuman = isHuman;
         this.loan = 0;
         this.doublesCount = 0;
-        this.getLoansCurrently = false;
+        this.getLoanCurrently = false;
+        this.money = new HashMap<>();
         for (String cName : Constants.CURRENCY_NAMES) {
             money.put(cName, 0);
         }
+        this.discardedFromGame = false;
     }
 
     //Functions
@@ -122,7 +129,6 @@ public class Player {
         int propertyIndex = -1;
         int count = 0;
         for ( PropertyCard s : ownedPlaces ) {
-
             if ( s.getId() == index ){
                 propertyIndex = count;
                 return ownedPlaces.get(propertyIndex);
@@ -221,7 +227,8 @@ public class Player {
     public boolean incrementDoublesCount() {
         doublesCount = doublesCount + 1;
         if (doublesCount == 3) {
-            isThreeTimesDoubled = true;
+            this.setThreeTimesDoubled(true);
+            this.setInJail(true); // doubles three times, go to jail
         }
         return true;
     }
@@ -270,22 +277,6 @@ public class Player {
 
     public void setSavedCards(ArrayList<DrawableCard> savedCards) {
         this.savedCards = savedCards;
-    }
-
-    public boolean isGetLoansCurrently() {
-        return getLoansCurrently;
-    }
-
-    public void setGetLoansCurrently(boolean getLoansCurrently) {
-        this.getLoansCurrently = getLoansCurrently;
-    }
-
-    public ArrayList<Integer> getMoneyOnBank() {
-        return moneyOnBank;
-    }
-
-    public void setMoneyOnBank(ArrayList<Integer> moneyOnBank) {
-        this.moneyOnBank = moneyOnBank;
     }
 
     public void setStartMoney(int amount) {
@@ -455,5 +446,21 @@ public class Player {
      */
     public void setBankrupt(boolean bankrupt) {
         isBankrupt = bankrupt;
+    }
+
+    public boolean isGetLoanCurrently() {
+        return getLoanCurrently;
+    }
+
+    public void setGetLoanCurrently(boolean getLoansCurrently) {
+        this.getLoanCurrently = getLoansCurrently;
+    }
+
+    public boolean isDiscardedFromGame() {
+        return discardedFromGame;
+    }
+
+    public void setDiscardedFromGame(boolean discardedFromGame) {
+        this.discardedFromGame = discardedFromGame;
     }
 }

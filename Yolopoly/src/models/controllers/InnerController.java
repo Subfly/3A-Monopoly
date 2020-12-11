@@ -293,7 +293,8 @@ public class InnerController {
             dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
-            int test = ie.startTurn(total, dice1 == dice2);
+            // TODO: Change multiplier later
+            int test = ie.startTurn(total, dice1 == dice2, 1);
 
             int newPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
 
