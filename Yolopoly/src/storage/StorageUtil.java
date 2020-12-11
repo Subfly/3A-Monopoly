@@ -390,7 +390,7 @@ public class StorageUtil {
         jo.put("curPlayerId", engine.getCurrentPlayerId());
         jo.put("log", engine.getLog());
         jo.put("players", engine.getPlayers());
-        jo.put("propertyCards", engine.getPropertyCards());
+        jo.put("propertyCards", engine.getBank().getPropertyCards());
         jo.put("state", engine.getState());
         writer.write(jo.toString());
         writer.close();

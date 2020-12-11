@@ -195,9 +195,31 @@ public class InnerEngine {
         return this.players.get(currentPlayerId).isHuman();
     }
 
-    public int makeDecision(int possibilityCount){
-        return (int) (Math.random() * possibilityCount + 1);
-        //Rest of the function is just a switch case in frontend
+    public int makeDecision(int diceResult, boolean isDouble){
+        double multiplier = 1;
+        if (this.gameMode ==  GameMode.bankman) {
+            int decision = (int)(Math.random() * 2 + 1);
+            if(decision == 1){
+                multiplier = this.generateChanceMultiplier(diceResult);
+            }
+        }
+        startTurn(diceResult, isDouble, multiplier);
+        Player bot = players.get(currentPlayerId);
+        if(checkBuyProperty(bot.getCurrentPosition())){
+            //Just buy the area
+            buyProperty();
+        }
+        int totalBoughtProperties = bot.getOwnedPlaces().size();
+        int randomArea = (int)(Math.random() * totalBoughtProperties + 1);
+        if(checkBuildBuilding(Building.House, board.getSpecificSquare(randomArea)).containsKey(true)){
+            //Build house
+            buildBuilding(Building.House, randomArea);
+        }
+        if(checkBuildBuilding(Building.Hotel, board.getSpecificSquare(randomArea)).containsKey(true)){
+            //Build hotel
+            buildBuilding(Building.Hotel, randomArea);
+        }
+        return 1;
     }
 
     //************
