@@ -501,7 +501,7 @@ public class InnerEngine {
 
         int money;
         if ( buildingType == Building.House ){
-            money = currentPlace.getHousePrice() / 2;
+            money = (int) (currentPlace.getHousePrice() / Bank.getReturnRate());
         }
         else{
             money = currentPlace.getHotelPrice();
@@ -901,6 +901,8 @@ public class InnerEngine {
 
     public Map<Boolean, Integer> checkBuildBuilding(Building buildingType, Square squareToBuild){
 
+        // TODO: Check house&hotel count of bank
+        // Also, maybe the algorithm can change, according to the rulebook
         Map<Boolean, Integer> checkAndCountHouses = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotel = new HashMap<>();
 
@@ -1000,6 +1002,9 @@ public class InnerEngine {
         return checkAndCountHouses;
     }
     public Map<Boolean, Integer> checkDestructBuilding(Building buildingType, Square squareToDestruct){
+
+        // TODO: Increment house&hotel count of bank
+        // Also, maybe the algorithm can change, according to the rulebook
 
         Map<Boolean, Integer> checkAndCountHousesDestruct = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotelDestruct = new HashMap<>();

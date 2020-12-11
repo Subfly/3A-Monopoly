@@ -93,6 +93,30 @@ public class Bank {
         return 0;
     }
 
+    public boolean decrementHouseCount() {
+        if (houseCount > 0) {
+            this.houseCount--;
+            return true;
+        }
+        return false;
+    }
+
+    public boolean decrementHotelCount() {
+        if (hotelCount > 0) {
+            this.hotelCount--;
+            return true;
+        }
+        return false;
+    }
+
+    public void incrementHouseCount() {
+        this.houseCount++;
+    }
+
+    public void incrementHotelCount() {
+        this.hotelCount++;
+    }
+
     //Getters and Setters
     public ArrayList<Currency> getCurrencyRates() {
         return currencyRates;
