@@ -17,6 +17,7 @@ public class Board {
     private ArrayList<Square> squares;
     private ArrayList<CommunityChestCard> commCards;
     private ArrayList<ChanceCard> chanceCards;
+    private int moneyOnBoard;
 
     //Constructor
     public Board(GameMode mode, GameTheme gameTheme) {
@@ -25,6 +26,7 @@ public class Board {
             squares = util.getSquaresData(mode, gameTheme);
             commCards = util.getCommunityChestCards(mode, gameTheme);
             chanceCards = util.getChanceCards(mode, gameTheme);
+            moneyOnBoard = 0;
         }catch(FileNotFoundException e){
             System.out.println("ERROR 2001: INVALID FILE");
         }
@@ -99,7 +101,25 @@ public class Board {
         return true;
     }
 
+    public boolean addToTaxMoney(int amount) {
+        this.moneyOnBoard += amount;
+        return true;
+    }
+
+    public boolean removeFromTaxMoney() {
+        this.moneyOnBoard = 0;
+        return true;
+    }
+
     //Getters and Setters
+
+    public int getMoneyOnBoard() {
+        return moneyOnBoard;
+    }
+
+    public void setMoneyOnBoard(int moneyOnBoard) {
+        this.moneyOnBoard = moneyOnBoard;
+    }
 
     public ArrayList<Square> getSquares() {
         return squares;

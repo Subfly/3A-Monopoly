@@ -11,6 +11,7 @@ public class Square {
     private int id;
     private SquareType type;
     private String name;
+
     private int cost;
     private Colors color;
     private boolean isBought;
@@ -157,5 +158,13 @@ public class Square {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getCost() {
+        return cost;
+    }
+
+    public void setCost(int cost) {
+        this.cost = cost;
     }
 }

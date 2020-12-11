@@ -4,6 +4,8 @@ import enumerations.Pawn;
 import models.cards.DrawableCard;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
+import storage.Constants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +23,7 @@ public class Player {
 
     //In variables
     private int doublesCount;
-    //private Map<Currency, Integer> money;
-    private int money;
+    private Map<String, Integer> money;
     private int currentPosition;
     private int railroadsOwned;
     private int utilitiesOwned;
@@ -85,7 +86,6 @@ public class Player {
         this.name = name;
         this.isInJail = false;
         this.isThreeTimesDoubled = false;
-        this.money = 0;
         this.ownedPlaces = new ArrayList<>();
         this.railroadsOwned = 0;
         this.utilitiesOwned = 0;
@@ -94,6 +94,9 @@ public class Player {
         this.loan = 0;
         this.doublesCount = 0;
         this.getLoansCurrently = false;
+        for (String cName : Constants.CURRENCY_NAMES) {
+            money.put(cName, 0);
+        }
     }
 
     //Functions
@@ -138,7 +141,10 @@ public class Player {
      * @param amount the amount to be added
      * @return the boolean if the operation is succedeed
      */
-    public boolean addMoney(int amount, Currency currency){
+    public boolean addMoney(String currencyName, int amount){
+        int oldMoney = money.get(currencyName);
+        int newMoney = oldMoney + amount;
+        money.replace(currencyName, newMoney);
         return true;
     }
 
@@ -152,8 +158,15 @@ public class Player {
      * @param amount the amount to be removed from the player
      * @return if the operation is succedeed
      */
-    public boolean removeMoney(int amount, Currency currency){
-            return true;
+    public boolean removeMoney(String currencyName, int amount){
+        int oldMoney = money.get(currencyName);
+        int newMoney = oldMoney - amount;
+        if (newMoney < 0) {
+            System.out.println("Money is not sufficient");
+            return false;
+        }
+        money.replace(currencyName, newMoney);
+        return true;
     }
 
     /**
@@ -207,7 +220,7 @@ public class Player {
      */
     public boolean incrementDoublesCount() {
         doublesCount = doublesCount + 1;
-        if (doublesCount == 1) {
+        if (doublesCount == 3) {
             isThreeTimesDoubled = true;
         }
         return true;
@@ -232,11 +245,14 @@ public class Player {
         this.doublesCount = doublesCount;
     }
 
-    public int getMoney() {
+    public Map<String, Integer> getMoney() {
         return money;
     }
 
-    public void setMoney(int money) {
+    public int getMonopolyMoneyAmount() {
+        return money.get(Constants.CURRENCY_NAMES[0]);
+    }
+    public void setMoney(Map<String, Integer> money) {
         this.money = money;
     }
 
@@ -270,6 +286,10 @@ public class Player {
 
     public void setMoneyOnBank(ArrayList<Integer> moneyOnBank) {
         this.moneyOnBank = moneyOnBank;
+    }
+
+    public void setStartMoney(int amount) {
+        money.replace(Constants.CURRENCY_NAMES[0], amount);
     }
 
     /**

@@ -4,6 +4,7 @@ import enumerations.*;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
+import storage.Constants;
 import storage.StorageUtil;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class InnerEngine {
 
             for (Player p : players){
                 p.setCurrentPosition(0);
-                p.setMoney(20000000);
+                p.setStartMoney(Constants.START_MONEY);
             }
         }
     }
@@ -246,9 +247,9 @@ public class InnerEngine {
             Rolling the dice
             Moving the Pawn where the dice show
                 If Draw Card Square -> Draw according Card
-                If Tax Square -> Pay Tax
+                If Tax Square -> Pay Tax, the money will remain on the board
                 If Go To Jail Square -> Go to Jail
-                If Free Park -> Pass
+                If Free Park -> Get the money that accumulated through paying taxes
                 If Property Square
                     If not bought -> Buy or Pass
                     If bought -> Pay Rent
@@ -287,7 +288,7 @@ public class InnerEngine {
 
         if(oldPosition > player.getCurrentPosition()){
             //Passed GO! Square
-            player.addMoney(2000000, new Currency("tl", 1.0));
+            player.addMoney(Constants.CURRENCY_NAMES[0], Constants.GO_SQUARE_MONEY);
         }
 
         //Get the square where pawn landed
@@ -307,13 +308,11 @@ public class InnerEngine {
             }
             //If Tax Square
             else if(square.getType() == SquareType.TaxSquare){
-                //Get the property card
-                var prop = getSpecificProperty(square.getId());
-                assert prop != null;
-                //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                //player.removeMoney(prop.getRentPrices().get(0), new Currency("tl", 1.0));
+                // Get the tax amount
+                int taxAmount = square.getCost();
+                player.removeMoney(Constants.CURRENCY_NAMES[0], taxAmount);
                 players.set(currentPlayerId, player);
-                //addToLog("pad tax of " + (prop.getRentPrices().get(0)).toString(), player.getName());
+                addToLog("paid tax of " + taxAmount, player.getName());
                 return 0;
             }
             //If Go to Jail Square
@@ -327,7 +326,13 @@ public class InnerEngine {
             }
             //If Free Parking Square, do nothing...
             else if(square.getType() == SquareType.FreeParkingSquare){
-                players.set(currentPlayerId, player);
+                int taxAmountOnBoard = board.getMoneyOnBoard();
+                if (taxAmountOnBoard != 0) {
+                    player.addMoney(Constants.CURRENCY_NAMES[0], taxAmountOnBoard);
+                    board.removeFromTaxMoney();
+                    players.set(currentPlayerId, player);
+                    addToLog("got the money on the board with the amount of " + taxAmountOnBoard + " Monopoly Dollars", player.getName());
+                }
                 return 0;
             }else{
                 //If pawn of the player landed on a property square :D Hardest part coming...
@@ -344,9 +349,9 @@ public class InnerEngine {
                     int rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
 
                     //Remove money from current player
-                    player.removeMoney(rentAmount, new Currency("tl", 1.0));
+                    player.removeMoney(Constants.CURRENCY_NAMES[0], rentAmount);
                     //Add money to other player
-                    payingPlayer.addMoney(rentAmount, new Currency("tl", 1.0));
+                    payingPlayer.addMoney(Constants.CURRENCY_NAMES[0], rentAmount);
 
                     //Set players
                     players.set(currentPlayerId, player);
@@ -413,7 +418,7 @@ public class InnerEngine {
         board.getSquares().get(squareIndex).setLevel(-1);
         PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
-        player.addMoney(moneyToAdd, new Currency("tl", 1.0));
+        player.addMoney(Constants.CURRENCY_NAMES[0], moneyToAdd);
 
     }
     public void dismortgagePlace(int squareIndex) {
@@ -422,7 +427,7 @@ public class InnerEngine {
         board.getSquares().get(squareIndex).setLevel(0);
         PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
         int moneyToRemove = currentPlace.getMortgagePrice();
-        player.removeMoney(moneyToRemove, new Currency("tl", 1.0));
+        player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToRemove);
     }
 
     public void continueAuction(int bidIncrease){
@@ -485,7 +490,7 @@ public class InnerEngine {
 
         board.build(buildingType, squareToBuild.getId());
 
-        player.removeMoney(money, new Currency("tl", 1.0));
+        player.removeMoney(Constants.CURRENCY_NAMES[0], money);
 
         addToLog("built structures on the property: " + propertyCards.get(squareToBuild.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
@@ -507,7 +512,7 @@ public class InnerEngine {
 
         board.destroy(buildingType, squareToDestruct.getId());
 
-        player.addMoney(money, new Currency("tl", 1.0));
+        player.addMoney(Constants.CURRENCY_NAMES[0], money);
         addToLog("built structures on the property: " + propertyCards.get(squareToDestruct.getId()).getName(), player.getName());
         players.set(currentPlayerId, player);
     }
@@ -546,8 +551,7 @@ public class InnerEngine {
                                 //If passed GO! Square during move
                                 int currentPosition = player.getCurrentPosition();
                                 if(currentPosition > moveToIndex){
-                                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                                    player.addMoney(2000000, new Currency("tl", 1.0));
+                                    player.addMoney(Constants.CURRENCY_NAMES[0], Constants.GO_SQUARE_MONEY);
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
@@ -567,15 +571,14 @@ public class InnerEngine {
                                 }
                             }
                         }
-                        //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                        player.removeMoney(housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels(), new Currency("tl", 1.0));
+
+                        player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
                         players.set(currentPlayerId, player);
                         return 5;
                     }
                 }else{
                     //If not composed or moving, hence paying money
-                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                    player.removeMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                    player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
                     players.set(currentPlayerId, player);
                     return 6;
                 }
@@ -616,8 +619,7 @@ public class InnerEngine {
                                 //If passed GO! Square during move
                                 int currentPosition = player.getCurrentPosition();
                                 if(currentPosition > moveToIndex){
-                                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                                    player.addMoney(2000000, new Currency("tl", 1.0));
+                                    player.addMoney(Constants.CURRENCY_NAMES[0], Constants.GO_SQUARE_MONEY);
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
@@ -637,18 +639,17 @@ public class InnerEngine {
                                 }
                             }
                         }
-                        //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                        player.removeMoney(housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels(), new Currency("tl", 1.0));
+                        player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
                         players.set(currentPlayerId, player);
                         return 5;
                     }else if(cardDrawn.isEachPlayerIncluded()){
                         //Or paying money to other players
-                        player.removeMoney(cardDrawn.getMoneyOwe() * players.size()-1, new Currency("tl", 1.0));
+                        player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe() * players.size() - 1);
                         players.set(currentPlayerId, player);
                         for (int i = 0; i < players.size(); i++) {
                             if(i != currentPlayerId){
                                 var otherPlayer = players.get(i);
-                                otherPlayer.addMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                                otherPlayer.addMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
                                 players.set(i, otherPlayer);
                             }
                         }
@@ -656,8 +657,7 @@ public class InnerEngine {
                     }
                 }else{
                     //If not composed or moving, hence paying money
-                    //TODO: CURRENCY İÇİM DÜZENLEME LAZIM
-                    player.removeMoney(cardDrawn.getMoneyOwe(), new Currency("tl", 1.0));
+                    player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
                     players.set(currentPlayerId, player);
                     return 6;
                 }
@@ -792,7 +792,7 @@ public class InnerEngine {
 
         if (currentPlayer.isOwned(currentPlace)) {
             if (squareLevel == -1){
-                if (currentPlayer.getMoney() >= dismortgageMoney){
+                if (currentPlayer.getMonopolyMoneyAmount() >= dismortgageMoney){
                     System.out.println("Player can dismortgage");
                     return true;
                 }
@@ -816,8 +816,7 @@ public class InnerEngine {
         System.out.println(toGetCostOfPropertyCard.getName());
         if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
-                assert toGetCostOfPropertyCard != null;
-                if (currentPlayer.getMoney() >= toGetCostOfPropertyCard.getCost()){
+                if (currentPlayer.getMonopolyMoneyAmount() >= toGetCostOfPropertyCard.getCost()){
                     System.out.println("Player can buy this property ");
                     return true;
                 }
@@ -850,7 +849,7 @@ public class InnerEngine {
         int colorsCountOnPlayer = countPlayersColor(squareToBuild);
         int houseCountOnSquare = squareToBuild.getHouseCount();
         int hotelCountOnSquare = squareToBuild.getHotelCount();
-        int currentMoney = currentPlayer.getMoney();
+        int currentMoney = currentPlayer.getMonopolyMoneyAmount();
         int squareLevel = squareToBuild.getLevel();
 
         PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToBuildIndex);
