@@ -12,6 +12,14 @@ public class OuterEngine {
     public OuterEngine() {
     }
 
+    public void setHosterNick(String hosterNick){
+        this.hosterNick = hosterNick;
+    }
+
+    public String getHosterNick(){
+        return this.hosterNick;
+    }
+
     //Functions
     public void singlePlayGame(){}
 

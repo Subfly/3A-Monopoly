@@ -97,7 +97,7 @@
                   <Image url="@sources/outer-controller/nick-handler.png" />
                </image>
             </ImageView>
-            <TextArea id="nick-handler-field" cacheShape="false" centerShape="false" layoutX="710.0" layoutY="530.0" onKeyPressed="#nick_handler" pickOnBounds="false" prefHeight="60.0" prefWidth="500.0" scaleShape="false" wrapText="true">
+            <TextArea id="nick-handler-field" fx:id="nick_handler_field" cacheShape="false" centerShape="false" layoutX="710.0" layoutY="530.0" onKeyPressed="#nick_handler" pickOnBounds="false" prefHeight="60.0" prefWidth="500.0" scaleShape="false" wrapText="true">
                <font>
                   <Font name="System Bold" size="20.0" />
                </font>

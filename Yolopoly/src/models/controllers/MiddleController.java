@@ -6,11 +6,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.InputMethodTextRun;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import javafx.scene.text.Text;
 import models.Player;
+import models.engines.InnerEngine;
 import models.engines.MiddleEngine;
+import models.engines.OuterEngine;
+import sample.Main;
+
+import java.util.ArrayList;
 
 import static sample.Main.changeScreen;
 
@@ -48,26 +53,34 @@ public class MiddleController {
     ImageView[] pawn_players;
 
     MiddleEngine me;
-    Player player;
+    OuterEngine oe;
+    InnerEngine ie;
 
     int player_count;
     int bot_count;
     String nickname;
 
-
-    public MiddleController() {
-        this.nickname = "Ali Taha Falan"; //TODO
-        this.player_count = 1;
-        this.bot_count = 0;
-
-        player_list_grid = new GridPane();
-
-        me = new MiddleEngine(nickname);
-    }
-
     final String LOBBY_SETTINGS = "sources/lobby-settings/";
     final String LOBBY_PAWNS = "sources/lobby-settings/pawns/";
     final String PNG = ".png";
+
+    ArrayList<Integer> availablePawns;
+    int oldPown = 1;
+
+    public MiddleController() {
+        me = Main.getMiddleEngine();
+        oe = Main.getOuterEngine();
+        ie = Main.getInnerEngine();
+
+        this.nickname = oe.getHosterNick();
+        this.player_count = 1;
+        this.bot_count = 0;
+
+        me.getAdmin().setName(nickname);
+        me.getAdmin().setPawnIndex(1);
+
+        player_list_grid = new GridPane();
+    }
 
     @FXML
     public void initialize() {
@@ -77,44 +90,61 @@ public class MiddleController {
         nick_player_labels = new Label[]{nick_player_0, nick_player_1, nick_player_2, nick_player_3, nick_player_4, nick_player_5, nick_player_6, nick_player_7};
         kick_player_buttons = new ImageView[]{kick_player_1, kick_player_2, kick_player_3, kick_player_4, kick_player_5, kick_player_6, kick_player_7};
         pawn_players = new ImageView[]{pawn_player_0, pawn_player_1, pawn_player_2, pawn_player_3, pawn_player_4, pawn_player_5, pawn_player_6, pawn_player_7};
+        availablePawns = new ArrayList<>();
+
+        me.setGameTheme(GameTheme.vanilla);
+        me.setGameMode(GameMode.vanilla);
+
+        for (int i = 2;i<=8;i++){
+            availablePawns.add(i);
+        }
 
         set_all_images();
     }
 
-    private void delete_bot_GUI_helper(){
-        pawn_players[player_count].setVisible(false);
-        nick_player_labels[player_count].setVisible(false);
-        kick_player_buttons[player_count-1].setVisible(false);
-    }
-
-    private void add_bot_GUI_helper(){
-        pawn_players[player_count-1].setVisible(true);
-        nick_player_labels[player_count-1].setVisible(true);
-        kick_player_buttons[player_count-2].setVisible(true);
+    private void changePlayerList(){
+        int max = 8;
+        for (int i = 1; i < max; i++){
+            pawn_players[i].setVisible(false);
+            nick_player_labels[i].setVisible(false);
+            kick_player_buttons[i-1].setVisible(false);
+        }
+        for (int i = 1;i < player_count;i++){
+            pawn_players[i].setVisible(true);
+            nick_player_labels[i].setVisible(true);
+            nick_player_labels[i].setText(me.getPlayerArrayList().get(i).getName());
+            kick_player_buttons[i-1].setVisible(true);
+            set_image_helper(pawn_players[i], LOBBY_PAWNS, "pawn-" + me.getPlayerArrayList().get(i).getPawnIndex());
+        }
     }
 
     @FXML
-    private void kick_player(){
-        if (me.deleteBot()){
-            player_count--;
-            bot_count--;
-            set_lobby_size_min();
-            delete_bot_GUI_helper();
-            set_log("Bot has been kicked");
-        }
-        else {
-            set_log("There is no bot!");
-        }
+    private void kick_player(MouseEvent e){
+        int index = Integer.parseInt(e.getPickResult().getIntersectedNode().getId().replace("kick_player_", ""));
+        availablePawns.add(me.getPlayerArrayList().get(index).getPawnIndex());
+        me.kickPlayer(index);
+        player_count--;
+        bot_count--;
+        set_lobby_size_min();
+        changePlayerList();
+        set_log("Bot has been kicked");
+        setAvailablePawnsGUI();
     }
 
     @FXML
     private void add_bot(){
         if (me.addBot()){
+            Player tmpBot = me.getPlayerArrayList().get(player_count);
+            int randomIndexForBotPawnFalan = (int)(Math.random()*(8 - player_count));
+            tmpBot.setPawnIndex(availablePawns.get(randomIndexForBotPawnFalan));
+            set_image_helper(pawn_players[player_count], LOBBY_PAWNS, "pawn-" + availablePawns.get(randomIndexForBotPawnFalan));
+            availablePawns.remove(randomIndexForBotPawnFalan);
             player_count++;
             bot_count++;
             set_lobby_size_min();
-            add_bot_GUI_helper();
+            changePlayerList();
             set_log("Bot has been added");
+            setAvailablePawnsGUI();
         }
         else {
             set_log("Max player! Cannot add bot!");
@@ -123,9 +153,14 @@ public class MiddleController {
 
     @FXML
     public void change_pawn(MouseEvent e){
+        availablePawns.add(oldPown);
         int chosen_pawn = Integer.parseInt(e.getPickResult().getIntersectedNode().getId().replace("pawn_button", ""));
         pawn_GUI_helper(false, chosen_pawn);
         set_log("Pawn has been changed");
+        me.getAdmin().setPawnIndex(chosen_pawn);
+        availablePawns.remove((Integer)(chosen_pawn));
+        oldPown = chosen_pawn;
+        setAvailablePawnsGUI();
     }
 
     @FXML
@@ -152,27 +187,42 @@ public class MiddleController {
         set_log("Lobby size changed to " + lobby_size_option);
     }
 
+    private void setAvailablePawnsGUI(){
+        String pawn_image_name = "pawn-";
+        for (int i = 0; i < pawn_buttons.length; i++){
+            set_image_helper(pawn_buttons[i], LOBBY_PAWNS, pawn_image_name + (i+1));
+            pawn_buttons[i].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 8, 0, 0, 0);");
+            pawn_buttons[i].setDisable(true);
+        }
+        for (Integer i : availablePawns){
+            set_image_helper(pawn_buttons[i-1], LOBBY_PAWNS, pawn_image_name + i);
+            pawn_buttons[i-1].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(217,24,40,0.6), 8, 0, 0, 0);");
+            pawn_buttons[i-1].setDisable(false);
+        }
+        pawn_buttons[oldPown - 1].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(86,191,132,0.6), 8, 0, 0, 0);");
+    }
+
     private void pawn_GUI_helper(boolean initial, int chosen_pawn){
         if (initial){
-            String pawn_image_name = "pawn-";
             for (int i = 0; i < pawn_buttons.length; i++){
+                String pawn_image_name = "pawn-";
                 set_image_helper(pawn_buttons[i], LOBBY_PAWNS, pawn_image_name + (i+1));
                 pawn_buttons[i].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(217,24,40,0.6), 8, 0, 0, 0);");
             }
         }
         else {
-            for (int i = 0; i < pawn_buttons.length; i++){
-                pawn_buttons[i].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(217,24,40,0.6), 8, 0, 0, 0);");
+            for (ImageView pawn_button : pawn_buttons) {
+                pawn_button.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(217,24,40,0.6), 8, 0, 0, 0);");
             }
         }
         pawn_buttons[chosen_pawn-1].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(86,191,132,0.6), 8, 0, 0, 0);");
-        set_image_helper(pawn_players[0], LOBBY_PAWNS, "pawn-" + chosen_pawn);
+        set_image_helper(pawn_player_0, LOBBY_PAWNS, "pawn-" + chosen_pawn);
     }
 
     private void set_lobby_size_min(){
-        for (int i = 0; i < lobby_size_buttons.length; i++){
-            lobby_size_buttons[i].setDisable(false);
-            lobby_size_buttons[i].setStyle("-fx-opacity: 100%");
+        for (ImageView lobby_size_button : lobby_size_buttons) {
+            lobby_size_button.setDisable(false);
+            lobby_size_button.setStyle("-fx-opacity: 100%");
         }
         for (int i = 0; i < player_count - 2; i++){
             lobby_size_buttons[i].setDisable(true);
@@ -210,7 +260,6 @@ public class MiddleController {
         set_image_helper(lobby_size_buttons[lobby_size_option-2], LOBBY_SETTINGS, image_name);
     }
 
-
     @FXML
     public void closeButtonPressed() throws Exception{
         changeScreen("../models/controllers/OuterController.fxml");
@@ -218,6 +267,7 @@ public class MiddleController {
 
     @FXML
     public void readyButtonPressed() throws Exception{
+        ie.initializeGame(false, me.getGameMode(), me.getGameTheme(), me.getPlayerArrayList());
         changeScreen("../models/controllers/InnerController.fxml");
     }
 
@@ -225,21 +275,16 @@ public class MiddleController {
     public void set_all_images(){
         //Lobby Size Buttons
         lobby_size_GUI_helper(2);
-
         //Mode Buttons
         mode_GUI_helper("vanilla");
-
         //Theme Buttons
         theme_GUI_helper("vanilla");
-
         //Pawn Buttons
         pawn_GUI_helper(true, 1);
-
         //Player's Info
         set_image_helper(pawn_players[0], LOBBY_PAWNS, "pawn-1");
         nick_player_0.setText(nickname);
         lobby_heading.setText(nickname + "'s Lobby - Player List");
-
         //For debug but at least log?
         test_label.setText("Welcome to Yolopoly!");
     }

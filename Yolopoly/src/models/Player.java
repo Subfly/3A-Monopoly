@@ -31,6 +31,8 @@ public class Player {
     private boolean isBankrupt;
     private ArrayList<PropertyCard> ownedPlaces;
     private ArrayList<DrawableCard> savedCards;
+    private int pawnIndex;
+
 
     public boolean isGetLoanCurrently() {
         return getLoansCurrently;
@@ -59,6 +61,14 @@ public class Player {
 
     public void setLoan(int loan) {
         this.loan = loan;
+    }
+
+    public int getPawnIndex() {
+        return pawnIndex;
+    }
+
+    public void setPawnIndex(int pawnIndex) {
+        this.pawnIndex = pawnIndex;
     }
 
     private int loan;
@@ -118,6 +128,8 @@ public class Player {
         }
         return null;
     }
+
+
 
 
     /**
