@@ -669,6 +669,36 @@ public class InnerEngine {
     // Checker Functions
     //************
 
+    public HashMap<String, Boolean> checkLevelStatus(int squareIndex){
+        Player player = players.get(currentPlayerId);
+        Square square = board.getSpecificSquare(squareIndex);
+        PropertyCard card = getSpecificProperty(squareIndex);
+
+        HashMap<String, Boolean> returningHash = new HashMap<>();
+
+        if(currentPlayerId == card.getOwnedBy()){
+            if(square.getLevel() == 5){
+                returningHash.put("levelUp", false);
+            }
+            if(square.getLevel() == -1){
+                returningHash.put("levelDown", false);
+            }
+            if(checkBuildBuilding(Building.House, square).containsKey(true) || checkBuildBuilding(Building.Hotel, square).containsKey(true)){
+                returningHash.put("levelUp", true);
+            }
+            if(checkDestructBuilding(Building.House, square).containsKey(true) || checkDestructBuilding(Building.Hotel, square).containsKey(true)){
+                returningHash.put("levelDown", true);
+            }
+            if(checkMortgage(player, square)){
+                returningHash.put("levelDown", true);
+            }
+            if(checkDismortgage(player, square)){
+                returningHash.put("levelUp", true);
+            }
+        }
+        return returningHash;
+    }
+
     public boolean checkBrokenStatus(){
         if(brokenPlayers.size() == 0){
             this.state = GameState.Linear;
@@ -772,7 +802,7 @@ public class InnerEngine {
 
                 int priceOfAHouse = currentPlace.getHousePrice();
 
-                if (squareToBuild.isHouseCheck()  ){  // Checks the square has a house once or not
+                if (squareToBuild.isHouseCheck()){  // Checks the square has a house once or not
 
                     if (board.hasHouseAllSquares(squareToBuild)){   // Checks other squares have houses or not
                         int availableHouses = 4 - houseCountOnSquare;
