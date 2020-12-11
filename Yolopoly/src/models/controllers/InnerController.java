@@ -150,7 +150,7 @@ public class InnerController {
         pawns_of_players = new ArrayList<>();
         indexes_of_players = new ArrayList<>();
 
-        square_bars = new ImageView[]{sq_bar1, sq_bar3, sq_bar6, sq_bar8,sq_bar9, sq_bar11, sq_bar13, sq_bar14, sq_bar16, sq_bar18, sq_bar19, sq_bar21, sq_bar23, sq_bar24, sq_bar26, sq_bar27, sq_bar29, sq_bar31, sq_bar32, sq_bar34, sq_bar37, sq_bar39};
+        square_bars = new ImageView[]{sq_bar1, sq_bar3, sq_bar6, sq_bar8, sq_bar9, sq_bar11, sq_bar13, sq_bar14, sq_bar16, sq_bar18, sq_bar19, sq_bar21, sq_bar23, sq_bar24, sq_bar26, sq_bar27, sq_bar29, sq_bar31, sq_bar32, sq_bar34, sq_bar37, sq_bar39};
         pawns = new ImageView[]{pawn_1, pawn_2, pawn_3, pawn_4, pawn_5, pawn_6, pawn_7, pawn_8};
         player_indexes = new ImageView[]{player_index1, player_index2, player_index3, player_index4, player_index5, player_index6, player_index7, player_index8};
         pawnTeam1 = new ArrayList<>();
@@ -193,35 +193,36 @@ public class InnerController {
     int turn = 0;
 
     @FXML
-    private void level_up(){
-        ie.buyProperty();
+    private void level_up() {
+        ie.levelUp(last_index_of_info_card);
         update_square_info();
         set_log();
     }
 
     @FXML
-    private void level_down(){
-
+    private void level_down() {
+        ie.levelDown(last_index_of_info_card);
+        update_square_info();
+        set_log();
     }
 
     @FXML
     public void actionButtonPressed() {
-        if (!pressedEndTurn){
+        if (!pressedEndTurn) {
             pressedEndTurn = true;
 
             turn++;
             turn = turn % pawns_of_players.size();
             set_turn_GUI();
-            square_update_GUI();
+            //square_update_GUI();
             ie.endTurn();
-        }
-        else
+        } else
             testTextField.setText("Tur sende değil göt");
     }
 
-    private void set_log(){
+    private void set_log() {
         StringBuilder tmpLog = new StringBuilder();
-        for (String i : ie.getLog()){
+        for (String i : ie.getLog()) {
             tmpLog.append(i + "\n");
         }
         test_label.setText(tmpLog.toString());
@@ -315,9 +316,7 @@ public class InnerController {
         set_log();
     }
 
-    int lastIndexOfCard = -1;
-
-    private boolean is_square(Square s, String type){
+    private boolean is_square(Square s, String type) {
         return switch (type) {
             case "buy" -> s.getType() == SquareType.NormalSquare || s.getType() == SquareType.RailroadSquare || s.getType() == SquareType.UtilitySquare;
             case "build" -> s.getType() == SquareType.NormalSquare;
@@ -325,7 +324,7 @@ public class InnerController {
         };
     }
 
-    private void update_square_info(){
+    private void update_square_info() {
         int squareId = ie.getBoard().getSquares().get(last_index_of_info_card).getId();
         PropertyCard tmpcard = ie.getSpecificProperty(squareId);
         Square tmpSquare = ie.getBoard().getSpecificSquare(squareId);
@@ -338,67 +337,61 @@ public class InnerController {
             sell_button.setVisible(true);
             assert tmpcard != null;
             if (ie.getOwner(squareId) != null) {
-                setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                if (tmpSquareLevel != -1){
+                    setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                }
+                else {
+                    setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), 0);
+                }
             } else {
                 setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
             }
         } else {
             System.out.println("ehelelele");
         }
-    }
 
-    int last_index_of_info_card = -1;
-    String  last_tmp_index_of_info_card = "";
-
-    @FXML
-    public void get_square_info(MouseEvent e) throws NullPointerException {
-
-
-        //get index
-
-        //check burda olcak
-        //ie.checkBuyProperty()
-        //checkin duruma göre level up level down açılcak
-
-
-
-        String tmpIndex = e.getSource().toString().substring(13, 21).replace(',', ' ').trim();
-        int index = Integer.parseInt(tmpIndex.replace("index", ""));
-        last_index_of_info_card = index;
-        last_tmp_index_of_info_card = tmpIndex;
-        int squareId = ie.getBoard().getSquares().get(index).getId();
-        PropertyCard tmpcard = ie.getSpecificProperty(squareId);
-        Square tmpSquare = ie.getBoard().getSpecificSquare(squareId);
-        if (lastIndexOfCard != index) {
-            lastIndexOfCard = index;
-            if (is_square(tmpSquare, "buy")) {
-                int tmpSquareLevel = tmpSquare.getLevel();
-                card_image.setVisible(true);
-                try{
-                    card_image.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/" + tmpIndex + ".png")));
-                    info_card.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/info-card.png")));
-                    buy_button.setVisible(true);
-                    sell_button.setVisible(true);
-                    assert tmpcard != null;
-                    if (ie.getOwner(squareId) != null) {
-                        setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
-                    } else {
-                        setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
-                    }
-                }
-                catch (NullPointerException npe){
-                    System.out.println(npe.getMessage());
-                }
+        try {
+            boolean levelUp = ie.checkLevelStatus(last_index_of_info_card).get(lvup);
+            boolean levelDown = ie.checkLevelStatus(last_index_of_info_card).get(lvdw);
+            if (levelUp) {
+                buy_button.setDisable(false);
+                buy_button.setStyle("-fx-opacity: 1");
             } else {
-                System.out.println("ehelelele");
+                buy_button.setDisable(true);
+                buy_button.setStyle("-fx-opacity: 0.5");
             }
-        } else {
-            lastIndexOfCard = -1;
-            clear_indexes();
+            if (levelDown) {
+                sell_button.setDisable(false);
+                sell_button.setStyle("-fx-opacity: 1");
+            } else {
+                sell_button.setDisable(true);
+                sell_button.setStyle("-fx-opacity: 0.5");
+            }
+        } catch (NullPointerException npe) {
+            System.out.println("yarrak kafası " + npe.getMessage());
         }
     }
 
-    private void set_turn_GUI(){
+    int last_index_of_info_card = -1;
+    String last_tmp_index_of_info_card = "";
+
+    final String lvup = "levelUp";
+    final String lvdw = "levelDown";
+
+    @FXML
+    public void get_square_info(MouseEvent e) throws NullPointerException {
+        if (last_index_of_info_card == -1){
+            last_tmp_index_of_info_card = e.getSource().toString().substring(13, 21).replace(',', ' ').trim();
+            last_index_of_info_card = Integer.parseInt(last_tmp_index_of_info_card.replace("index", ""));
+            update_square_info();
+        }
+        else {
+            clear_indexes();
+            last_index_of_info_card = -1;
+        }
+    }
+
+    private void set_turn_GUI() {
         int i = 0;
         for (ImageView player_index : indexes_of_players) {
             player_index.setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
@@ -410,26 +403,23 @@ public class InnerController {
         indexes_of_players.get(turn).setStyle("-fx-effect: dropshadow(three-pass-box, rgb(55,199,219), 8, 0, 0, 0);");
     }
 
-    private void square_update_GUI(){
+    private void square_update_GUI() {
         int i = 0;
-        for (Square s : ie.getBoard().getSquares()){
+        for (Square s : ie.getBoard().getSquares()) {
             String position;
             int id = s.getId();
-            if (id <= 10 || (id >= 20 && id <= 30)){
+            if (id <= 10 || (id >= 20 && id <= 30)) {
                 position = "v";
-            }
-            else
+            } else
                 position = "h";
-            if (is_square(s, "build")){
+            if (is_square(s, "build")) {
                 String deneme;
-                if (s.getLevel() == 0){
+                if (s.getLevel() == 0) {
                     square_bars[i].setVisible(false);
-                }
-                else if(s.getLevel() == 5){
+                } else if (s.getLevel() == 5) {
                     deneme = "sources/squares/sq-hotel-" + position + ".png";
                     square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
-                }
-                else {
+                } else {
                     deneme = "sources/squares/sq-house-" + s.getLevel() + "-" + position + ".png";
                     square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
                 }
@@ -515,7 +505,7 @@ public class InnerController {
     }
 
     //Image Set Helper
-    public void set_image_helper(ImageView iv, String path, String name){
+    public void set_image_helper(ImageView iv, String path, String name) {
         iv.setImage(new Image(getClass().getResourceAsStream(path + name + PNG)));
     }
 

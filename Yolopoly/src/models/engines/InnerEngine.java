@@ -66,6 +66,7 @@ public class InnerEngine {
 
             for (Player p : players){
                 p.setCurrentPosition(0);
+                p.setMoney(20000000);
             }
         }
     }
@@ -78,7 +79,6 @@ public class InnerEngine {
     //************
     public Player getOwner(int squareIndex){
         var prop = getSpecificProperty(squareIndex);
-        System.out.println(prop.getOwnedBy() + " " + prop.getName());
         if(prop.getOwnedBy() != -1){
             return players.get(prop.getOwnedBy());
         }
@@ -407,19 +407,20 @@ public class InnerEngine {
         }
         this.currentPlayerAuctioning = 0;
     }
-    public void mortgagePlace(Player player, Square square ) {
-
-        player.getOwnedPlaces().get(square.getId()).setMortgaged(true);
-        square.setLevel(-1);
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(square.getId());
+    public void mortgagePlace(int squareIndex) {
+        Player player = players.get(getCurrentPlayerId());
+        player.getSpecificCard(squareIndex).setMortgaged(true);
+        board.getSquares().get(squareIndex).setLevel(-1);
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
         player.addMoney(moneyToAdd, new Currency("tl", 1.0));
 
     }
-    public void dismortgagePlace(Player player, Square square) {
-        player.getOwnedPlaces().get(square.getId()).setMortgaged(false);
-        square.setLevel(0);
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(square.getId());
+    public void dismortgagePlace(int squareIndex) {
+        Player player = players.get(getCurrentPlayerId());
+        player.getSpecificCard(squareIndex).setMortgaged(false);
+        board.getSquares().get(squareIndex).setLevel(0);
+        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
         int moneyToRemove = currentPlace.getMortgagePrice();
         player.removeMoney(moneyToRemove, new Currency("tl", 1.0));
     }
@@ -665,6 +666,57 @@ public class InnerEngine {
         return 0;
     }
 
+    public void levelUp(int squareIndex){
+        Square square = board.getSpecificSquare(squareIndex);
+        int level = square.getLevel();
+
+        if (level == -1){
+            dismortgagePlace(squareIndex);
+        }
+        else if (level == 0 && !square.isBought()){
+            buyProperty();
+        }
+        else if(level == 0 && square.isBought()){
+            buildBuilding(Building.House, squareIndex);
+        }
+        else if(level == 1){
+            buildBuilding(Building.House, squareIndex);
+        }
+        else if(level == 2){
+            buildBuilding(Building.House, squareIndex);
+        }
+        else if(level == 3){
+            buildBuilding(Building.House, squareIndex);
+        }
+        else if(level == 4){
+            buildBuilding(Building.Hotel, squareIndex);
+        }
+    }
+
+    public void levelDown(int squareIndex){
+        Square square = board.getSpecificSquare(squareIndex);
+        int level = square.getLevel();
+
+        if (level == 5){
+            destructBuilding(Building.Hotel, squareIndex);
+        }
+        else if(level == 4){
+            destructBuilding(Building.House, squareIndex);
+        }
+        else if(level == 3){
+            destructBuilding(Building.House, squareIndex);
+        }
+        else if(level == 2){
+            destructBuilding(Building.House, squareIndex);
+        }
+        else if(level == 1){
+            destructBuilding(Building.House, squareIndex);
+        }
+        else if(level == 0){
+            mortgagePlace(squareIndex);
+        }
+    }
+
     //************
     // Checker Functions
     //************
@@ -677,24 +729,30 @@ public class InnerEngine {
         HashMap<String, Boolean> returningHash = new HashMap<>();
 
         if(currentPlayerId == card.getOwnedBy()){
-            if(square.getLevel() == 5){
+            if(checkBuildBuilding(Building.House, square).containsKey(true) || checkBuildBuilding(Building.Hotel, square).containsKey(true) || checkDismortgage(player, square)){
+                returningHash.put("levelUp", true);
+            } else{
                 returningHash.put("levelUp", false);
             }
-            if(square.getLevel() == -1){
+
+            if(checkDestructBuilding(Building.House, square).containsKey(true) || checkDestructBuilding(Building.Hotel, square).containsKey(true) || checkMortgage(player, square)){
+                returningHash.put("levelDown", true);
+            } else{
                 returningHash.put("levelDown", false);
             }
-            if(checkBuildBuilding(Building.House, square).containsKey(true) || checkBuildBuilding(Building.Hotel, square).containsKey(true)){
+        }
+        else if(currentPlayerId != card.getOwnedBy() && card.getOwnedBy() != -1){
+            returningHash.put("levelUp", false);
+            returningHash.put("levelDown", false);
+        }
+        else {
+            if (checkBuyProperty(squareIndex)){
                 returningHash.put("levelUp", true);
             }
-            if(checkDestructBuilding(Building.House, square).containsKey(true) || checkDestructBuilding(Building.Hotel, square).containsKey(true)){
-                returningHash.put("levelDown", true);
+            else {
+                returningHash.put("levelUp", false);
             }
-            if(checkMortgage(player, square)){
-                returningHash.put("levelDown", true);
-            }
-            if(checkDismortgage(player, square)){
-                returningHash.put("levelUp", true);
-            }
+            returningHash.put("levelDown", false);
         }
         return returningHash;
     }
@@ -751,11 +809,11 @@ public class InnerEngine {
         }
         return false;
     }
-    public boolean checkBuyProperty(){
+    public boolean checkBuyProperty(int index){
         Player currentPlayer = players.get(currentPlayerId);
-        Square squareToBuy = board.getSpecificSquare(currentPlayer.getCurrentPosition());
+        Square squareToBuy = board.getSpecificSquare(index);
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
-
+        System.out.println(toGetCostOfPropertyCard.getName());
         if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 assert toGetCostOfPropertyCard != null;
