@@ -153,6 +153,15 @@ public class InnerEngine {
         return this.players.get(currentPlayerId).isHuman();
     }
 
+    /*
+     * RETURN VALUES
+     * -100 => ERROR OCCUR
+     * -99 => BANKRUPT, ACCEPT DIRECTLY
+     * -98 => PAID DEBTS
+     * -97 => FREELY MADE DECISIONS
+     * VALUE BETWEEN -90 TO 0 => MOVE BACKWARDS
+     * VALUE BETWEEN 0 TO 39 => MOVE TO INDEX
+     */
     public int makeDecision(int diceResult, boolean isDouble){
         double multiplier = 1;
         if (this.gameMode ==  GameMode.bankman) {
@@ -166,18 +175,6 @@ public class InnerEngine {
         if(result == -99){
             return payDebtBot(bot);
         }else if(result == 1){
-            /*
-             * RETURN VALUES EXPLAINED
-             * -99 => PLAYER BROKE
-             * 1 => DRAWN GOOJC
-             * 2 => DRAWN GTJC
-             * 3 => CHANGED POSITION FORWARD
-             * 4 => CHANGED POSITION TO INDEX
-             * 5 => PAY MONEY FOR BUILDINGS
-             * 6 => PAY TO BANK
-             * 7 => BIRTHDAY GIFT BABY!
-             * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
-             */
             int cardRes = drawCard(DrawableCardType.Chance);
             if (cardRes == -99){
                 return payDebtBot(bot);
@@ -191,7 +188,7 @@ public class InnerEngine {
                  * SO MOVE AGAIN WITH RETURN VALUE
                  * CHECK WITH if(result < 0 && result > -90)
                  */
-                return cardRes;
+                return -cardRes;
             }else if(cardRes == 4){
                 //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
                 /*
@@ -218,7 +215,7 @@ public class InnerEngine {
                  * SO MOVE AGAIN WITH RETURN VALUE
                  * CHECK WITH if(result < 0 && result > -90)
                  */
-                return cardRes;
+                return -cardRes;
             }else if(cardRes == 4){
                 //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
                 /*
@@ -248,7 +245,7 @@ public class InnerEngine {
                         /*
                          * Same as above
                          */
-                        return cardResAgain;
+                        return -cardResAgain;
                     }else if(cardResAgain == 4){
                         //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
                         /*
@@ -512,8 +509,12 @@ public class InnerEngine {
      * RETURN VALUES
      * 1 => NORMAL END
      * 2 => DID NOT PAID LOANS
+     * 3 => GAME DONE, REMAINING PLAYER WINS!
      */
     public int endTurn(){
+        if(players.size() == 1){
+            return 3;
+        }
         Player player = players.get(currentPlayerId);
         if(player.isBankrupt()){
             //Remove player
@@ -696,7 +697,7 @@ public class InnerEngine {
      * -99 => PLAYER BROKE
      * 1 => DRAWN GOOJC
      * 2 => DRAWN GTJC
-     * 3 => CHANGED POSITION FORWARD
+     * 3 => CHANGED POSITION BACKWARD
      * 4 => CHANGED POSITION TO INDEX
      * 5 => PAY MONEY FOR BUILDINGS
      * 6 => PAY TO BANK
@@ -782,7 +783,6 @@ public class InnerEngine {
         }else{
             var cardDrawn = board.drawCommunityChestCard();
             var player = players.get(currentPlayerId);
-            //Algorithm
             addToLog("drawn a community chest card including message: " + cardDrawn.getMessage(), player.getName());
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
