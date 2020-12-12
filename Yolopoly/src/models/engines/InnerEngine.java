@@ -532,7 +532,7 @@ public class InnerEngine {
             //Return GOOJC
             if(player.getSavedCards().size() != 0){
                 var c = player.removeFromSavedCards();
-                // board.returnSavedCard(c);
+                board.returnSavedCard(c);
             }
             currentPlayerId--;
             //Clear debts :D
