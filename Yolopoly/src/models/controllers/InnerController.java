@@ -1,15 +1,17 @@
 package models.controllers;
 
-import enumerations.Pawn;
 import enumerations.SquareType;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
-import models.Dice;
 import models.Player;
 import models.Square;
 import models.cards.PropertyCard;
@@ -93,7 +95,6 @@ public class InnerController {
         pressedEndTurn = true;
         card_image.setVisible(false);
 
-        //Lazım baya biliyon mu
         ie = Main.getInnerEngine();
         me = Main.getMiddleEngine();
 
@@ -156,6 +157,57 @@ public class InnerController {
         set_log();
     }
 
+    boolean jailedBot = false;
+
+    private void play_bot(){
+        if (!ie.isCurrentPlayerHuman()){
+            if (!ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail()){
+                ie.rollDice();
+
+                int dice1 = ie.getDice().getDice1();
+                int dice2 = ie.getDice().getDice2();
+                int total = ie.getDice().getTotal();
+
+                dice1 = 6;
+                dice2 = 4;
+                total = 10;
+
+                int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
+
+                dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
+                dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
+                movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
+                Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
+                //System.out.println(p.getName() + " " + p.getCurrentPosition());
+                int result = ie.makeDecision(total, dice1 == dice2);
+                jailedBot = ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail();
+                if (ie.getPlayers().get(ie.getCurrentPlayerId()).getDoublesCount() < 1 && !ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail()){
+                    turn++;
+                    turn = turn % pawns_of_players.size();
+                    set_turn_GUI();
+                    System.out.println("turn if " + turn);
+                    ie.endTurn();
+                }
+            }
+            else if (jailedBot){
+                movePawn(pawns_of_players.get(turn), 20, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), 30);
+                jailedBot = false;
+                turn++;
+                turn = turn % pawns_of_players.size();
+                System.out.println("turn else " + turn);
+                set_turn_GUI();
+                ie.endTurn();
+            }
+            else {
+                turn++;
+                turn = turn % pawns_of_players.size();
+                System.out.println("turn else " + turn);
+                set_turn_GUI();
+            }
+            set_log();
+        }
+    }
+
     @FXML
     public void actionButtonPressed() {
         if (!pressedEndTurn) {
@@ -167,26 +219,7 @@ public class InnerController {
                 //square_update_GUI();
                 ie.endTurn();
 
-                while (!ie.isCurrentPlayerHuman()){
-                    ie.rollDice();
-
-                    int dice1 = ie.getDice().getDice1();
-                    int dice2 = ie.getDice().getDice2();
-                    int total = ie.getDice().getTotal();
-
-                    int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
-
-                    dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
-                    dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
-                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-                    Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
-                    //System.out.println(p.getName() + " " + p.getCurrentPosition());
-                    ie.makeDecision(total, dice1 == dice2);
-                    ie.endTurn();
-                    turn++;
-                    turn = turn % pawns_of_players.size();
-                    set_turn_GUI();
-                }
+                play_bot();
             }
         } else
             testTextField.setText("Tur sende değil göt");
@@ -238,19 +271,23 @@ public class InnerController {
                     pawnXtmp -= 80;
                 }
             }
+
+            //hamle hamle gidiyo
+
             oldposition++;
-            oldposition = oldposition % 40; //PÜÜÜÜÜÜÜÜÜÜÜ
+            oldposition = oldposition % 40;
             moveCount--;
 
 //            tmpPawn.setLayoutX(pawnXtmp);
 //            tmpPawn.setLayoutY(pawnYtmp);
 
-            TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
-            tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
-            tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
-            tt.setAutoReverse(false);
-            tt.play();
         }
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
+        tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
+        tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
+        tt.setOnFinished(e -> play_bot());
+        tt.setAutoReverse(false);
+        tt.play();
     }
 
     // B O T
@@ -258,32 +295,26 @@ public class InnerController {
     @FXML
     public void roll_dice() {
         if (pressedEndTurn) {
+            // TODO: Change multiplier later
+
             ie.rollDice();
             int dice1 = ie.getDice().getDice1();
             int dice2 = ie.getDice().getDice2();
-            int total = ie.getDice().getTotal();
+            int dice_total = ie.getDice().getTotal();
 
             int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
 
             dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
-            // TODO: Change multiplier later
-            int test = ie.startTurn(total, dice1 == dice2, 1);
+            int test = ie.startTurn(dice_total, dice1 == dice2, 1);
 
-            int newPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
-
-            movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-            Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
-            //System.out.println(p.getName() + " " + p.getCurrentPosition());
+            movePawn(pawns_of_players.get(turn), dice_total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
             if (test == 3){
                 movePawn(pawns_of_players.get(turn), 20, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
             }
 
-            String oldSt = testTextField.getText();
-            testTextField.setText(oldSt + "\n" + test);
-
-            pressedEndTurn = false;
+            pressedEndTurn = dice1 == dice2;
         } else {
             testTextField.setText("Turu bitir önce");
         }
@@ -343,7 +374,7 @@ public class InnerController {
             }
         } catch (NullPointerException npe) {
             //TODO bak bulcaz artık
-            System.out.println("yarrak kafası " + npe.getMessage());
+            System.out.println(npe.getMessage());
         }
     }
 

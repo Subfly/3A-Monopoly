@@ -204,7 +204,7 @@ public class InnerEngine {
                 multiplier = this.generateChanceMultiplier(diceResult);
             }
         }
-        startTurn(diceResult, isDouble, multiplier);
+        int result = startTurn(diceResult, isDouble, multiplier);
         Player bot = players.get(currentPlayerId);
         if(checkBuyProperty(bot.getCurrentPosition()) && board.getSquares().get(bot.getCurrentPosition()).getType() == SquareType.NormalSquare){
             //Just buy the area
@@ -220,7 +220,7 @@ public class InnerEngine {
             //Build hotel
             buildBuilding(Building.Hotel, randomArea);
         }
-        return 1;
+        return result;
     }
 
     //************
@@ -281,6 +281,9 @@ public class InnerEngine {
         if(hasRolledDouble){
             player.incrementDoublesCount();
         }
+        else {
+            player.resetDoublesCount();
+        }
 
 //        if(player.isThreeTimesDoubled()){
 //            player.setInJail(true);
@@ -323,16 +326,17 @@ public class InnerEngine {
 //                return 0;
 //            }
             //If Go to Jail Square
-//            else if(square.getType() == SquareType.GoToJailSquare){
-//                player.setCurrentPosition(10); //Move to jail hardcode
-//                player.setInJail(true);
-//                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
-//                //players.set(currentPlayerId, player);
-//                addToLog("sent to the jail", player.getName());
-//                return 3;
-//            }
+            if(square.getType() == SquareType.GoToJailSquare){
+                player.setCurrentPosition(10); //Move to jail hardcode
+                player.setInJail(true);
+                player.resetDoublesCount();
+                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
+                //players.set(currentPlayerId, player);
+                addToLog("sent to the jail", player.getName());
+                return 3;
+            }
             //If Free Parking Square, do nothing...
-            if(square.getType() == SquareType.FreeParkingSquare){
+            else if(square.getType() == SquareType.FreeParkingSquare){
                 int taxAmountOnBoard = board.getMoneyOnBoard();
                 if (taxAmountOnBoard != 0) {
                     player.addMoney(Constants.CURRENCY_NAMES[0], taxAmountOnBoard);
