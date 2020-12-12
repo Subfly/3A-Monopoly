@@ -66,64 +66,16 @@ public class InnerController {
 
     public InnerController() {
         //Card Image and Info Card Variables Declaration
-        card_image = new ImageView();
-        house_slot0 = new ImageView();
-        house_slot1 = new ImageView();
-        house_slot2 = new ImageView();
-        house_slot3 = new ImageView();
-        owner_label = new Label();
-        owner_nick = new Label();
-        price_rent_label = new Label();
-        price_rent_value = new Label();
-        sell_button = new ImageView();
-        buy_button = new ImageView();
+        card_image = new ImageView();house_slot0 = new ImageView();house_slot1 = new ImageView();house_slot2 = new ImageView();house_slot3 = new ImageView();owner_label = new Label();owner_nick = new Label();price_rent_label = new Label();price_rent_value = new Label();sell_button = new ImageView();buy_button = new ImageView();
 
         //Hotel and House Bars
-        sq_bar1 = new ImageView();
-        sq_bar3 = new ImageView();
-        sq_bar6 = new ImageView();
-        sq_bar8 = new ImageView();
-        sq_bar9 = new ImageView();
-
-        sq_bar11 = new ImageView();
-        sq_bar13 = new ImageView();
-        sq_bar14 = new ImageView();
-        sq_bar16 = new ImageView();
-        sq_bar18 = new ImageView();
-        sq_bar19 = new ImageView();
-
-        sq_bar21 = new ImageView();
-        sq_bar23 = new ImageView();
-        sq_bar24 = new ImageView();
-        sq_bar26 = new ImageView();
-        sq_bar27 = new ImageView();
-        sq_bar29 = new ImageView();
-
-        sq_bar31 = new ImageView();
-        sq_bar32 = new ImageView();
-        sq_bar34 = new ImageView();
-        sq_bar37 = new ImageView();
-        sq_bar39 = new ImageView();
+        sq_bar1 = new ImageView();sq_bar3 = new ImageView();sq_bar6 = new ImageView();sq_bar8 = new ImageView();sq_bar9 = new ImageView();sq_bar11 = new ImageView();sq_bar13 = new ImageView();sq_bar14 = new ImageView();sq_bar16 = new ImageView();sq_bar18 = new ImageView();sq_bar19 = new ImageView();sq_bar21 = new ImageView();sq_bar23 = new ImageView();sq_bar24 = new ImageView();sq_bar26 = new ImageView();sq_bar27 = new ImageView();sq_bar29 = new ImageView();sq_bar31 = new ImageView();sq_bar32 = new ImageView();sq_bar34 = new ImageView();sq_bar37 = new ImageView();sq_bar39 = new ImageView();
 
         //Players Big Pawn Images
-        player_index1 = new ImageView();
-        player_index2 = new ImageView();
-        player_index3 = new ImageView();
-        player_index4 = new ImageView();
-        player_index5 = new ImageView();
-        player_index6 = new ImageView();
-        player_index7 = new ImageView();
-        player_index8 = new ImageView();
+        player_index1 = new ImageView();player_index2 = new ImageView();player_index3 = new ImageView();player_index4 = new ImageView();player_index5 = new ImageView();player_index6 = new ImageView();player_index7 = new ImageView();player_index8 = new ImageView();
 
         //Pawns
-        pawn_1 = new ImageView();
-        pawn_2 = new ImageView();
-        pawn_3 = new ImageView();
-        pawn_4 = new ImageView();
-        pawn_5 = new ImageView();
-        pawn_6 = new ImageView();
-        pawn_7 = new ImageView();
-        pawn_8 = new ImageView();
+        pawn_1 = new ImageView();pawn_2 = new ImageView();pawn_3 = new ImageView();pawn_4 = new ImageView();pawn_5 = new ImageView();pawn_6 = new ImageView();pawn_7 = new ImageView();pawn_8 = new ImageView();
 
         //Dices
         dice_1 = new ImageView();
@@ -131,9 +83,7 @@ public class InnerController {
 
         //For Debug Issues
         testTextField = new Label();
-
     }
-
 
     ArrayList<ImageView> pawns_of_players;
     ArrayList<ImageView> indexes_of_players;
@@ -209,13 +159,35 @@ public class InnerController {
     @FXML
     public void actionButtonPressed() {
         if (!pressedEndTurn) {
-            pressedEndTurn = true;
+            if(ie.isCurrentPlayerHuman()){
+                pressedEndTurn = true;
+                turn++;
+                turn = turn % pawns_of_players.size();
+                set_turn_GUI();
+                //square_update_GUI();
+                ie.endTurn();
 
-            turn++;
-            turn = turn % pawns_of_players.size();
-            set_turn_GUI();
-            //square_update_GUI();
-            ie.endTurn();
+                while (!ie.isCurrentPlayerHuman()){
+                    ie.rollDice();
+
+                    int dice1 = ie.getDice().getDice1();
+                    int dice2 = ie.getDice().getDice2();
+                    int total = ie.getDice().getTotal();
+
+                    int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
+
+                    dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
+                    dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
+                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
+                    Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
+                    //System.out.println(p.getName() + " " + p.getCurrentPosition());
+                    ie.makeDecision(total, dice1 == dice2);
+                    ie.endTurn();
+                    turn++;
+                    turn = turn % pawns_of_players.size();
+                    set_turn_GUI();
+                }
+            }
         } else
             testTextField.setText("Tur sende değil göt");
     }
@@ -228,7 +200,7 @@ public class InnerController {
         test_label.setText(tmpLog.toString());
     }
 
-    public void movePawn(Player tmpPlayer, ImageView tmpPawn, int moveCount, boolean pawnIsLonged, int oldposition) {
+    public void movePawn(ImageView tmpPawn, int moveCount, boolean pawnIsLonged, int oldposition) {
         double pawnXtmp = tmpPawn.getLayoutX();
         double pawnYtmp = tmpPawn.getLayoutY();
 
@@ -267,6 +239,7 @@ public class InnerController {
                 }
             }
             oldposition++;
+            oldposition = oldposition % 40; //PÜÜÜÜÜÜÜÜÜÜÜ
             moveCount--;
 
 //            tmpPawn.setLayoutX(pawnXtmp);
@@ -279,6 +252,8 @@ public class InnerController {
             tt.play();
         }
     }
+
+    // B O T
 
     @FXML
     public void roll_dice() {
@@ -298,14 +273,12 @@ public class InnerController {
 
             int newPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
 
-            movePawn(ie.getPlayers().get(ie.getCurrentPlayerId()), pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-
-//            if (test == 3){
-//                movePawn(ie.getPlayers().get(ie.getCurrentPlayerId()), pawns_of_players.get(turn), 30 + total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-//            }
-//            else {
-//                movePawn(ie.getPlayers().get(ie.getCurrentPlayerId()), pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-//            }
+            movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
+            Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
+            //System.out.println(p.getName() + " " + p.getCurrentPosition());
+            if (test == 3){
+                movePawn(pawns_of_players.get(turn), 20, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
+            }
 
             String oldSt = testTextField.getText();
             testTextField.setText(oldSt + "\n" + test);
@@ -369,6 +342,7 @@ public class InnerController {
                 sell_button.setStyle("-fx-opacity: 0.5");
             }
         } catch (NullPointerException npe) {
+            //TODO bak bulcaz artık
             System.out.println("yarrak kafası " + npe.getMessage());
         }
     }
@@ -381,14 +355,18 @@ public class InnerController {
 
     @FXML
     public void get_square_info(MouseEvent e) throws NullPointerException {
+        last_tmp_index_of_info_card = e.getSource().toString().substring(13, 21).replace(',', ' ').trim();
         if (last_index_of_info_card == -1){
-            last_tmp_index_of_info_card = e.getSource().toString().substring(13, 21).replace(',', ' ').trim();
             last_index_of_info_card = Integer.parseInt(last_tmp_index_of_info_card.replace("index", ""));
             update_square_info();
         }
-        else {
+        else if(last_index_of_info_card == Integer.parseInt(last_tmp_index_of_info_card.replace("index", ""))) {
             clear_indexes();
             last_index_of_info_card = -1;
+        }
+        else {
+            last_index_of_info_card = Integer.parseInt(last_tmp_index_of_info_card.replace("index", ""));
+            update_square_info();
         }
     }
 
