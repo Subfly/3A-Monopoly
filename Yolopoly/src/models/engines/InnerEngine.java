@@ -1,6 +1,7 @@
 package models.engines;
 
 import enumerations.*;
+import javafx.beans.property.Property;
 import models.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
@@ -209,7 +210,7 @@ public class InnerEngine {
         }
         startTurn(diceResult, isDouble, multiplier);
         Player bot = players.get(currentPlayerId);
-        if(checkBuyProperty(bot.getCurrentPosition())){
+        if(checkBuyProperty(bot.getCurrentPosition()) && board.getSquares().get(bot.getCurrentPosition()).getType() == SquareType.NormalSquare){
             //Just buy the area
             buyProperty();
         }
@@ -285,12 +286,12 @@ public class InnerEngine {
             player.incrementDoublesCount();
         }
 
-        if(player.isThreeTimesDoubled()){
-            player.setInJail(true);
-            player.setCurrentPosition(10);
-            players.set(currentPlayerId, player);
-            return 5;
-        }
+//        if(player.isThreeTimesDoubled()){
+//            player.setInJail(true);
+//            player.setCurrentPosition(10);
+//            //players.set(currentPlayerId, player);
+//            return 5;
+//        }
 
         //Moving the Pawn where the dice show
         int oldPosition = player.getCurrentPosition();
@@ -307,40 +308,40 @@ public class InnerEngine {
         //Start If's
         //If chance square
         if(player.getCurrentPosition() == square.getId()){
-            if(square.getType() == SquareType.ChanceSquare){
-                players.set(currentPlayerId, player);
-                return 1;
-            }
+//            if(square.getType() == SquareType.ChanceSquare){
+//                //players.set(currentPlayerId, player);
+//                return 1;
+//            }
             //If Community Chest Square
-            else if(square.getType() == SquareType.CommunityChestSquare){
-                players.set(currentPlayerId, player);
-                return 2;
-            }
+//            else if(square.getType() == SquareType.CommunityChestSquare){
+//                //players.set(currentPlayerId, player);
+//                return 2;
+//            }
             //If Tax Square
-            else if(square.getType() == SquareType.TaxSquare){
-                // Get the tax amount
-                int taxAmount = square.getCost();
-                player.removeMoney(Constants.CURRENCY_NAMES[0], taxAmount);
-                players.set(currentPlayerId, player);
-                addToLog("paid tax of " + taxAmount, player.getName());
-                return 0;
-            }
+//            else if(square.getType() == SquareType.TaxSquare){
+//                // Get the tax amount
+//                int taxAmount = square.getCost();
+//                player.removeMoney(Constants.CURRENCY_NAMES[0], taxAmount);
+//                //players.set(currentPlayerId, player);
+//                addToLog("paid tax of " + taxAmount, player.getName());
+//                return 0;
+//            }
             //If Go to Jail Square
-            else if(square.getType() == SquareType.GoToJailSquare){
-                player.setCurrentPosition(10); //Move to jail hardcode
-                player.setInJail(true);
-                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
-                players.set(currentPlayerId, player);
-                addToLog("sent to the jail", player.getName());
-                return 3;
-            }
+//            else if(square.getType() == SquareType.GoToJailSquare){
+//                player.setCurrentPosition(10); //Move to jail hardcode
+//                player.setInJail(true);
+//                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
+//                //players.set(currentPlayerId, player);
+//                addToLog("sent to the jail", player.getName());
+//                return 3;
+//            }
             //If Free Parking Square, do nothing...
-            else if(square.getType() == SquareType.FreeParkingSquare){
+            if(square.getType() == SquareType.FreeParkingSquare){
                 int taxAmountOnBoard = board.getMoneyOnBoard();
                 if (taxAmountOnBoard != 0) {
                     player.addMoney(Constants.CURRENCY_NAMES[0], taxAmountOnBoard);
                     board.removeFromTaxMoney();
-                    players.set(currentPlayerId, player);
+                    //players.set(currentPlayerId, player);
                     addToLog("got the money on the board with the amount of " + taxAmountOnBoard + " Monopoly Dollars", player.getName());
                 }
                 return 0;
@@ -364,13 +365,13 @@ public class InnerEngine {
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], rentAmount);
 
                     //Set players
-                    players.set(currentPlayerId, player);
-                    players.set(buyerId, paidToPlayer);
+                    //players.set(currentPlayerId, player);
+                    //players.set(buyerId, paidToPlayer);
                     addToLog("paid " + String.valueOf(rentAmount) + " as rent", player.getName());
                     addToLog("received " + String.valueOf(rentAmount) + " as rent income", paidToPlayer.getName());
                 }else{
                     //Not bought, this part left to frontend
-                    players.set(currentPlayerId, player);
+                    //players.set(currentPlayerId, player);
                     return 4;
                 }
             }
@@ -394,7 +395,9 @@ public class InnerEngine {
         if(this.currentPlayerId > players.size() - 1){
             this.currentPlayerId = 0;
         }
-        changeCurrenciesOfBank();
+        if (this.gameMode == GameMode.bankman){
+            changeCurrenciesOfBank();
+        }
         return true;
     }
 
@@ -412,8 +415,9 @@ public class InnerEngine {
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
         //Save changes on data
-        players.set(currentPlayerId, currentPlayer);
-        bank.getPropertyCards().set(square.getId(), card);
+        //players.set(currentPlayerId, currentPlayer);
+        //TODO ponçik ali taha olur böyle şeyler
+        bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
         board.buySquare(square.getId());
 
         addToLog("bought property named : " + card.getName(), currentPlayer.getName());
@@ -490,7 +494,7 @@ public class InnerEngine {
                     winnerIndex = i;
                 }
             }
-            players.set(winnerIndex, currentPlayer);
+            //players.set(winnerIndex, currentPlayer);
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
         }
@@ -516,7 +520,7 @@ public class InnerEngine {
         player.removeMoney(Constants.CURRENCY_NAMES[0], money);
 
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
-        players.set(currentPlayerId, player);
+        //players.set(currentPlayerId, player);
     }
 
     public void destructBuilding(Building buildingType, int squareIndex){
@@ -537,7 +541,7 @@ public class InnerEngine {
 
         player.addMoney(Constants.CURRENCY_NAMES[0], money);
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
-        players.set(currentPlayerId, player);
+        //players.set(currentPlayerId, player);
     }
 
     public int drawCard(DrawableCardType cardType){
@@ -549,13 +553,13 @@ public class InnerEngine {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                players.set(currentPlayerId, player);
+                //players.set(currentPlayerId, player);
                 return 1;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                players.set(currentPlayerId, player);
+                //players.set(currentPlayerId, player);
                 return 2;
             }else{
                 if(cardDrawn.isComposed()){
@@ -567,7 +571,7 @@ public class InnerEngine {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            players.set(currentPlayerId, player);
+                            //players.set(currentPlayerId, player);
                             return 3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -579,7 +583,7 @@ public class InnerEngine {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            players.set(currentPlayerId, player);
+                            //players.set(currentPlayerId, player);
                             return 4;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
@@ -597,13 +601,13 @@ public class InnerEngine {
                         }
 
                         player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
-                        players.set(currentPlayerId, player);
+                        //players.set(currentPlayerId, player);
                         return 5;
                     }
                 }else{
                     //If not composed or moving, hence paying money
                     player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                    players.set(currentPlayerId, player);
+                    //players.set(currentPlayerId, player);
                     return 6;
                 }
             }
@@ -615,12 +619,12 @@ public class InnerEngine {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                players.set(currentPlayerId, player);
+                //players.set(currentPlayerId, player);
                 return 1;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
-                players.set(currentPlayerId, player);
+                //(currentPlayerId, player);
                 return 2;
             }else if(cardDrawn.isDrawingChanceCard()){
                 //Needed to be handled in front-end.
@@ -635,7 +639,7 @@ public class InnerEngine {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            players.set(currentPlayerId, player);
+                            //players.set(currentPlayerId, player);
                             return 3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -647,7 +651,7 @@ public class InnerEngine {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            players.set(currentPlayerId, player);
+                            //players.set(currentPlayerId, player);
                             return 4;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
@@ -664,17 +668,17 @@ public class InnerEngine {
                             }
                         }
                         player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
-                        players.set(currentPlayerId, player);
+                        //players.set(currentPlayerId, player);
                         return 5;
                     }else if(cardDrawn.isEachPlayerIncluded()){
                         //Or paying money to other players
                         player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe() * players.size() - 1);
-                        players.set(currentPlayerId, player);
+                        //players.set(currentPlayerId, player);
                         for (int i = 0; i < players.size(); i++) {
                             if(i != currentPlayerId){
                                 var otherPlayer = players.get(i);
                                 otherPlayer.addMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                                players.set(i, otherPlayer);
+                                //players.set(i, otherPlayer);
                             }
                         }
                         return 8;
@@ -682,7 +686,7 @@ public class InnerEngine {
                 }else{
                     //If not composed or moving, hence paying money
                     player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                    players.set(currentPlayerId, player);
+                    //players.set(currentPlayerId, player);
                     return 6;
                 }
             }
@@ -892,10 +896,10 @@ public class InnerEngine {
         PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
 
         if ( currentPlayer.isOwned(currentPlace ) && squareLevel == 0 ) {
-            System.out.println("Player can mortgage this place");
+            //System.out.println("Player can mortgage this place");
             return true;
         }
-        System.out.println("Player cannot mortgage this place");
+        //System.out.println("Player cannot mortgage this place");
         return false;
     }
 
@@ -908,19 +912,19 @@ public class InnerEngine {
         if (currentPlayer.isOwned(currentPlace)) {
             if (squareLevel == -1){
                 if (currentPlayer.getMonopolyMoneyAmount() >= dismortgageMoney){
-                    System.out.println("Player can dismortgage");
+                    //System.out.println("Player can dismortgage");
                     return true;
                 }
                 else {
-                    System.out.println("player does not have enough money to dismortgage");
+                    //System.out.println("player does not have enough money to dismortgage");
                 }
             }
             else {
-                System.out.println("This square is not mortgaged");
+                //System.out.println("This square is not mortgaged");
             }
         }
         else{
-            System.out.println("Player does not have this place");
+            //System.out.println("Player does not have this place");
         }
         return false;
     }
@@ -928,25 +932,25 @@ public class InnerEngine {
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(index);
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
-        System.out.println(toGetCostOfPropertyCard.getName());
-        if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
+        boolean isBuyable = squareToBuy.getType() == SquareType.NormalSquare || squareToBuy.getType() == SquareType.UtilitySquare || squareToBuy.getType() == SquareType.RailroadSquare;
+        if (isBuyable && currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 if (currentPlayer.getMonopolyMoneyAmount() >= toGetCostOfPropertyCard.getCost()){
-                    System.out.println("Player can buy this property ");
+                    //System.out.println("Player can buy this property ");
                     return true;
                 }
                 else {
-                    System.out.println("Player does not have enough money");
+                    //System.out.println("Player does not have enough money");
                     return false;
                 }
             }
             else {
-                System.out.println("square is already bought");
+                //System.out.println("square is already bought");
                 return false;
             }
         }
         else {
-            System.out.println("Player is not on this square");
+            //System.out.println("Player is not on this square");
             return false;
         }
     }
@@ -988,36 +992,36 @@ public class InnerEngine {
                         }
                         if (count > 0) { // checks if count is positive, count houses can be bought
                             checkAndCountHouses.put(true, count);
-                            System.out.println("Player can buy " + count + " houses on this square");
+                            //System.out.println("Player can buy " + count + " houses on this square");
                         }
                         else {  // player cannot buy a house
                             checkAndCountHouses.put(false, 0);
-                            System.out.println("Max number of houses or not enough money");
+                            //System.out.println("Max number of houses or not enough money");
                         }
                     }
                     else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare > 0 ){ // if there is one house and other squares don't have a house
                         checkAndCountHouses.put(false, 0);
-                        System.out.println("Player has already a house in this square");
+                        //System.out.println("Player has already a house in this square");
                     }
                     else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare == 0 ){
                         if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
                             checkAndCountHouses.put(true, 1);
-                            System.out.println("Player can buy a house");
+                            //System.out.println("Player can buy a house");
                         }
                         else {
                             checkAndCountHouses.put(false, 0);
-                            System.out.println("Not sufficient money or player is not on that square");
+                            //System.out.println("Not sufficient money or player is not on that square");
                         }
                     }
                 }
                 else {  // if the square has no house
                     if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
                         checkAndCountHouses.put(true, 1);
-                        System.out.println("Player can buy a house");
+                        //System.out.println("Player can buy a house");
                     }
                     else {
                         checkAndCountHouses.put(false, 0);
-                        System.out.println("Not sufficient money or player is not on that square");
+                        //System.out.println("Not sufficient money or player is not on that square");
                     }
                 }
                 return checkAndCountHouses;
@@ -1027,29 +1031,29 @@ public class InnerEngine {
                     int priceOfAHotel = currentPlace.getHotelPrice();
                     if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
                         checkAndCountHotel.put(true, 1);
-                        System.out.println("Player can buy an hotel");
+                        //System.out.println("Player can buy an hotel");
 
                     }
                     else {  //money is not enough
                         checkAndCountHotel.put(false, 0);
-                        System.out.println("Not sufficient money");
+                        //System.out.println("Not sufficient money");
                     }
                 }
                 else {  // houses are not enough or there is an hotel
                     checkAndCountHotel.put(false, 0);
-                    System.out.println("not enough houses or there is an hotel");
+                    //System.out.println("not enough houses or there is an hotel");
                 }
                 return checkAndCountHotel;
             }
             else{
 
                 checkAndCountHouses.put(false, 0);
-                System.out.println("place is mortgaged");
+                //System.out.println("place is mortgaged");
             }
         }
         else{   // player does not have all squares with that color
             checkAndCountHouses.put(false, 0);
-            System.out.println("Player haven't got all squares with that color");
+            //System.out.println("Player haven't got all squares with that color");
         }
         return checkAndCountHouses;
     }
@@ -1073,11 +1077,11 @@ public class InnerEngine {
             if ( buildingType == Building.Hotel) {
                 if ( hotelCountOnSquare == 1 ) {
                     checkAndCountHotelDestruct.put(true, 1);
-                    System.out.println("Player can destruct an hotel");
+                    //System.out.println("Player can destruct an hotel");
                 }
                 else{
                     checkAndCountHotelDestruct.put(false, 0);
-                    System.out.println("there is no hotel to destruct");
+                    //System.out.println("there is no hotel to destruct");
                 }
                 return checkAndCountHotelDestruct;
 
@@ -1085,18 +1089,18 @@ public class InnerEngine {
             if ( buildingType == Building.House ) {
                 if (houseCountOnSquare > 0) {
                     checkAndCountHousesDestruct.put(true, hotelCountOnSquare);
-                    System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
+                    //System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
                 }
                 else {
                     checkAndCountHousesDestruct.put(false, 0);
-                    System.out.println("There is no house to destruct");
+                    //System.out.println("There is no house to destruct");
                 }
                 return checkAndCountHousesDestruct;
             }
         }
         else {
             checkAndCountHousesDestruct.put(false, 0);
-            System.out.println("Player does not have this square");
+            //System.out.println("Player does not have this square");
             return checkAndCountHousesDestruct;
         }
         checkAndCountHousesDestruct.put(false, 0);
