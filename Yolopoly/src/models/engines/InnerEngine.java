@@ -2,11 +2,11 @@ package models.engines;
 
 import enumerations.*;
 import models.*;
+import models.cards.ChanceCard;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import storage.Constants;
 import storage.StorageUtil;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,11 +38,25 @@ public class InnerEngine {
     private ArrayList<Player> participants;
 
     //Broken player related
-    private ArrayList<Player> brokenPlayers;
+    /**
+     * IMPORTANT!!!!!
+     * THIS HASH IS THE CORE OF BANKRUPTCY
+     * HENCE BE AWARE USING IT
+     * <====VALUES====>
+     *      FROM 0 TO PLAYERS.SIZE-1 ===> MONEY PAYING FROM A PARTICULAR PLAYER TO OTHER PLAYERS
+     *      PLAYER.SIZE ===> MONEY PAYING TO BANK
+     *      PLAYER.SIZE + 1 ===> MONEY PAYING AS TAX
+     * <====STRUCTURE====>
+     *     PAYING PLAYER ID / WHERE TO PAY / PAYMENT AMOUNT
+     */
+    private HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash;
 
     //************
     // Constructor
     //************
+    public InnerEngine(){
+    }
+
     public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
         if(isSavedGamePlaying){
             //TODO: IMPLEMENT SAVED GAME
@@ -58,9 +72,8 @@ public class InnerEngine {
             currentBid = 0;
             auctionPropertyIndex = -1;
             currentPlayerAuctioning = -1;
-            brokenPlayers = new ArrayList<>();
+            brokenPlayersMoneyHash = new HashMap<>();
             gameMode = mode;
-
 
             for (Player p : players){
                 p.setCurrentPosition(0);
@@ -69,12 +82,18 @@ public class InnerEngine {
         }
     }
 
-    public InnerEngine(){
-    }
-
     //************
     // Functions
     //************
+    public PropertyCard getSpecificProperty( int squareIndex ){
+        for(PropertyCard p: bank.getPropertyCards()){
+            if(p.getId() == squareIndex){
+                return p;
+            }
+        }
+        return null;
+    }
+
     public Player getOwner(int squareIndex){
         var prop = getSpecificProperty(squareIndex);
         if(prop.getOwnedBy() != -1){
@@ -91,49 +110,6 @@ public class InnerEngine {
             System.out.println("ERROR (3001) SAVE FAILED");
         }
         return 0;
-    }
-    public int finishGameForParticularPlayer(){
-        Player brokenPlayer = brokenPlayers.get(0);
-        for (Player player : players) {
-            if (brokenPlayer.getName().equals(player.getName())) {
-                for (PropertyCard p : bank.getPropertyCards()) {
-                    if (player.isOwned(p)) {
-                        p.setOwnedBy(-1);
-                    }
-                }
-                var goojc = player.getSavedCards().get(0);
-                board.returnSavedCard(goojc);
-                players.remove(player);
-                break;
-            }
-        }
-        if(brokenPlayer.isHuman()){
-            return 1; //To show "you lost screen"
-        }else{
-            return 0; //To remove bot from the game
-        }
-    }
-
-    //TODO: NAME IS INCONVINIENT AND PURPOSE OF THE FUNCTION IS UNDETERMINED
-    public int checkGameStatus(){
-        boolean isAnyoneBroke = false;
-        int curId = -1;
-        for (Player p : players) {
-            if(p.isBankrupt()){
-                isAnyoneBroke = true;
-                this.state = GameState.Broken;
-                curId = players.indexOf(p);
-                break;
-            }
-        }
-        if(isAnyoneBroke && !brokenPlayers.contains(players.get(curId))){
-            brokenPlayers.add(players.get(curId));
-            return curId;
-        }
-        if(players.size() == 1){
-            return 1001; //Last player won the game
-        }
-        return -1; //Everything is fine
     }
 
     public ArrayList<Integer> getSettings(){
@@ -170,28 +146,6 @@ public class InnerEngine {
         log.add("Player " + userName + " has " + logAction);
     }
 
-    public int handleBrokeStatus(){
-        Player player = brokenPlayers.get(0);
-        boolean hasBuildings = false;
-        for(PropertyCard p : player.getOwnedPlaces()){
-            var square = board.getSpecificSquare(p.getId());
-            if(square.getHotelCount() != 0 || square.getHouseCount() != 0){
-                hasBuildings = true;
-                break;
-            }
-        }
-        if(hasBuildings){
-            return 1; //Pursue player to sell buildings
-        }else{
-            //TODO: Implement mortgage status after Kutsal finish
-            boolean hasAnyNonMortgagedProperty = false;
-            if(player.getOwnedPlaces().size() != 0){
-                return 2; //Pursue player to mortgage
-            }
-        }
-        return -1; //Nothing found to mortgage or sell, player is completely broke
-    }
-
     //************
     // Bot Handlers
     //************
@@ -207,37 +161,192 @@ public class InnerEngine {
                 multiplier = this.generateChanceMultiplier(diceResult);
             }
         }
-        startTurn(diceResult, isDouble, multiplier);
+        int result = startTurn(diceResult, isDouble, multiplier);
         Player bot = players.get(currentPlayerId);
-        if(checkBuyProperty(bot.getCurrentPosition())){
-            //Just buy the area
-            buyProperty();
+        if(result == -99){
+            return payDebtBot(bot);
+        }else if(result == 1){
+            /*
+             * RETURN VALUES EXPLAINED
+             * -99 => PLAYER BROKE
+             * 1 => DRAWN GOOJC
+             * 2 => DRAWN GTJC
+             * 3 => CHANGED POSITION FORWARD
+             * 4 => CHANGED POSITION TO INDEX
+             * 5 => PAY MONEY FOR BUILDINGS
+             * 6 => PAY TO BANK
+             * 7 => BIRTHDAY GIFT BABY!
+             * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
+             */
+            int cardRes = drawCard(DrawableCardType.Chance);
+            if (cardRes == -99){
+                return payDebtBot(bot);
+            }else if (cardRes == 3){
+                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                /*
+                 * HANDLE ALGORITHM===>
+                 * SAVE OLD POSITION
+                 * MOVE PAWN ACCORDING TO TOTAL COUNT
+                 * HERE I ENCODE MOVE ***COUNT*** AS SUPPOSED TO BE
+                 * SO MOVE AGAIN WITH RETURN VALUE
+                 * CHECK WITH if(result < 0 && result > -90)
+                 */
+                return cardRes;
+            }else if(cardRes == 4){
+                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                /*
+                 * HANDLE ALGORITHM===>
+                 * SAVE OLD POSITION
+                 * MOVE PAWN ACCORDING TO TOTAL COUNT
+                 * HERE I ENCODE MOVE ***INDEX*** AS SUPPOSED TO BE
+                 * SO MOVE AGAIN WITH RETURN VALUE
+                 * CHECK WITH if(result >= 0 && result <= 39)
+                 */
+                return cardRes;
+            }
+        }else if(result == 2){
+            int cardRes = drawCard(DrawableCardType.Community);
+            if (cardRes == -99){
+                return payDebtBot(bot);
+            }else if (cardRes == 3){
+                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                /*
+                 * HANDLE ALGORITHM===>
+                 * SAVE OLD POSITION
+                 * MOVE PAWN ACCORDING TO TOTAL COUNT
+                 * HERE I ENCODE MOVE ***COUNT*** AS SUPPOSED TO BE
+                 * SO MOVE AGAIN WITH RETURN VALUE
+                 * CHECK WITH if(result < 0 && result > -90)
+                 */
+                return cardRes;
+            }else if(cardRes == 4){
+                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                /*
+                 * HANDLE ALGORITHM===>
+                 * SAVE OLD POSITION
+                 * MOVE PAWN ACCORDING TO TOTAL COUNT
+                 * HERE I ENCODE MOVE ***INDEX*** AS SUPPOSED TO BE
+                 * SO MOVE AGAIN WITH RETURN VALUE
+                 * CHECK WITH if(result >= 0 && result <= 39)
+                 */
+                return cardRes;
+            }else if (cardRes >= 100000){
+                int decision = (int) (Math.random() * 2 + 1);
+                if(decision == 1){
+                    if(bot.removeMoney(Constants.CURRENCY_NAMES[0], cardRes)){
+                        return -97;
+                    }else{
+                        //YİNE Mİ BATTIN BE HACI YETER YA
+                        return payDebtBot(bot);
+                    }
+                }else{
+                    int cardResAgain = drawCard(DrawableCardType.Chance);
+                    if (cardResAgain == -99){
+                        return payDebtBot(bot);
+                    }else if (cardResAgain == 3){
+                        //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                        /*
+                         * Same as above
+                         */
+                        return cardResAgain;
+                    }else if(cardResAgain == 4){
+                        //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
+                        /*
+                         * Same as above
+                         */
+                        return cardResAgain;
+                    }
+                }
+            }
+        }else if(result == 7){
+            if(checkBuyProperty(bot.getCurrentPosition()) && board.getSquares().get(bot.getCurrentPosition()).getType() == SquareType.NormalSquare){
+                //Just buy the area
+                buyProperty();
+            }
+            int totalBoughtProperties = bot.getOwnedPlaces().size();
+            int randomArea = (int)(Math.random() * totalBoughtProperties + 1);
+            if(checkBuildBuilding(Building.House, board.getSpecificSquare(randomArea)).containsKey(true)){
+                //Build house
+                buildBuilding(Building.House, randomArea);
+            }
+            if(checkBuildBuilding(Building.Hotel, board.getSpecificSquare(randomArea)).containsKey(true)){
+                //Build hotel
+                buildBuilding(Building.Hotel, randomArea);
+            }
+            return -97;
         }
-        int totalBoughtProperties = bot.getOwnedPlaces().size();
-        int randomArea = (int)(Math.random() * totalBoughtProperties + 1);
-        if(checkBuildBuilding(Building.House, board.getSpecificSquare(randomArea)).containsKey(true)){
-            //Build house
-            buildBuilding(Building.House, randomArea);
+        return -100;
+    }
+
+    //************
+    // Bankruptcy Handlers
+    //************
+    public boolean payDebt(){
+        Player player = players.get(currentPlayerId);
+        var debtData = brokenPlayersMoneyHash.get(currentPlayerId);
+        int moneyPayIndex = debtData.entrySet().iterator().next().getKey();
+        int debt = debtData.get(moneyPayIndex);
+        if(moneyPayIndex < players.size()){
+            //Paying money to other player
+            player.removeMoney(Constants.CURRENCY_NAMES[0], debt);
+            Player otherPlayer = players.get(moneyPayIndex);
+            otherPlayer.addMoney(Constants.CURRENCY_NAMES[0], debt);
+            player.setBankrupt(false);
+            return true;
+        }else if(moneyPayIndex == players.size()){
+            //Paying to bank, just pay...
+            player.removeMoney(Constants.CURRENCY_NAMES[0], debt);
+            player.setBankrupt(false);
+            return true;
+        }else if(moneyPayIndex == players.size() + 1){
+            //Paying to free park space :D
+            player.removeMoney(Constants.CURRENCY_NAMES[0], debt);
+            board.addToTaxMoney(debt);
+            player.setBankrupt(false);
+            return true;
         }
-        if(checkBuildBuilding(Building.Hotel, board.getSpecificSquare(randomArea)).containsKey(true)){
-            //Build hotel
-            buildBuilding(Building.Hotel, randomArea);
+        return false;
+    }
+
+    public int payDebtBot(Player bot){
+        var debtData = brokenPlayersMoneyHash.get(currentPlayerId);
+        int moneyPayIndex = debtData.entrySet().iterator().next().getKey();
+        int debt = debtData.get(moneyPayIndex);
+        //Look in properties
+        for(PropertyCard p : bot.getOwnedPlaces()){
+            Square s = board.getSpecificSquare(p.getId());
+            //Select the one with less valuable
+            if(s.getLevel() == 0){
+                //Mortgage that place
+                levelDown(s.getId());
+                //If has enough money
+                if(bot.getMonopolyMoneyAmount() >= debt){
+                    payDebt();
+                    return -98;
+                }
+            }
         }
-        return 1;
+        //Look in properties but now start to sell hotels and houses
+        for(PropertyCard p : bot.getOwnedPlaces()){
+            Square s = board.getSpecificSquare(p.getId());
+            //Select the first one that has hotels or houses
+            while(s.getLevel() > 0){
+                //Mortgage that place
+                levelDown(s.getId());
+                //If has enough money
+                if(bot.getMonopolyMoneyAmount() >= debt){
+                    payDebt();
+                    return -98;
+                }
+            }
+        }
+        //BROKE HACI GEÇMİŞ OLSUN
+        return -99;
     }
 
     //************
     // Private Functions
     //************
-    public PropertyCard getSpecificProperty( int squareIndex ){
-        for(PropertyCard p: bank.getPropertyCards()){
-            if(p.getId() == squareIndex){
-                return p;
-            }
-        }
-        return null;
-    }
-
     private int getBuyer(int squareIndex){
         for(PropertyCard p: bank.getPropertyCards()){
             if(squareIndex == p.getId()){
@@ -254,13 +363,24 @@ public class InnerEngine {
     //************
     // Turn Related Functions
     //************
-    public Dice rollDice(){
+    public void rollDice(){
         dice.roll();
-        return this.dice;
     }
 
+    /*
+     * RETURN VALUES EXPLAINED
+     * -99 PLAYER BROKE, PAY DEBTS
+     * -2 => PLAYER DOUBLED THREE TIMES
+     * -1 => ERROR APPEARED SUCCESSFULLY
+     * 1 => DRAW CHANCE
+     * 2 => DRAW COMMUNITY
+     * 3 => PAID TAX
+     * 4 => GO TO JAIL
+     * 5 => GET TAXES FROM PARK
+     * 6 => PAID RENT
+     * 7 => EVERYTHING IS DONE, GOODBYE!
+     */
     public int startTurn(int diceResult, boolean hasRolledDouble, double multiplier){
-
         /*
         Basic structure of a turn is consists of:
             Rolling the dice
@@ -288,8 +408,8 @@ public class InnerEngine {
         if(player.isThreeTimesDoubled()){
             player.setInJail(true);
             player.setCurrentPosition(10);
-            players.set(currentPlayerId, player);
-            return 5;
+            player.resetDoublesCount();
+            return -2;
         }
 
         //Moving the Pawn where the dice show
@@ -308,31 +428,34 @@ public class InnerEngine {
         //If chance square
         if(player.getCurrentPosition() == square.getId()){
             if(square.getType() == SquareType.ChanceSquare){
-                players.set(currentPlayerId, player);
                 return 1;
             }
             //If Community Chest Square
             else if(square.getType() == SquareType.CommunityChestSquare){
-                players.set(currentPlayerId, player);
                 return 2;
             }
             //If Tax Square
             else if(square.getType() == SquareType.TaxSquare){
                 // Get the tax amount
                 int taxAmount = square.getCost();
-                player.removeMoney(Constants.CURRENCY_NAMES[0], taxAmount);
-                players.set(currentPlayerId, player);
-                addToLog("paid tax of " + taxAmount, player.getName());
-                return 0;
+                if(player.removeMoney(Constants.CURRENCY_NAMES[0], taxAmount)){
+                    addToLog("paid tax of " + taxAmount, player.getName());
+                    return 3;
+                }else{
+                    player.setBankrupt(true);
+                    HashMap<Integer, Integer> payHash = new HashMap<>();
+                    payHash.put(players.size()+1, taxAmount);
+                    brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                    return -99;
+                }
             }
             //If Go to Jail Square
             else if(square.getType() == SquareType.GoToJailSquare){
                 player.setCurrentPosition(10); //Move to jail hardcode
                 player.setInJail(true);
                 //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
-                players.set(currentPlayerId, player);
                 addToLog("sent to the jail", player.getName());
-                return 3;
+                return 4;
             }
             //If Free Parking Square, do nothing...
             else if(square.getType() == SquareType.FreeParkingSquare){
@@ -340,18 +463,18 @@ public class InnerEngine {
                 if (taxAmountOnBoard != 0) {
                     player.addMoney(Constants.CURRENCY_NAMES[0], taxAmountOnBoard);
                     board.removeFromTaxMoney();
-                    players.set(currentPlayerId, player);
+                    //players.set(currentPlayerId, player);
                     addToLog("got the money on the board with the amount of " + taxAmountOnBoard + " Monopoly Dollars", player.getName());
                 }
-                return 0;
+                return 5;
             }else{
                 //If pawn of the player landed on a property square :D Hardest part coming...
                 if(square.isBought()){
                     //Find the player who bought that square
-                    int buyerId = getBuyer(square.getId());
+                    int buyerIdOfProperty = getBuyer(square.getId());
 
                     //Create a dummy player holder to change players data in the end
-                    Player paidToPlayer = players.get(buyerId);
+                    Player paidToPlayer = players.get(buyerIdOfProperty);
 
                     //Find rent amount
                     PropertyCard prop = getSpecificProperty(square.getId());
@@ -359,43 +482,78 @@ public class InnerEngine {
                     int rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
 
                     //Remove money from current player
-                    player.removeMoney(Constants.CURRENCY_NAMES[0], rentAmount);
+                    boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], rentAmount);
+                    if(!isAbleToPay){
+                        player.setBankrupt(true);
+                        HashMap<Integer, Integer> payHash = new HashMap<>();
+                        payHash.put(buyerIdOfProperty, rentAmount);
+                        brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                        return -99;
+                    }
                     //Add money to other player
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], rentAmount);
 
-                    //Set players
-                    players.set(currentPlayerId, player);
-                    players.set(buyerId, paidToPlayer);
                     addToLog("paid " + String.valueOf(rentAmount) + " as rent", player.getName());
                     addToLog("received " + String.valueOf(rentAmount) + " as rent income", paidToPlayer.getName());
+                    return 6;
                 }else{
                     //Not bought, this part left to frontend
-                    players.set(currentPlayerId, player);
-                    return 4;
+                    //players.set(currentPlayerId, player);
+                    return 7;
                 }
             }
         }else{
             //Error occur!
             return -1;
         }
-        return -1;
     }
 
-    public boolean endTurn(){
-        if (gameMode.equals(GameMode.bankman)) { // check loan for bankman mod
-            Player player = players.get(currentPlayerId);
+    /*
+     * RETURN VALUES
+     * 1 => NORMAL END
+     * 2 => DID NOT PAID LOANS
+     */
+    public int endTurn(){
+        Player player = players.get(currentPlayerId);
+        if(player.isBankrupt()){
+            //Remove player
+            players.remove(currentPlayerId);
+            //Return properties
+            for(PropertyCard p : player.getOwnedPlaces()){
+                p.setOwnedBy(-1);
+                Square s = board.getSpecificSquare(p.getId());
+                //Return houses and hotels
+                if(s.getHotelCount() > 0 || s.getHouseCount() > 0){
+                    s.setHotelCount(0);
+                    s.setHouseCount(0);
+                    s.setLevel(0);
+                }
+            }
+            //Return GOOJC
+            if(player.getSavedCards().size() != 0){
+                var c = player.removeFromSavedCards();
+                // board.returnSavedCard(c);
+            }
+            currentPlayerId--;
+            //Clear debts :D
+            brokenPlayersMoneyHash.clear();
+        }
+        if (gameMode.equals(GameMode.bankman)) {
+            // check loan for bankman mod
             player.decrementLoanTurn();
             if (checkHasToPayLoanBack()) {
                 player.setDiscardedFromGame(true);
-                return false;
+                return 2;
             }
         }
         this.currentPlayerId += 1;
         if(this.currentPlayerId > players.size() - 1){
             this.currentPlayerId = 0;
         }
-        changeCurrenciesOfBank();
-        return true;
+        if (this.gameMode == GameMode.bankman){
+            changeCurrenciesOfBank();
+        }
+        return 1;
     }
 
     //************
@@ -412,25 +570,14 @@ public class InnerEngine {
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
         //Save changes on data
-        players.set(currentPlayerId, currentPlayer);
-        bank.getPropertyCards().set(square.getId(), card);
+        //players.set(currentPlayerId, currentPlayer);
+        //TODO ponçik ali taha olur böyle şeyler
+        bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
         board.buySquare(square.getId());
 
         addToLog("bought property named : " + card.getName(), currentPlayer.getName());
     }
 
-    public void createAuction(){
-        this.state = GameState.Auction;
-        this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
-        PropertyCard card = bank.getPropertyCards().get(this.auctionPropertyIndex);
-        this.currentBid = card.getCost();
-        for(Player p : players){
-            if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
-                participants.add(p);
-            }
-        }
-        this.currentPlayerAuctioning = 0;
-    }
     public void mortgagePlace(int squareIndex) {
         Player player = players.get(getCurrentPlayerId());
         player.getSpecificCard(squareIndex).setMortgaged(true);
@@ -451,6 +598,19 @@ public class InnerEngine {
             return true;
         }
         return false;
+    }
+
+    public void createAuction(){
+        this.state = GameState.Auction;
+        this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
+        PropertyCard card = bank.getPropertyCards().get(this.auctionPropertyIndex);
+        this.currentBid = card.getCost();
+        for(Player p : players){
+            if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
+                participants.add(p);
+            }
+        }
+        this.currentPlayerAuctioning = 0;
     }
 
     public void continueAuction(int bidIncrease){
@@ -482,15 +642,6 @@ public class InnerEngine {
             //Make changes on data
             card.setOwnedBy(currentPlayerAuctioning);
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
-
-            //Save changes on data
-            int winnerIndex = -1;
-            for(int i = 0; i < players.size(); i++){
-                if(currentPlayer.getName().equals(players.get(i).getName())){
-                    winnerIndex = i;
-                }
-            }
-            players.set(winnerIndex, currentPlayer);
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
         }
@@ -516,7 +667,7 @@ public class InnerEngine {
         player.removeMoney(Constants.CURRENCY_NAMES[0], money);
 
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
-        players.set(currentPlayerId, player);
+        //players.set(currentPlayerId, player);
     }
 
     public void destructBuilding(Building buildingType, int squareIndex){
@@ -537,9 +688,21 @@ public class InnerEngine {
 
         player.addMoney(Constants.CURRENCY_NAMES[0], money);
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
-        players.set(currentPlayerId, player);
+        //players.set(currentPlayerId, player);
     }
 
+    /*
+     * RETURN VALUES EXPLAINED
+     * -99 => PLAYER BROKE
+     * 1 => DRAWN GOOJC
+     * 2 => DRAWN GTJC
+     * 3 => CHANGED POSITION FORWARD
+     * 4 => CHANGED POSITION TO INDEX
+     * 5 => PAY MONEY FOR BUILDINGS
+     * 6 => PAY TO BANK
+     * 7 => BIRTHDAY GIFT BABY!
+     * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
+     */
     public int drawCard(DrawableCardType cardType){
         if(cardType == DrawableCardType.Chance){
             var cardDrawn = board.drawChanceCard();
@@ -549,13 +712,11 @@ public class InnerEngine {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                players.set(currentPlayerId, player);
                 return 1;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                players.set(currentPlayerId, player);
                 return 2;
             }else{
                 if(cardDrawn.isComposed()){
@@ -567,7 +728,6 @@ public class InnerEngine {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            players.set(currentPlayerId, player);
                             return 3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -579,7 +739,6 @@ public class InnerEngine {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            players.set(currentPlayerId, player);
                             return 4;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
@@ -595,16 +754,29 @@ public class InnerEngine {
                                 }
                             }
                         }
-
-                        player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
-                        players.set(currentPlayerId, player);
-                        return 5;
+                        int moneyToHotels = hotelsOwned * cardDrawn.getMoneyForHotels();
+                        int moneyToHoses = housesOwned * cardDrawn.getMoneyForHouses();
+                        if(player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToHoses + moneyToHotels)){
+                            return 5;
+                        }else{
+                            player.setBankrupt(true);
+                            HashMap<Integer, Integer> payHash = new HashMap<>();
+                            payHash.put(players.size(), moneyToHoses + moneyToHotels);
+                            brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                            return -99;
+                        }
                     }
                 }else{
                     //If not composed or moving, hence paying money
-                    player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                    players.set(currentPlayerId, player);
-                    return 6;
+                    if(player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe())){
+                        return 6;
+                    }else{
+                        player.setBankrupt(true);
+                        HashMap<Integer, Integer> payHash = new HashMap<>();
+                        payHash.put(players.size(), cardDrawn.getMoneyOwe());
+                        brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                        return -99;
+                    }
                 }
             }
         }else{
@@ -615,16 +787,15 @@ public class InnerEngine {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                players.set(currentPlayerId, player);
                 return 1;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
-                players.set(currentPlayerId, player);
+                player.setInJail(true);
                 return 2;
             }else if(cardDrawn.isDrawingChanceCard()){
                 //Needed to be handled in front-end.
-                return 7;
+                return cardDrawn.getMoneyOwe();
             }else{
                 if(cardDrawn.isComposed()){
                     //If the card has more than one operation
@@ -635,7 +806,6 @@ public class InnerEngine {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            players.set(currentPlayerId, player);
                             return 3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -647,7 +817,6 @@ public class InnerEngine {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            players.set(currentPlayerId, player);
                             return 4;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
@@ -663,31 +832,46 @@ public class InnerEngine {
                                 }
                             }
                         }
-                        player.removeMoney(Constants.CURRENCY_NAMES[0], housesOwned * cardDrawn.getMoneyForHouses() + hotelsOwned * cardDrawn.getMoneyForHotels());
-                        players.set(currentPlayerId, player);
-                        return 5;
+                        int moneyToHouses = housesOwned * cardDrawn.getMoneyForHouses();
+                        int moneyForHotels = hotelsOwned * cardDrawn.getMoneyForHotels();
+                        if(player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToHouses + moneyForHotels)){
+                            return 5;
+                        }else{
+                            player.setBankrupt(true);
+                            HashMap<Integer, Integer> payHash = new HashMap<>();
+                            payHash.put(players.size(), moneyToHouses + moneyForHotels);
+                            brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                            return -99;
+                        }
                     }else if(cardDrawn.isEachPlayerIncluded()){
                         //Or paying money to other players
-                        player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe() * players.size() - 1);
-                        players.set(currentPlayerId, player);
                         for (int i = 0; i < players.size(); i++) {
                             if(i != currentPlayerId){
                                 var otherPlayer = players.get(i);
-                                otherPlayer.addMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                                players.set(i, otherPlayer);
+                                boolean ableToPay = otherPlayer.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
+                                if(!ableToPay){
+                                    otherPlayer.setBankrupt(true);
+                                }
                             }
                         }
-                        return 8;
+                        player.addMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe() * players.size() - 1);
+                        return 7;
                     }
                 }else{
                     //If not composed or moving, hence paying money
-                    player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe());
-                    players.set(currentPlayerId, player);
-                    return 6;
+                    if(player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe())){
+                        return 6;
+                    }else{
+                        player.setBankrupt(true);
+                        HashMap<Integer, Integer> payHash = new HashMap<>();
+                        payHash.put(players.size(), cardDrawn.getMoneyOwe());
+                        brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                        return -99;
+                    }
                 }
             }
         }
-        return 0;
+        return -1;
     }
 
     public void levelUp(int squareIndex){
@@ -741,6 +925,23 @@ public class InnerEngine {
         }
     }
 
+    public int payForGetOutOfJail() {
+        Player player = players.get(currentPlayerId);
+        if (player.isInJail()) {
+            if (player.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty())) {
+                return 1; // player can get out
+            }
+            else {
+                player.setBankrupt(true); // player has gone bankrupt
+                HashMap<Integer, Integer> payHash = new HashMap<>();
+                payHash.put(players.size(), Bank.getJailPenalty());
+                brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+                return -99; // player has not enough money to get out of jail, go bankrupt
+            }
+        }
+        return 3; // player is not even in jail, control return
+    }
+
     //************
     // Bankman Mode Functions
     //************
@@ -758,14 +959,22 @@ public class InnerEngine {
 
     public boolean receiveLoanBackFromPlayer() {
         Player player = players.get(currentPlayerId);
-        int amount = player.getLoan();
         if (!player.isGetLoanCurrently()) {
             System.out.println("The player is not on the loan currently");
             return false;
         }
-        System.out.println("Player paid his/her loan " + player.getName());
-        addToLog("paid loan back with amount of: " + amount, player.getName());
-        return true;
+        int amount = player.getLoan();
+        if(player.removeMoney(Constants.CURRENCY_NAMES[0], amount)){
+            System.out.println("Player paid his/her loan " + player.getName());
+            addToLog("paid loan back with amount of: " + amount, player.getName());
+            return true;
+        }else{
+            player.setBankrupt(true);
+            HashMap<Integer, Integer> payHash = new HashMap<>();
+            payHash.put(players.size(), amount);
+            brokenPlayersMoneyHash.put(currentPlayerId, payHash);
+            return false;
+        }
     }
 
     public boolean checkHasToPayLoanBack() {
@@ -802,21 +1011,6 @@ public class InnerEngine {
             result = 2.0;
         }
         return result;
-    }
-
-
-    public int payForGetOutOfJail() {
-        Player player = players.get(currentPlayerId);
-        if (player.isInJail()) {
-            if (player.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty())) {
-                return 1; // player can get out
-            }
-            else {
-                player.setBankrupt(true); // player has gone bankrupt
-                return 2; // player has not enough money, stay in jail
-            }
-        }
-        return 3; // player is not even in jail, control return
     }
 
     //************
@@ -873,12 +1067,13 @@ public class InnerEngine {
     }
 
     public boolean checkBrokenStatus(){
-        if(brokenPlayers.size() == 0){
-            this.state = GameState.Linear;
-            return false;
-        }else{
-            return true;
+        for(Player p : players){
+            if(p.isBankrupt()){
+                this.state = GameState.Broken;
+                return true;
+            }
         }
+        return false;
     }
 
     public boolean checkAuctionStatus(){
@@ -892,10 +1087,10 @@ public class InnerEngine {
         PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
 
         if ( currentPlayer.isOwned(currentPlace ) && squareLevel == 0 ) {
-            System.out.println("Player can mortgage this place");
+            //System.out.println("Player can mortgage this place");
             return true;
         }
-        System.out.println("Player cannot mortgage this place");
+        //System.out.println("Player cannot mortgage this place");
         return false;
     }
 
@@ -908,19 +1103,19 @@ public class InnerEngine {
         if (currentPlayer.isOwned(currentPlace)) {
             if (squareLevel == -1){
                 if (currentPlayer.getMonopolyMoneyAmount() >= dismortgageMoney){
-                    System.out.println("Player can dismortgage");
+                    //System.out.println("Player can dismortgage");
                     return true;
                 }
                 else {
-                    System.out.println("player does not have enough money to dismortgage");
+                    //System.out.println("player does not have enough money to dismortgage");
                 }
             }
             else {
-                System.out.println("This square is not mortgaged");
+                //System.out.println("This square is not mortgaged");
             }
         }
         else{
-            System.out.println("Player does not have this place");
+            //System.out.println("Player does not have this place");
         }
         return false;
     }
@@ -928,25 +1123,25 @@ public class InnerEngine {
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(index);
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
-        System.out.println(toGetCostOfPropertyCard.getName());
-        if (currentPlayer.getCurrentPosition() == squareToBuy.getId()){
+        boolean isBuyable = squareToBuy.getType() == SquareType.NormalSquare || squareToBuy.getType() == SquareType.UtilitySquare || squareToBuy.getType() == SquareType.RailroadSquare;
+        if (isBuyable && currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 if (currentPlayer.getMonopolyMoneyAmount() >= toGetCostOfPropertyCard.getCost()){
-                    System.out.println("Player can buy this property ");
+                    //System.out.println("Player can buy this property ");
                     return true;
                 }
                 else {
-                    System.out.println("Player does not have enough money");
+                    //System.out.println("Player does not have enough money");
                     return false;
                 }
             }
             else {
-                System.out.println("square is already bought");
+                //System.out.println("square is already bought");
                 return false;
             }
         }
         else {
-            System.out.println("Player is not on this square");
+            //System.out.println("Player is not on this square");
             return false;
         }
     }
@@ -988,36 +1183,36 @@ public class InnerEngine {
                         }
                         if (count > 0) { // checks if count is positive, count houses can be bought
                             checkAndCountHouses.put(true, count);
-                            System.out.println("Player can buy " + count + " houses on this square");
+                            //System.out.println("Player can buy " + count + " houses on this square");
                         }
                         else {  // player cannot buy a house
                             checkAndCountHouses.put(false, 0);
-                            System.out.println("Max number of houses or not enough money");
+                            //System.out.println("Max number of houses or not enough money");
                         }
                     }
                     else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare > 0 ){ // if there is one house and other squares don't have a house
                         checkAndCountHouses.put(false, 0);
-                        System.out.println("Player has already a house in this square");
+                        //System.out.println("Player has already a house in this square");
                     }
                     else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare == 0 ){
                         if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
                             checkAndCountHouses.put(true, 1);
-                            System.out.println("Player can buy a house");
+                            //System.out.println("Player can buy a house");
                         }
                         else {
                             checkAndCountHouses.put(false, 0);
-                            System.out.println("Not sufficient money or player is not on that square");
+                            //System.out.println("Not sufficient money or player is not on that square");
                         }
                     }
                 }
                 else {  // if the square has no house
                     if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
                         checkAndCountHouses.put(true, 1);
-                        System.out.println("Player can buy a house");
+                        //System.out.println("Player can buy a house");
                     }
                     else {
                         checkAndCountHouses.put(false, 0);
-                        System.out.println("Not sufficient money or player is not on that square");
+                        //System.out.println("Not sufficient money or player is not on that square");
                     }
                 }
                 return checkAndCountHouses;
@@ -1027,29 +1222,29 @@ public class InnerEngine {
                     int priceOfAHotel = currentPlace.getHotelPrice();
                     if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
                         checkAndCountHotel.put(true, 1);
-                        System.out.println("Player can buy an hotel");
+                        //System.out.println("Player can buy an hotel");
 
                     }
                     else {  //money is not enough
                         checkAndCountHotel.put(false, 0);
-                        System.out.println("Not sufficient money");
+                        //System.out.println("Not sufficient money");
                     }
                 }
                 else {  // houses are not enough or there is an hotel
                     checkAndCountHotel.put(false, 0);
-                    System.out.println("not enough houses or there is an hotel");
+                    //System.out.println("not enough houses or there is an hotel");
                 }
                 return checkAndCountHotel;
             }
             else{
 
                 checkAndCountHouses.put(false, 0);
-                System.out.println("place is mortgaged");
+                //System.out.println("place is mortgaged");
             }
         }
         else{   // player does not have all squares with that color
             checkAndCountHouses.put(false, 0);
-            System.out.println("Player haven't got all squares with that color");
+            //System.out.println("Player haven't got all squares with that color");
         }
         return checkAndCountHouses;
     }
@@ -1073,11 +1268,11 @@ public class InnerEngine {
             if ( buildingType == Building.Hotel) {
                 if ( hotelCountOnSquare == 1 ) {
                     checkAndCountHotelDestruct.put(true, 1);
-                    System.out.println("Player can destruct an hotel");
+                    //System.out.println("Player can destruct an hotel");
                 }
                 else{
                     checkAndCountHotelDestruct.put(false, 0);
-                    System.out.println("there is no hotel to destruct");
+                    //System.out.println("there is no hotel to destruct");
                 }
                 return checkAndCountHotelDestruct;
 
@@ -1085,25 +1280,25 @@ public class InnerEngine {
             if ( buildingType == Building.House ) {
                 if (houseCountOnSquare > 0) {
                     checkAndCountHousesDestruct.put(true, hotelCountOnSquare);
-                    System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
+                    //System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
                 }
                 else {
                     checkAndCountHousesDestruct.put(false, 0);
-                    System.out.println("There is no house to destruct");
+                    //System.out.println("There is no house to destruct");
                 }
                 return checkAndCountHousesDestruct;
             }
         }
         else {
             checkAndCountHousesDestruct.put(false, 0);
-            System.out.println("Player does not have this square");
+            //System.out.println("Player does not have this square");
             return checkAndCountHousesDestruct;
         }
         checkAndCountHousesDestruct.put(false, 0);
         return checkAndCountHousesDestruct;
 
     }
-    
+
 
     //Getters and Setters
 
@@ -1201,13 +1396,5 @@ public class InnerEngine {
 
     public void setParticipants(ArrayList<Player> participants) {
         this.participants = participants;
-    }
-
-    public ArrayList<Player> getBrokenPlayers() {
-        return brokenPlayers;
-    }
-
-    public void setBrokenPlayers(ArrayList<Player> brokenPlayers) {
-        this.brokenPlayers = brokenPlayers;
     }
 }
