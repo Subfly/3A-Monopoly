@@ -28,6 +28,7 @@ public class Player {
     private int railroadsOwned;
     private int utilitiesOwned;
     private boolean isInJail;
+    private int inJailTurnCount;
     private boolean isThreeTimesDoubled;
     private boolean isBankrupt;
     private ArrayList<PropertyCard> ownedPlaces;
@@ -242,6 +243,19 @@ public class Player {
     public boolean resetDoublesCount() {
         doublesCount = 0;
         return true;
+    }
+
+    public boolean resetInJailTurnCount() {
+        this.setInJailTurnCount(0);
+        return true;
+    }
+
+    public boolean incrementInJailTurnCount() {
+        if (this.isInJail()) {
+            this.inJailTurnCount++;
+            return true;
+        }
+        return false;
     }
 
     public int getDoublesCount() {
@@ -462,5 +476,13 @@ public class Player {
 
     public void setDiscardedFromGame(boolean discardedFromGame) {
         this.discardedFromGame = discardedFromGame;
+    }
+
+    public int getInJailTurnCount() {
+        return inJailTurnCount;
+    }
+
+    public void setInJailTurnCount(int inJailTurnCount) {
+        this.inJailTurnCount = inJailTurnCount;
     }
 }

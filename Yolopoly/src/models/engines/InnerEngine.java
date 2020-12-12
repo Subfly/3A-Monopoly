@@ -14,6 +14,10 @@ import java.util.Map;
 
 
 public class InnerEngine {
+
+    // Constants
+    private final static int JAIL_TURN_COUNT = 3;
+
     //************
     // Variables
     //************
@@ -779,10 +783,36 @@ public class InnerEngine {
     }
 
 
+    public int payForGetOutOfJail() {
+        Player player = players.get(currentPlayerId);
+        if (player.isInJail()) {
+            if (player.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty())) {
+                return 1; // player can get out
+            }
+            else {
+                player.setBankrupt(true); // player has gone bankrupt
+                return 2; // player has not enough money, stay in jail
+            }
+        }
+        return 3; // player is not even in jail, control return
+    }
 
     //************
     // Checker Functions
     //************
+
+    public int checkJailStatus() {
+        Player player = players.get(currentPlayerId);
+        if (!player.isInJail()) {
+            return -1; // Player is not in jail
+        }
+        int jailTurnCount = player.getInJailTurnCount();
+        if (jailTurnCount == JAIL_TURN_COUNT) {
+            return 1; // the player has to go out right now
+        }
+        return 2; // the player will remain in jail
+    }
+
 
     public HashMap<String, Boolean> checkLevelStatus(int squareIndex){
         Player player = players.get(currentPlayerId);
