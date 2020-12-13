@@ -1,4 +1,4 @@
-package models;
+package models.bases;
 
 import enumerations.Pawn;
 import models.cards.DrawableCard;
@@ -28,6 +28,7 @@ public class Player {
     private int railroadsOwned;
     private int utilitiesOwned;
     private boolean isInJail;
+    private int inJailTurnCount;
     private boolean isThreeTimesDoubled;
     private boolean isBankrupt;
     private ArrayList<PropertyCard> ownedPlaces;
@@ -112,14 +113,14 @@ public class Player {
         return true;
     }
 
-    public boolean removeFromSavedCards(){
+    public DrawableCard removeFromSavedCards(){
         //As only the GOFJ Cards can be present here
         try{
             this.savedCards.remove(0);
-            return true;
+            return removeFromSavedCards();
         }catch (IndexOutOfBoundsException e){
             System.out.println("No saved cards found.");
-            return false;
+            return null;
         }
     }
 
@@ -242,6 +243,19 @@ public class Player {
     public boolean resetDoublesCount() {
         doublesCount = 0;
         return true;
+    }
+
+    public boolean resetInJailTurnCount() {
+        this.setInJailTurnCount(0);
+        return true;
+    }
+
+    public boolean incrementInJailTurnCount() {
+        if (this.isInJail()) {
+            this.inJailTurnCount++;
+            return true;
+        }
+        return false;
     }
 
     public int getDoublesCount() {
@@ -461,5 +475,13 @@ public class Player {
 
     public void setDiscardedFromGame(boolean discardedFromGame) {
         this.discardedFromGame = discardedFromGame;
+    }
+
+    public int getInJailTurnCount() {
+        return inJailTurnCount;
+    }
+
+    public void setInJailTurnCount(int inJailTurnCount) {
+        this.inJailTurnCount = inJailTurnCount;
     }
 }

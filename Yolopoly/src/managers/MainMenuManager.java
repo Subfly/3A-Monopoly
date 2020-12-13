@@ -1,15 +1,25 @@
-package models.engines;
+package managers;
 
 import java.io.File;
 import java.util.ArrayList;
 
-public class OuterEngine {
+public class MainMenuManager {
+
+    private static MainMenuManager outerEngine = null;
+
     //Variables
-    private MiddleEngine middleEngine;
+    private LobbyManager lobbyManager;
     private String hosterNick;
 
     //Constructor
-    public OuterEngine() {
+    private MainMenuManager() {
+    }
+
+    public static MainMenuManager getInstance(){
+        if(outerEngine == null){
+            outerEngine = new MainMenuManager();
+        }
+        return outerEngine;
     }
 
     public void setHosterNick(String hosterNick){

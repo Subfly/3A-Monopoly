@@ -1,4 +1,4 @@
-package models;
+package models.bases;
 
 import enumerations.GameMode;
 import enumerations.GameTheme;
@@ -15,6 +15,7 @@ public class Bank {
 
     // Constants
     private static final double RETURN_RATE = 0.5;
+    private static final int JAIL_PENALTY = 500_000;
     private int houseCount;
     private int hotelCount;
 
@@ -159,5 +160,9 @@ public class Bank {
 
     public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {
         this.propertyCards = propertyCards;
+    }
+
+    public static int getJailPenalty() {
+        return JAIL_PENALTY;
     }
 }

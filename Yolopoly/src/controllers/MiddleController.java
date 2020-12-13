@@ -1,4 +1,4 @@
-package models.controllers;
+package controllers;
 
 import enumerations.GameMode;
 import enumerations.GameTheme;
@@ -6,18 +6,17 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.InputMethodTextRun;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
-import models.Player;
-import models.engines.InnerEngine;
-import models.engines.MiddleEngine;
-import models.engines.OuterEngine;
-import sample.Main;
+import models.bases.Player;
+import managers.InGameManager;
+import managers.LobbyManager;
+import managers.MainMenuManager;
+import main.Main;
 
 import java.util.ArrayList;
 
-import static sample.Main.changeScreen;
+import static main.Main.changeScreen;
 
 
 public class MiddleController {
@@ -52,9 +51,9 @@ public class MiddleController {
     Label[] nick_player_labels;
     ImageView[] pawn_players;
 
-    MiddleEngine me;
-    OuterEngine oe;
-    InnerEngine ie;
+    LobbyManager me;
+    MainMenuManager oe;
+    InGameManager ie;
 
     int player_count;
     int bot_count;
@@ -68,9 +67,9 @@ public class MiddleController {
     int oldPown = 1;
 
     public MiddleController() {
-        me = Main.getMiddleEngine();
-        oe = Main.getOuterEngine();
-        ie = Main.getInnerEngine();
+        me = LobbyManager.getInstance();
+        oe = MainMenuManager.getInstance();
+        ie = InGameManager.getInstance();
 
         this.nickname = oe.getHosterNick();
         this.player_count = 1;

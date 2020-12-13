@@ -1,19 +1,18 @@
-package models.controllers;
+package controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Skin;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
-import models.engines.MiddleEngine;
-import models.engines.OuterEngine;
-import sample.Main;
+import managers.LobbyManager;
+import managers.MainMenuManager;
+import main.Main;
 
 
-import static sample.Main.changeScreen;
+import static main.Main.changeScreen;
 
 public class OuterController {
 
@@ -31,12 +30,12 @@ public class OuterController {
 
     boolean menu_is_enable = true;
 
-    MiddleEngine me;
-    OuterEngine oe;
+    LobbyManager me;
+    MainMenuManager oe;
 
     public OuterController(){
-        me = Main.getMiddleEngine();
-        oe = Main.getOuterEngine();
+        me = LobbyManager.getInstance();
+        oe = MainMenuManager.getInstance();
     }
 
     public void initialize() {

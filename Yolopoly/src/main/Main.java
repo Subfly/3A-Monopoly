@@ -1,4 +1,4 @@
-package sample;
+package main;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -6,9 +6,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-import models.engines.InnerEngine;
-import models.engines.MiddleEngine;
-import models.engines.OuterEngine;
+import managers.InGameManager;
+import managers.LobbyManager;
+import managers.MainMenuManager;
 
 public class Main extends Application {
 
@@ -17,31 +17,10 @@ public class Main extends Application {
 
     static Stage primaryStage;
 
-    static OuterEngine oe;
-    static MiddleEngine me;
-    static InnerEngine ie;
-
     @Override
     public void start(Stage primaryStage) throws Exception {
-
-        Main.oe = new OuterEngine();
-        Main.me = new MiddleEngine();
-        Main.ie = new InnerEngine();
-
         Main.primaryStage = primaryStage;
         changeScreen("../models/controllers/OuterController.fxml");
-    }
-
-    public static OuterEngine getOuterEngine() {
-        return oe;
-    }
-
-    public static MiddleEngine getMiddleEngine() {
-        return me;
-    }
-
-    public static InnerEngine getInnerEngine() {
-        return ie;
     }
 
     public static void changeScreen(String source) throws Exception{

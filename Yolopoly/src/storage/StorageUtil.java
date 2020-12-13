@@ -1,8 +1,8 @@
 package storage;
 import enumerations.*;
-import models.Square;
+import models.bases.Square;
 import models.cards.*;
-import models.engines.InnerEngine;
+import managers.InGameManager;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -378,7 +378,7 @@ public class StorageUtil {
         return true;
     }
 
-    public boolean saveGame(InnerEngine engine) throws IOException {
+    public boolean saveGame(InGameManager engine) throws IOException {
         File file = new File("../" + UUID.randomUUID().toString() + ".json");
         FileWriter writer = new FileWriter(file);
         writer.write("");
