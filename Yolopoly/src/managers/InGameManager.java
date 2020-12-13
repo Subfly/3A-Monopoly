@@ -1,7 +1,7 @@
-package models.engines;
+package managers;
 
 import enumerations.*;
-import models.*;
+import models.bases.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import storage.Constants;
@@ -12,10 +12,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class InnerEngine {
+public class InGameManager {
 
     // Constants
     private final static int JAIL_TURN_COUNT = 3;
+
+    private static InGameManager innerEngine = null;
 
     //************
     // Variables
@@ -53,7 +55,14 @@ public class InnerEngine {
     //************
     // Constructor
     //************
-    public InnerEngine(){
+    private InGameManager(){
+    }
+
+    public static InGameManager getInstance(){
+        if(innerEngine == null){
+            innerEngine = new InGameManager();
+        }
+        return innerEngine;
     }
 
     public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {

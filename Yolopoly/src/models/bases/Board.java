@@ -1,4 +1,4 @@
-package models;
+package models.bases;
 
 import enumerations.Building;
 import enumerations.GameMode;

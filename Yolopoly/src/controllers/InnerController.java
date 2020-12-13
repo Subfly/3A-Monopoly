@@ -1,6 +1,5 @@
-package models.controllers;
+package controllers;
 
-import enumerations.Pawn;
 import enumerations.SquareType;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
@@ -9,17 +8,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
-import models.Dice;
-import models.Player;
-import models.Square;
+import models.bases.Player;
+import models.bases.Square;
 import models.cards.PropertyCard;
-import models.engines.InnerEngine;
-import models.engines.MiddleEngine;
-import sample.Main;
+import managers.InGameManager;
+import managers.LobbyManager;
+import main.Main;
 
 import java.util.ArrayList;
 
-import static sample.Main.changeScreen;
+import static main.Main.changeScreen;
 
 public class InnerController {
 
@@ -94,8 +92,8 @@ public class InnerController {
         card_image.setVisible(false);
 
         //Lazım baya biliyon mu
-        ie = Main.getInnerEngine();
-        me = Main.getMiddleEngine();
+        ie = InGameManager.getInstance();
+        me = LobbyManager.getInstance();
 
         pawns_of_players = new ArrayList<>();
         indexes_of_players = new ArrayList<>();
@@ -129,8 +127,8 @@ public class InnerController {
         initializeSettings();
     }
 
-    InnerEngine ie;
-    MiddleEngine me;
+    InGameManager ie;
+    LobbyManager me;
 
     ArrayList<Player> playerArrayList;
     int playerCount;

@@ -1,4 +1,4 @@
-package models;
+package models.bases;
 
 import enumerations.Pawn;
 import models.cards.DrawableCard;

@@ -1,4 +1,4 @@
-package models;
+package models.bases;
 
 public class Currency {
     private String name;

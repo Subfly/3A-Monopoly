@@ -1,18 +1,17 @@
-package models.engines;
+package managers;
 
 import enumerations.GameMode;
 import enumerations.GameTheme;
 import enumerations.Pawn;
-import models.Bank;
-import models.Board;
-import models.Player;
+import models.bases.Player;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-public class MiddleEngine {
+public class LobbyManager {
+
+    private static LobbyManager middleEngine = null;
+
     //Sunucu kurma/Lobi bu classta
     private boolean isOnline;
     private GameMode gameMode;
@@ -31,13 +30,20 @@ public class MiddleEngine {
     //Lobi Ayarları
     private String lobbyPassword;
 
-    public MiddleEngine() {
+    private LobbyManager() {
         this.playerArrayList = new ArrayList<>();
         this.admin = new Player(adminDummyName, true);
         this.playerArrayList.add(this.admin);
         this.playerCount = 1;
         this.maxPlayerCount = 2;
         this.botCount = 0;
+    }
+
+    public static LobbyManager getInstance(){
+        if(middleEngine == null){
+            middleEngine = new LobbyManager();
+        }
+        return middleEngine;
     }
 
     public ArrayList<Player> getPlayerArrayList() {
