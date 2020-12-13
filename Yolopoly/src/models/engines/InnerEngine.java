@@ -2,7 +2,6 @@ package models.engines;
 
 import enumerations.*;
 import models.*;
-import models.cards.ChanceCard;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
 import storage.Constants;
@@ -318,8 +317,11 @@ public class InnerEngine {
                 levelDown(s.getId());
                 //If has enough money
                 if(bot.getMonopolyMoneyAmount() >= debt){
-                    payDebt();
-                    return -98;
+                    if(payDebt()){
+                        return -98;
+                    }else{
+                        return -100;
+                    }
                 }
             }
         }
@@ -332,8 +334,11 @@ public class InnerEngine {
                 levelDown(s.getId());
                 //If has enough money
                 if(bot.getMonopolyMoneyAmount() >= debt){
-                    payDebt();
-                    return -98;
+                    if(payDebt()){
+                        return -98;
+                    }else{
+                        return -100;
+                    }
                 }
             }
         }
