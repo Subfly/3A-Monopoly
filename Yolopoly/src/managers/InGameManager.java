@@ -389,6 +389,7 @@ public class InGameManager {
      * 5 => GET TAXES FROM PARK
      * 6 => PAID RENT
      * 7 => EVERYTHING IS DONE, GOODBYE!
+     * 8 => IN JAIL, ASK USER PROMPT
      */
     public int startTurn(int diceResult, boolean hasRolledDouble, double multiplier){
         /*
@@ -410,6 +411,10 @@ public class InGameManager {
 
         //Start with getting player
         Player player = players.get(currentPlayerId);
+
+        if(player.isInJail()){
+            return 8;
+        }
 
         if(hasRolledDouble){
             player.incrementDoublesCount();
@@ -1053,7 +1058,10 @@ public class InGameManager {
         if (jailTurnCount == JAIL_TURN_COUNT) {
             return 1; // the player has to go out right now
         }
-        return 2; // the player will remain in jail
+        if(player.getMonopolyMoneyAmount() >= Bank.getJailPenalty()){
+            return 2; // the player has not enough money to get out of jail
+        }
+        return 3; // the player will remain in jail
     }
 
 
