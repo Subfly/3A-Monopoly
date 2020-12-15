@@ -12,7 +12,6 @@ import models.bases.Player;
 import managers.InGameManager;
 import managers.LobbyManager;
 import managers.MainMenuManager;
-import main.Main;
 
 import java.util.ArrayList;
 
@@ -77,6 +76,7 @@ public class MiddleController {
 
         me.getAdmin().setName(nickname);
         me.getAdmin().setPawnIndex(1);
+        me.getAdmin().setHuman(false);
 
         player_list_grid = new GridPane();
     }
@@ -261,13 +261,13 @@ public class MiddleController {
 
     @FXML
     public void closeButtonPressed() throws Exception{
-        changeScreen("../models/controllers/OuterController.fxml");
+        changeScreen("../controllers/OuterController.fxml");
     }
 
     @FXML
     public void readyButtonPressed() throws Exception{
         ie.initializeGame(false, me.getGameMode(), me.getGameTheme(), me.getPlayerArrayList());
-        changeScreen("../models/controllers/InnerController.fxml");
+        changeScreen("../controllers/InnerController.fxml");
     }
 
     //Initialize Screen With Images

@@ -179,63 +179,61 @@ public class InGameManager {
             }
         }
         int result = startTurn(diceResult, isDouble, multiplier);
+        /*
+         * RETURN VALUES EXPLAINED
+         * -99 PLAYER BROKE, PAY DEBTS
+         * -2 => PLAYER DOUBLED THREE TIMES
+         * -1 => ERROR APPEARED SUCCESSFULLY
+         * 1 => DRAW CHANCE
+         * 2 => DRAW COMMUNITY
+         * 3 => PAID TAX
+         * 4 => GO TO JAIL
+         * 5 => GET TAXES FROM PARK
+         * 6 => PAID RENT
+         * 7 => EVERYTHING IS DONE, GOODBYE!
+         */
+
+        /*
+         * RETURN VALUES EXPLAINED
+         * -99 => PLAYER BROKE
+         * -3 => Backward
+         * 0 - 39 => to index
+         * 5100 => DRAWN GOOJC
+         * 5200 => DRAWN GTJC
+         * 6000 => PAY MONEY FOR BUILDINGS
+         * 6100 => PAY TO BANK
+         * 7000 => BIRTHDAY GIFT BABY!
+         * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
+         */
+
         Player bot = players.get(currentPlayerId);
         if(result == -99){
             return payDebtBot(bot);
-        }else if(result == 1){
+        }
+        else if(result == 1){
             int cardRes = drawCard(DrawableCardType.Chance);
             if (cardRes == -99){
                 return payDebtBot(bot);
-            }else if (cardRes == 3){
-                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                /*
-                 * HANDLE ALGORITHM===>
-                 * SAVE OLD POSITION
-                 * MOVE PAWN ACCORDING TO TOTAL COUNT
-                 * HERE I ENCODE MOVE ***COUNT*** AS SUPPOSED TO BE
-                 * SO MOVE AGAIN WITH RETURN VALUE
-                 * CHECK WITH if(result < 0 && result > -90)
-                 */
-                return -cardRes;
-            }else if(cardRes == 4){
-                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                /*
-                 * HANDLE ALGORITHM===>
-                 * SAVE OLD POSITION
-                 * MOVE PAWN ACCORDING TO TOTAL COUNT
-                 * HERE I ENCODE MOVE ***INDEX*** AS SUPPOSED TO BE
-                 * SO MOVE AGAIN WITH RETURN VALUE
-                 * CHECK WITH if(result >= 0 && result <= 39)
-                 */
+            }
+            else if (cardRes == -3){
                 return cardRes;
             }
-        }else if(result == 2){
+            else if(cardRes >= 0 && cardRes <= 39){
+                return cardRes;
+            }
+        }
+        else if(result == 2){
             int cardRes = drawCard(DrawableCardType.Community);
             if (cardRes == -99){
                 return payDebtBot(bot);
-            }else if (cardRes == 3){
-                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                /*
-                 * HANDLE ALGORITHM===>
-                 * SAVE OLD POSITION
-                 * MOVE PAWN ACCORDING TO TOTAL COUNT
-                 * HERE I ENCODE MOVE ***COUNT*** AS SUPPOSED TO BE
-                 * SO MOVE AGAIN WITH RETURN VALUE
-                 * CHECK WITH if(result < 0 && result > -90)
-                 */
-                return -cardRes;
-            }else if(cardRes == 4){
-                //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                /*
-                 * HANDLE ALGORITHM===>
-                 * SAVE OLD POSITION
-                 * MOVE PAWN ACCORDING TO TOTAL COUNT
-                 * HERE I ENCODE MOVE ***INDEX*** AS SUPPOSED TO BE
-                 * SO MOVE AGAIN WITH RETURN VALUE
-                 * CHECK WITH if(result >= 0 && result <= 39)
-                 */
+            }
+            else if (cardRes == -3){
                 return cardRes;
-            }else if (cardRes >= 100000){
+            }
+            else if(cardRes >= 0 && cardRes <= 39){
+                return cardRes;
+            }
+            else if (cardRes >= 100000){
                 int decision = (int) (Math.random() * 2 + 1);
                 if(decision == 1){
                     if(bot.removeMoney(Constants.CURRENCY_NAMES[0], cardRes)){
@@ -248,22 +246,20 @@ public class InGameManager {
                     int cardResAgain = drawCard(DrawableCardType.Chance);
                     if (cardResAgain == -99){
                         return payDebtBot(bot);
-                    }else if (cardResAgain == 3){
-                        //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                        /*
-                         * Same as above
-                         */
-                        return -cardResAgain;
-                    }else if(cardResAgain == 4){
-                        //TODO: SAİT BURAYI HANDLE ET POSITION FARKI İLE
-                        /*
-                         * Same as above
-                         */
+                    }
+                    else if (cardResAgain == -3){
+                        return cardResAgain;
+                    }
+                    else if(cardResAgain >= 0 && cardResAgain <= 39){
                         return cardResAgain;
                     }
                 }
             }
-        }else if(result == 7){
+            else if (cardRes == 6000 || cardRes == 6100 || cardRes == 7000){
+                return -98;
+            }
+        }
+        else if(result == 7){
             if(checkBuyProperty(bot.getCurrentPosition()) && board.getSquares().get(bot.getCurrentPosition()).getType() == SquareType.NormalSquare){
                 //Just buy the area
                 buyProperty();
@@ -279,6 +275,9 @@ public class InGameManager {
                 buildBuilding(Building.Hotel, randomArea);
             }
             return -97;
+        }
+        else {
+            return -99;
         }
         return -100;
     }
@@ -415,12 +414,24 @@ public class InGameManager {
         if(hasRolledDouble){
             player.incrementDoublesCount();
         }
+        else {
+            player.resetDoublesCount();
+        }
 
         if(player.isThreeTimesDoubled()){
             player.setInJail(true);
             player.setCurrentPosition(10);
             player.resetDoublesCount();
             return -2;
+        }
+
+        if (player.isInJail()){
+            if (player.getInJailTurnCount() < 4){
+                player.incrementInJailTurnCount();
+            }
+            else {
+                player.resetInJailTurnCount();
+            }
         }
 
         //Moving the Pawn where the dice show
@@ -709,13 +720,13 @@ public class InGameManager {
     /*
      * RETURN VALUES EXPLAINED
      * -99 => PLAYER BROKE
-     * 1 => DRAWN GOOJC
-     * 2 => DRAWN GTJC
-     * 3 => CHANGED POSITION BACKWARD
-     * 4 => CHANGED POSITION TO INDEX
-     * 5 => PAY MONEY FOR BUILDINGS
-     * 6 => PAY TO BANK
-     * 7 => BIRTHDAY GIFT BABY!
+     * -3 => Backward
+     * 0 - 39 => to index
+     * 5100 => DRAWN GOOJC
+     * 5200 => DRAWN GTJC
+     * 6000 => PAY MONEY FOR BUILDINGS
+     * 6100 => PAY TO BANK
+     * 7000 => BIRTHDAY GIFT BABY!
      * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
      */
     public int drawCard(DrawableCardType cardType){
@@ -727,12 +738,13 @@ public class InGameManager {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                return 1;
+                return 5100;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                return 2;
+                System.out.println("helal lan alitahasubuçak");
+                return 5200;
             }else{
                 if(cardDrawn.isComposed()){
                     //If the card has more than one operation
@@ -743,7 +755,7 @@ public class InGameManager {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            return 3;
+                            return -3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
                             if(cardDrawn.isGettingMoney()){
@@ -754,7 +766,7 @@ public class InGameManager {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            return 4;
+                            return moveToIndex;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
                         //If not moving but paying for each building owned
@@ -772,7 +784,7 @@ public class InGameManager {
                         int moneyToHotels = hotelsOwned * cardDrawn.getMoneyForHotels();
                         int moneyToHoses = housesOwned * cardDrawn.getMoneyForHouses();
                         if(player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToHoses + moneyToHotels)){
-                            return 5;
+                            return 6000;
                         }else{
                             player.setBankrupt(true);
                             HashMap<Integer, Integer> payHash = new HashMap<>();
@@ -784,7 +796,7 @@ public class InGameManager {
                 }else{
                     //If not composed or moving, hence paying money
                     if(player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe())){
-                        return 6;
+                        return 6100;
                     }else{
                         player.setBankrupt(true);
                         HashMap<Integer, Integer> payHash = new HashMap<>();
@@ -801,12 +813,13 @@ public class InGameManager {
             if(cardDrawn.isGOOJC()){
                 //If card is a GOOJC, save to inventory of the current player
                 player.addToSavedCards(cardDrawn);
-                return 1;
+                return 5100;
             }else if(cardDrawn.isGTJC()){
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                return 2;
+                System.out.println("helal lan alitahasubuçak");
+                return 5200;
             }else if(cardDrawn.isDrawingChanceCard()){
                 //Needed to be handled in front-end.
                 return cardDrawn.getMoneyOwe();
@@ -820,7 +833,7 @@ public class InGameManager {
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
                             player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
-                            return 3;
+                            return -3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
                             if(cardDrawn.isGettingMoney()){
@@ -831,7 +844,7 @@ public class InGameManager {
                                 }
                             }
                             player.setCurrentPosition(moveToIndex);
-                            return 4;
+                            return moveToIndex;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
                         //If not moving but paying for each building owned
@@ -849,7 +862,7 @@ public class InGameManager {
                         int moneyToHouses = housesOwned * cardDrawn.getMoneyForHouses();
                         int moneyForHotels = hotelsOwned * cardDrawn.getMoneyForHotels();
                         if(player.removeMoney(Constants.CURRENCY_NAMES[0], moneyToHouses + moneyForHotels)){
-                            return 5;
+                            return 6000;
                         }else{
                             player.setBankrupt(true);
                             HashMap<Integer, Integer> payHash = new HashMap<>();
@@ -869,12 +882,12 @@ public class InGameManager {
                             }
                         }
                         player.addMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe() * players.size() - 1);
-                        return 7;
+                        return 7000;
                     }
                 }else{
                     //If not composed or moving, hence paying money
                     if(player.removeMoney(Constants.CURRENCY_NAMES[0], cardDrawn.getMoneyOwe())){
-                        return 6;
+                        return 6100;
                     }else{
                         player.setBankrupt(true);
                         HashMap<Integer, Integer> payHash = new HashMap<>();

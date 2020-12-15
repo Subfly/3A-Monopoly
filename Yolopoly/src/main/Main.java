@@ -20,7 +20,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Main.primaryStage = primaryStage;
-        changeScreen("../models/controllers/OuterController.fxml");
+        changeScreen("../controllers/OuterController.fxml");
     }
 
     public static void changeScreen(String source) throws Exception{

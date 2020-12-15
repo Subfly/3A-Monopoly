@@ -254,11 +254,11 @@
          </image>
       </ImageView>
       <Label fx:id="testTextField" layoutX="1301.0" layoutY="274.0" text="Label" />
-        <ScrollPane id="scroll_pane" hbarPolicy="NEVER" layoutX="1530.0" layoutY="595.0" pannable="true" prefHeight="405.0" prefWidth="310.0">
+        <ScrollPane id="scroll_pane" hbarPolicy="NEVER" layoutX="1530.0" layoutY="595.0" pannable="true" prefHeight="405.0" prefWidth="310.0" maxWidth="310.0">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="310.0">
                     <children>
-                        <Label fx:id="test_label" text="Label" />
+                        <Label fx:id="test_label" text="Label" wrapText="true" lineSpacing="5" prefWidth="300.0"/>
                     </children>
                 </AnchorPane>
             </content>

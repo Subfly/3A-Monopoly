@@ -17,10 +17,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case ankara -> file = new File("src/data/themes/debug_theme.json");
-            case bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/Vanilla.json");
+            case ankara -> file = new File("src/data/themes/Ankara.json");
+            case bilkent -> file = new File("src/data/themes/Bilkent.json");
+            case halloween -> file = new File("src/data/themes/Halloween.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -80,10 +80,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case ankara -> file = new File("src/data/themes/debug_theme.json");
-            case bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/Vanilla.json");
+            case ankara -> file = new File("src/data/themes/Ankara.json");
+            case bilkent -> file = new File("src/data/themes/Bilkent.json");
+            case halloween -> file = new File("src/data/themes/Halloween.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -100,7 +100,7 @@ public class StorageUtil {
 
         for (String s : dummyChances) {
             var chanceCardJSON = chanceJSON.getJSONObject(s);
-            String message = chanceCardJSON.getString("message");
+            String message = chanceCardJSON.getString("message") + " " + chanceCardJSON.getInt("moveToIndex");
             boolean isComposed = chanceCardJSON.getBoolean("isComposed");
             boolean isMoving = chanceCardJSON.getBoolean("isMoving");
             int moveToIndex = chanceCardJSON.getInt("moveToIndex");
@@ -127,10 +127,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case ankara -> file = new File("src/data/themes/debug_theme.json");
-            case bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/Vanilla.json");
+            case ankara -> file = new File("src/data/themes/Ankara.json");
+            case bilkent -> file = new File("src/data/themes/Bilkent.json");
+            case halloween -> file = new File("src/data/themes/Halloween.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -174,10 +174,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case ankara -> file = new File("src/data/themes/debug_theme.json");
-            case bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/Vanilla.json");
+            case ankara -> file = new File("src/data/themes/Ankara.json");
+            case bilkent -> file = new File("src/data/themes/Bilkent.json");
+            case halloween -> file = new File("src/data/themes/Halloween.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 
@@ -310,10 +310,10 @@ public class StorageUtil {
 
         File file = null;
         switch (theme){
-            case vanilla -> file = new File("src/data/themes/debug_theme.json");
-            case ankara -> file = new File("src/data/themes/debug_theme.json");
-            case bilkent -> file = new File("src/data/themes/debug_theme.json");
-            case halloween -> file = new File("src/data/themes/debug_theme.json");
+            case vanilla -> file = new File("src/data/themes/Vanilla.json");
+            case ankara -> file = new File("src/data/themes/Ankara.json");
+            case bilkent -> file = new File("src/data/themes/Bilkent.json");
+            case halloween -> file = new File("src/data/themes/Halloween.json");
         }
         String content = new Scanner(file).useDelimiter("\\Z").next();
 

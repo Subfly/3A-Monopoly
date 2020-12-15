@@ -95,12 +95,14 @@ public class Player {
         this.ownedPlaces = new ArrayList<>();
         this.railroadsOwned = 0;
         this.utilitiesOwned = 0;
+        this.inJailTurnCount = 0;
         this.isBankrupt = false;
         this.isHuman = isHuman;
         this.loan = 0;
         this.doublesCount = 0;
         this.getLoanCurrently = false;
         this.money = new HashMap<>();
+        this.savedCards = new ArrayList<>();
         for (String cName : Constants.CURRENCY_NAMES) {
             money.put(cName, 0);
         }

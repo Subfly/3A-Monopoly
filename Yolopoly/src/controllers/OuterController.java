@@ -9,7 +9,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import managers.LobbyManager;
 import managers.MainMenuManager;
-import main.Main;
 
 
 import static main.Main.changeScreen;
@@ -50,7 +49,7 @@ public class OuterController {
     public void nick_handler(KeyEvent e) throws Exception {
         if (e.getCode().equals(KeyCode.ENTER)){
             oe.setHosterNick(nick_handler_field.getText().substring(0, nick_handler_field.getText().length()-1));
-            changeScreen("../models/controllers/MiddleController.fxml");
+            changeScreen("../controllers/MiddleController.fxml");
         }
         else if (e.getCode().equals(KeyCode.ESCAPE)){
             nick_handler.setStyle("-fx-opacity: 0;");

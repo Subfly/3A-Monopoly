@@ -1,27 +1,22 @@
-package models.controllers;
+package controllers;
 
 import enumerations.SquareType;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
 import javafx.animation.TranslateTransition;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
-import models.Player;
-import models.Square;
+import managers.*;
+import main.Main;
+import models.bases.Player;
+import models.bases.Square;
 import models.cards.PropertyCard;
-import models.engines.InnerEngine;
-import models.engines.MiddleEngine;
-import sample.Main;
 
 import java.util.ArrayList;
 
-import static sample.Main.changeScreen;
+import static main.Main.changeScreen;
 
 public class InnerController {
 
@@ -95,8 +90,8 @@ public class InnerController {
         pressedEndTurn = true;
         card_image.setVisible(false);
 
-        ie = Main.getInnerEngine();
-        me = Main.getMiddleEngine();
+        igm = InGameManager.getInstance();
+        lm = LobbyManager.getInstance();
 
         pawns_of_players = new ArrayList<>();
         indexes_of_players = new ArrayList<>();
@@ -109,7 +104,7 @@ public class InnerController {
 
         int tmpIndex = 0;
 
-        for (Player i : ie.getPlayers()) {
+        for (Player i : igm.getPlayers()) {
             pawns_of_players.add(pawns[i.getPawnIndex() - 1]);
             if (i.getPawnIndex() == 1 || i.getPawnIndex() == 2 || i.getPawnIndex() == 5 || i.getPawnIndex() == 6) {
                 pawnTeam1.add(pawns[i.getPawnIndex() - 1]);
@@ -130,79 +125,143 @@ public class InnerController {
         initializeSettings();
     }
 
-    InnerEngine ie;
-    MiddleEngine me;
+    InGameManager igm;
+    LobbyManager lm;
 
     ArrayList<Player> playerArrayList;
     int playerCount;
 
     private void initializeSettings() {
-        playerCount = me.getPlayerCount();
-        playerArrayList = me.getPlayerArrayList();
+        playerCount = lm.getPlayerCount();
+        playerArrayList = lm.getPlayerArrayList();
     }
 
     int turn = 0;
 
     @FXML
     private void level_up() {
-        ie.levelUp(last_index_of_info_card);
+        igm.levelUp(last_index_of_info_card);
         update_square_info();
         set_log();
     }
 
     @FXML
     private void level_down() {
-        ie.levelDown(last_index_of_info_card);
+        igm.levelDown(last_index_of_info_card);
         update_square_info();
         set_log();
     }
 
-    boolean jailedBot = false;
+    private void end_turn_for_bot(){
+        turn++;
+        turn = turn % pawns_of_players.size();
+        set_turn_GUI();
+        state_of_bot = 0;
+        igm.endTurn();
+    }
+
+    int state_of_bot = 0;
+    int result_of_bots_cards = 0;
+    int old_position_of_bot = 0;
+
 
     private void play_bot(){
-        if (!ie.isCurrentPlayerHuman()){
-            if (!ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail()){
-                ie.rollDice();
+        if (!igm.isCurrentPlayerHuman()){
+            // -1- jailed
+            // 0 - move w dice
+            // 1 - move wout dice
+            // 2 - finito
 
-                int dice1 = ie.getDice().getDice1();
-                int dice2 = ie.getDice().getDice2();
-                int total = ie.getDice().getTotal();
 
-                dice1 = 6;
-                dice2 = 4;
-                total = 10;
+            if (!igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail()){
+                //TODO haahha
 
-                int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
+                if (state_of_bot == 0){
+                    igm.rollDice();
 
-                dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
-                dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
-                movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-                Player p = ie.getPlayers().get(ie.getCurrentPlayerId());
-                //System.out.println(p.getName() + " " + p.getCurrentPosition());
-                int result = ie.makeDecision(total, dice1 == dice2);
-                jailedBot = ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail();
-                if (ie.getPlayers().get(ie.getCurrentPlayerId()).getDoublesCount() < 1 && !ie.getPlayers().get(ie.getCurrentPlayerId()).isInJail()){
+                    int dice1 = igm.getDice().getDice1();
+                    int dice2 = igm.getDice().getDice2();
+                    int total = igm.getDice().getTotal();
+
+                    old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
+
+                    dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
+                    dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
+
+                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                    result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
+                    old_position_of_bot += total;
+                    boolean bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
+
+                    if (!bot_jailed && dice1 == dice2){
+                        state_of_bot = 0;
+                    }
+                    else if (bot_jailed){
+                        state_of_bot = 0;
+                    }
+                    else if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
+                        state_of_bot = 1;
+                    }
+                    else {
+                        turn++;
+                        turn = turn % pawns_of_players.size();
+                        set_turn_GUI();
+                        state_of_bot = 0;
+                        igm.endTurn();
+                    }
+                }
+                else if (state_of_bot == 1){
+                    int move_count_of_bot;
+                    if (result_of_bots_cards == -3){
+                        move_count_of_bot = 37;
+                    }
+                    else {
+                        if (result_of_bots_cards > old_position_of_bot){
+                            move_count_of_bot = result_of_bots_cards - old_position_of_bot;
+                        }
+                        else {
+                            move_count_of_bot = 40 - (old_position_of_bot - result_of_bots_cards);
+                        }
+                    }
+                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                    result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
+
+                    if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
+                        state_of_bot = 1;
+                    }
+                    else {
+                        turn++;
+                        turn = turn % pawns_of_players.size();
+                        set_turn_GUI();
+                        state_of_bot = 0;
+                        igm.endTurn();
+                    }
+                }
+            }
+            else {
+                System.out.println(igm.getPlayers().get(igm.getCurrentPlayerId()).getName() + " " + igm.getPlayers().get(igm.getCurrentPlayerId()).getInJailTurnCount());
+                if (igm.getPlayers().get(igm.getCurrentPlayerId()).getInJailTurnCount() == 0){
+                    int move_count_of_bot;
+                    if (old_position_of_bot < 10){
+                        move_count_of_bot = 10 - old_position_of_bot;
+                    }
+                    else {
+                        move_count_of_bot = 50 - old_position_of_bot;
+                    }
+                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     turn++;
                     turn = turn % pawns_of_players.size();
                     set_turn_GUI();
-                    System.out.println("turn if " + turn);
-                    ie.endTurn();
+                    state_of_bot = 0;
+                    igm.endTurn();
                 }
-            }
-            else if (jailedBot){
-                movePawn(pawns_of_players.get(turn), 20, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), 30);
-                jailedBot = false;
-                turn++;
-                turn = turn % pawns_of_players.size();
-                System.out.println("turn else " + turn);
-                set_turn_GUI();
-                ie.endTurn();
-            }
-            else {
-                turn++;
-                turn = turn % pawns_of_players.size();
-                System.out.println("turn else " + turn);
-                set_turn_GUI();
+                else {
+                    turn++;
+                    turn = turn % pawns_of_players.size();
+                    set_turn_GUI();
+                    state_of_bot = 0;
+                    igm.endTurn();
+                }
             }
             set_log();
         }
@@ -211,13 +270,13 @@ public class InnerController {
     @FXML
     public void actionButtonPressed() {
         if (!pressedEndTurn) {
-            if(ie.isCurrentPlayerHuman()){
+            if(igm.isCurrentPlayerHuman()){
                 pressedEndTurn = true;
                 turn++;
                 turn = turn % pawns_of_players.size();
                 set_turn_GUI();
                 //square_update_GUI();
-                ie.endTurn();
+                igm.endTurn();
 
                 play_bot();
             }
@@ -227,7 +286,7 @@ public class InnerController {
 
     private void set_log() {
         StringBuilder tmpLog = new StringBuilder();
-        for (String i : ie.getLog()) {
+        for (String i : igm.getLog()) {
             tmpLog.append(i + "\n");
         }
         test_label.setText(tmpLog.toString());
@@ -297,22 +356,19 @@ public class InnerController {
         if (pressedEndTurn) {
             // TODO: Change multiplier later
 
-            ie.rollDice();
-            int dice1 = ie.getDice().getDice1();
-            int dice2 = ie.getDice().getDice2();
-            int dice_total = ie.getDice().getTotal();
+            igm.rollDice();
+            int dice1 = igm.getDice().getDice1();
+            int dice2 = igm.getDice().getDice2();
+            int dice_total = igm.getDice().getTotal();
 
-            int oldPosOfPlayer = ie.getPlayers().get(ie.getCurrentPlayerId()).getCurrentPosition();
+            int oldPosOfPlayer = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
             dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
-            int test = ie.startTurn(dice_total, dice1 == dice2, 1);
+            int test = igm.startTurn(dice_total, dice1 == dice2, 1);
 
-            movePawn(pawns_of_players.get(turn), dice_total, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-            if (test == 3){
-                movePawn(pawns_of_players.get(turn), 20, pawnTeam2.contains(pawns_of_players.get(ie.getCurrentPlayerId())), oldPosOfPlayer);
-            }
+            movePawn(pawns_of_players.get(turn), dice_total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), oldPosOfPlayer);
 
             pressedEndTurn = dice1 == dice2;
         } else {
@@ -330,9 +386,9 @@ public class InnerController {
     }
 
     private void update_square_info() {
-        int squareId = ie.getBoard().getSquares().get(last_index_of_info_card).getId();
-        PropertyCard tmpcard = ie.getSpecificProperty(squareId);
-        Square tmpSquare = ie.getBoard().getSpecificSquare(squareId);
+        int squareId = igm.getBoard().getSquares().get(last_index_of_info_card).getId();
+        PropertyCard tmpcard = igm.getSpecificProperty(squareId);
+        Square tmpSquare = igm.getBoard().getSpecificSquare(squareId);
         if (is_square(tmpSquare, "buy")) {
             int tmpSquareLevel = tmpSquare.getLevel();
             card_image.setVisible(true);
@@ -341,12 +397,12 @@ public class InnerController {
             buy_button.setVisible(true);
             sell_button.setVisible(true);
             assert tmpcard != null;
-            if (ie.getOwner(squareId) != null) {
+            if (igm.getOwner(squareId) != null) {
                 if (tmpSquareLevel != -1){
-                    setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
                 }
                 else {
-                    setInfoCard(tmpSquareLevel, ie.getOwner(squareId).getName(), 0);
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), 0);
                 }
             } else {
                 setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
@@ -356,8 +412,8 @@ public class InnerController {
         }
 
         try {
-            boolean levelUp = ie.checkLevelStatus(last_index_of_info_card).get(lvup);
-            boolean levelDown = ie.checkLevelStatus(last_index_of_info_card).get(lvdw);
+            boolean levelUp = igm.checkLevelStatus(last_index_of_info_card).get(lvup);
+            boolean levelDown = igm.checkLevelStatus(last_index_of_info_card).get(lvdw);
             if (levelUp) {
                 buy_button.setDisable(false);
                 buy_button.setStyle("-fx-opacity: 1");
@@ -415,7 +471,7 @@ public class InnerController {
 
     private void square_update_GUI() {
         int i = 0;
-        for (Square s : ie.getBoard().getSquares()) {
+        for (Square s : igm.getBoard().getSquares()) {
             String position;
             int id = s.getId();
             if (id <= 10 || (id >= 20 && id <= 30)) {
@@ -521,6 +577,6 @@ public class InnerController {
 
     @FXML
     public void closeButtonPressed() throws Exception {
-        changeScreen("../models/controllers/OuterController.fxml");
+        changeScreen("../controllers/OuterController.fxml");
     }
 }
