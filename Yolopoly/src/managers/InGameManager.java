@@ -179,7 +179,7 @@ public class InGameManager {
                 multiplier = this.generateChanceMultiplier(diceResult);
             }
         }
-
+        //Dummy commit
         int result = startTurn(diceResult, isDouble, multiplier);
 
         Player bot = players.get(currentPlayerId);
