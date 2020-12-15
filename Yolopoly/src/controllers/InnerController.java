@@ -344,16 +344,35 @@ public class InnerController {
         TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
         tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
         tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
-        tt.setOnFinished(e -> play_bot());
+        tt.setOnFinished(e -> {
+            play_bot();
+            get_player_jail();
+        });
         tt.setAutoReverse(false);
         tt.play();
     }
 
     // B O T
 
+    boolean is_player_get_jailed = false;
+
+    public void get_player_jail(){
+        if (is_player_get_jailed){
+            int current_place = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
+            int move_count_of_player;
+            if (old_position_of_bot < 10){
+                move_count_of_player = 10 - current_place;
+            }
+            else {
+                move_count_of_player = 50 - current_place;
+            }
+            movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
+        }
+    }
+
     @FXML
     public void roll_dice() {
-        if (pressedEndTurn) {
+        if (pressedEndTurn && !is_player_get_jailed) {
             // TODO: Change multiplier later
 
             igm.rollDice();
@@ -366,12 +385,19 @@ public class InnerController {
             dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
-            int test = igm.startTurn(dice_total, dice1 == dice2, 1);
+            int result_of_start_turn = igm.startTurn(dice_total, dice1 == dice2, 1);
 
             movePawn(pawns_of_players.get(turn), dice_total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), oldPosOfPlayer);
 
+            if (result_of_start_turn == -100){
+                is_player_get_jailed = true;
+            }
+
             pressedEndTurn = dice1 == dice2;
-        } else {
+        } else if (is_player_get_jailed){
+            testTextField.setText("jaildasın anam ona göre iş yapcaz");
+        }
+        else {
             testTextField.setText("Turu bitir önce");
         }
         set_log();
