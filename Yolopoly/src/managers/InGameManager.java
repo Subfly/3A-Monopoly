@@ -163,11 +163,12 @@ public class InGameManager {
 
     /*
      * RETURN VALUES
+     * -101 => BOT SELECTED TO ROLL DICE IN JAIL
      * -100 => ERROR OCCUR
      * -99 => BANKRUPT, ACCEPT DIRECTLY
      * -98 => PAID DEBTS
      * -97 => FREELY MADE DECISIONS
-     * VALUE BETWEEN -90 TO 0 => MOVE BACKWARDS
+     * -3 => MOVE BACKWARDS
      * VALUE BETWEEN 0 TO 39 => MOVE TO INDEX
      */
     public int makeDecision(int diceResult, boolean isDouble){
@@ -178,39 +179,23 @@ public class InGameManager {
                 multiplier = this.generateChanceMultiplier(diceResult);
             }
         }
-        int result = startTurn(diceResult, isDouble, multiplier);
-        /*
-         * RETURN VALUES EXPLAINED
-         * -99 PLAYER BROKE, PAY DEBTS
-         * -2 => PLAYER DOUBLED THREE TIMES
-         * -1 => ERROR APPEARED SUCCESSFULLY
-         * 1 => DRAW CHANCE
-         * 2 => DRAW COMMUNITY
-         * 3 => PAID TAX
-         * 4 => GO TO JAIL
-         * 5 => GET TAXES FROM PARK
-         * 6 => PAID RENT
-         * 7 => EVERYTHING IS DONE, GOODBYE!
-         */
 
-        /*
-         * RETURN VALUES EXPLAINED
-         * -99 => PLAYER BROKE
-         * -3 => Backward
-         * 0 - 39 => to index
-         * 5100 => DRAWN GOOJC
-         * 5200 => DRAWN GTJC
-         * 6000 => PAY MONEY FOR BUILDINGS
-         * 6100 => PAY TO BANK
-         * 7000 => BIRTHDAY GIFT BABY!
-         * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
-         */
+        int result = startTurn(diceResult, isDouble, multiplier);
 
         Player bot = players.get(currentPlayerId);
-        if(bot.isInJail()){
-            return -101; //Handle here in frontend
+        if(result == -100){
+            int jailDecision = (int) (Math.random() * 2 + 1);
+            if(jailDecision == 1){
+                //Pay money and get out
+                bot.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty());
+                bot.setInJail(false);
+                bot.resetInJailTurnCount();
+                bot.resetDoublesCount();
+                //Make decision method again
+                return makeDecision(diceResult, isDouble);
+            }
         }
-        if(result == -99){
+        else if(result == -99){
             return payDebtBot(bot);
         }
         else if(result == 1){
@@ -382,7 +367,8 @@ public class InGameManager {
 
     /*
      * RETURN VALUES EXPLAINED
-     * -99 PLAYER BROKE, PAY DEBTS
+     * -100 => PLAYER IN JAIL
+     * -99 => PLAYER BROKE, PAY DEBTS
      * -2 => PLAYER DOUBLED THREE TIMES
      * -1 => ERROR APPEARED SUCCESSFULLY
      * 1 => DRAW CHANCE
@@ -392,7 +378,11 @@ public class InGameManager {
      * 5 => GET TAXES FROM PARK
      * 6 => PAID RENT
      * 7 => EVERYTHING IS DONE, GOODBYE!
-     * 8 => IN JAIL, ASK USER PROMPT
+     *
+     * JAIL ALGORITHM
+     * -99 => LET PLAYER PAY DEBTS, THEN startTurn() AGAIN
+     * -100 => LET PLAYER TO CHOOSE FROM DICE OR PAY FINE
+     * NO SPECIAL HANDLE IN GETTING OUT
      */
     public int startTurn(int diceResult, boolean hasRolledDouble, double multiplier){
         /*
@@ -415,8 +405,16 @@ public class InGameManager {
         //Start with getting player
         Player player = players.get(currentPlayerId);
 
-        if(player.isInJail()){
-            return 8;
+        if(player.isInJail() && hasRolledDouble){
+            player.setInJail(false);
+            player.resetInJailTurnCount();
+        }
+
+        int jailResult = checkJailStatus();
+        if(jailResult == 1){
+            return payForGetOutOfJail();
+        }else if(jailResult == 2){
+            return -100;
         }
 
         if(hasRolledDouble){
@@ -431,15 +429,6 @@ public class InGameManager {
             player.setCurrentPosition(10);
             player.resetDoublesCount();
             return -2;
-        }
-
-        if (player.isInJail()){
-            if (player.getInJailTurnCount() < 4){
-                player.incrementInJailTurnCount();
-            }
-            else {
-                player.resetInJailTurnCount();
-            }
         }
 
         //Moving the Pawn where the dice show
@@ -483,17 +472,15 @@ public class InGameManager {
             else if(square.getType() == SquareType.GoToJailSquare){
                 player.setCurrentPosition(10); //Move to jail hardcode
                 player.setInJail(true);
-                //player.removeMoney(2000000, new Currency("tl", 1.0)); //Remove the money as player passes from GO! square while going to jail.
                 addToLog("sent to the jail", player.getName());
                 return 4;
             }
-            //If Free Parking Square, do nothing...
+            //If Free Parking Square, get money...
             else if(square.getType() == SquareType.FreeParkingSquare){
                 int taxAmountOnBoard = board.getMoneyOnBoard();
                 if (taxAmountOnBoard != 0) {
                     player.addMoney(Constants.CURRENCY_NAMES[0], taxAmountOnBoard);
                     board.removeFromTaxMoney();
-                    //players.set(currentPlayerId, player);
                     addToLog("got the money on the board with the amount of " + taxAmountOnBoard + " Monopoly Dollars", player.getName());
                 }
                 return 5;
@@ -528,7 +515,6 @@ public class InGameManager {
                     return 6;
                 }else{
                     //Not bought, this part left to frontend
-                    //players.set(currentPlayerId, player);
                     return 7;
                 }
             }
@@ -701,7 +687,6 @@ public class InGameManager {
         player.removeMoney(Constants.CURRENCY_NAMES[0], money);
 
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
-        //players.set(currentPlayerId, player);
     }
 
     public void destructBuilding(Building buildingType, int squareIndex){
@@ -960,11 +945,19 @@ public class InGameManager {
         }
     }
 
+    /*
+     * RETURN VALUES
+     * 1 => PAID AND SET FREE
+     * -99 => CAN NOT PAID AND HAS TO PAY DEBTS
+     * 3 => NOT EVEN IN JAIL
+     */
     public int payForGetOutOfJail() {
         Player player = players.get(currentPlayerId);
         if (player.isInJail()) {
             if (player.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty())) {
-                return 1; // player can get out
+                player.setInJail(false);
+                player.resetInJailTurnCount();
+                return 1;
             }
             else {
                 player.setBankrupt(true); // player has gone bankrupt
@@ -1052,6 +1045,13 @@ public class InGameManager {
     // Checker Functions
     //************
 
+    /*
+     * RETURN VALUES
+     * -1 => NOT IN JAIL
+     * 1 => HAS TO GET OUT
+     * 2 => HAS NOT ENOUGH MONEY / BROKE
+     * 3 => IN JAIL
+     */
     public int checkJailStatus() {
         Player player = players.get(currentPlayerId);
         if (!player.isInJail()) {
@@ -1062,9 +1062,9 @@ public class InGameManager {
             return 1; // the player has to go out right now
         }
         if(player.getMonopolyMoneyAmount() >= Bank.getJailPenalty()){
-            return 2; // the player has not enough money to get out of jail
+            return 2; // the player has enough money to get out of jail
         }
-        return 3; // the player will remain in jail
+        return 3; // the player has not enough money to get out of jail
     }
 
 
