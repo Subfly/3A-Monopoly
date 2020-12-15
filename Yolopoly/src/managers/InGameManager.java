@@ -207,6 +207,9 @@ public class InGameManager {
          */
 
         Player bot = players.get(currentPlayerId);
+        if(bot.isInJail()){
+            return -101;
+        }
         if(result == -99){
             return payDebtBot(bot);
         }
