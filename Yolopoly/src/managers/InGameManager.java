@@ -367,6 +367,21 @@ public class InGameManager {
     //**
     // Private Functions
     //**
+    private String parser(int amount){
+        double million = 0;
+        double thousand = 0;
+        if(amount >= 1000000){
+            million = (float)(amount / 1000000);
+            double ten = million / 10;
+            double one = (million % 10)/10;
+            return "" + ten + one + " M";
+        }else if(amount >= 100000){
+            thousand = (float) (amount / 100);
+            return "" + thousand + " K";
+        }
+        return "";
+    }
+
     private int getBuyer(int squareIndex){
         for(PropertyCard p: bank.getPropertyCards()){
             if(squareIndex == p.getId()){
@@ -505,7 +520,7 @@ public class InGameManager {
                 // Get the tax amount
                 int taxAmount = square.getCost();
                 if(player.removeMoney(Constants.CURRENCY_NAMES[0], (int) (taxAmount * multiplier))){
-                    addToLog("paid tax of " + taxAmount, player.getName());
+                    addToLog("paid tax of " + parser(taxAmount), player.getName());
                     return 3;
                 }else{
                     player.setBankrupt(true);
@@ -528,7 +543,7 @@ public class InGameManager {
                 if (taxAmountOnBoard != 0) {
                     player.addMoney(Constants.CURRENCY_NAMES[0], (int)(taxAmountOnBoard * multiplier));
                     board.removeFromTaxMoney();
-                    addToLog("got the money on the board with the amount of " + taxAmountOnBoard + " Monopoly Dollars", player.getName());
+                    addToLog("got the money on the board with the amount of " + parser(taxAmountOnBoard) + " Monopoly Dollars", player.getName());
                 }
                 return 5;
             }else{
@@ -578,8 +593,8 @@ public class InGameManager {
                     //Add money to other player
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
 
-                    addToLog("paid " + String.valueOf(rentAmount) + " as rent", player.getName());
-                    addToLog("received " + String.valueOf(rentAmount) + " as rent income", paidToPlayer.getName());
+                    addToLog("paid " + parser(rentAmount) + " as rent", player.getName());
+                    addToLog("received " + parser(rentAmount) + " as rent income", paidToPlayer.getName());
                     return 6;
                 }else{
                     //Not bought, this part left to frontend
@@ -726,7 +741,7 @@ public class InGameManager {
     }
 
     public void continueAuction(int bidIncrease){
-        addToLog("increased bid by: " + bidIncrease, participants.get(currentPlayerAuctioning).getName());
+        addToLog("increased bid by: " + parser(bidIncrease), participants.get(currentPlayerAuctioning).getName());
         this.currentPlayerAuctioning += 1;
         if(this.currentPlayerAuctioning > participants.size()){
             this.currentPlayerAuctioning = 0;
@@ -758,7 +773,7 @@ public class InGameManager {
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
-            addToLog("bought property for: " + this.currentBid, participants.get(currentPlayerAuctioning).getName());
+            addToLog("bought property for: " + parser(this.currentBid), participants.get(currentPlayerAuctioning).getName());
 
             //Continue game in linear from the next player
             this.currentPlayerId += 1;
@@ -1085,7 +1100,7 @@ public class InGameManager {
             return false;
         }
         System.out.println("Gave loan to the player " + player.getName());
-        addToLog("got loan in amount " + amount, player.getName());
+        addToLog("got loan in amount " + parser(amount), player.getName());
         bank.giveLoan(amount, player);
         return true;
     }
@@ -1099,7 +1114,7 @@ public class InGameManager {
         int amount = player.getLoan();
         if(player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(amount * multiplier))){
             System.out.println("Player paid his/her loan " + player.getName());
-            addToLog("paid loan back with amount of: " + amount, player.getName());
+            addToLog("paid loan back with amount of: " + parser(amount), player.getName());
             player.resetLoan();
             return true;
         }else{
