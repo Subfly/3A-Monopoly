@@ -186,10 +186,6 @@ public class InnerController {
                     int dice2 = igm.getDice().getDice2();
                     int total = igm.getDice().getTotal();
 
-                    dice1 = 1;
-                    dice2 = 4;
-                    total = 5;
-
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
                     dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
