@@ -16,12 +16,13 @@ public class InGameManager {
 
     // Constants
     private final static int JAIL_TURN_COUNT = 3;
+    private final static int AUCTION_START_MONEY = 500000;
 
     private static InGameManager innerEngine = null;
 
-    //************
+    //****
     // Variables
-    //************
+    //****
     private ArrayList<String> chat;
     private ArrayList<String> log;
     private ArrayList<Player> players;
@@ -52,9 +53,9 @@ public class InGameManager {
      */
     private HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash;
 
-    //************
+    //****
     // Constructor
-    //************
+    //****
     private InGameManager(){
     }
 
@@ -90,9 +91,9 @@ public class InGameManager {
         }
     }
 
-    //************
+    //****
     // Functions
-    //************
+    //****
     public PropertyCard getSpecificProperty( int squareIndex ){
         for(PropertyCard p: bank.getPropertyCards()){
             if(p.getId() == squareIndex){
@@ -154,9 +155,9 @@ public class InGameManager {
         log.add("Player " + userName + " has " + logAction);
     }
 
-    //************
+    //****
     // Bot Handlers
-    //************
+    //****
     public boolean isCurrentPlayerHuman(){
         return this.players.get(currentPlayerId).isHuman();
     }
@@ -179,7 +180,7 @@ public class InGameManager {
                 multiplier = this.generateChanceMultiplier(diceResult);
             }
         }
-        //Dummy commit
+
         int result = startTurn(diceResult, isDouble, multiplier);
 
         Player bot = players.get(currentPlayerId);
@@ -270,9 +271,9 @@ public class InGameManager {
         return -100;
     }
 
-    //************
+    //****
     // Bankruptcy Handlers
-    //************
+    //****
     public boolean payDebt(){
         Player player = players.get(currentPlayerId);
         var debtData = brokenPlayersMoneyHash.get(currentPlayerId);
@@ -342,9 +343,9 @@ public class InGameManager {
         return -99;
     }
 
-    //************
+    //****
     // Private Functions
-    //************
+    //****
     private int getBuyer(int squareIndex){
         for(PropertyCard p: bank.getPropertyCards()){
             if(squareIndex == p.getId()){
@@ -358,9 +359,9 @@ public class InGameManager {
         return (int) players.get(currentPlayerId).getOwnedPlaces().stream().filter(s-> s.getColor() == square.getColor()).count();
     }
 
-    //************
+    //****
     // Turn Related Functions
-    //************
+    //****
     public void rollDice(){
         dice.roll();
     }
@@ -402,8 +403,29 @@ public class InGameManager {
                 Return true as turn completed
          */
 
+        //If currently in auction
+        if(this.state == GameState.Auction){
+            return -1;
+        }
+
         //Start with getting player
         Player player = players.get(currentPlayerId);
+
+        if(gameMode == GameMode.bankman){
+            if(player.isGetLoanCurrently()){
+                if(player.decrementLoanTurn()){
+                    if(player.getLoanTurn() == 0){
+                        addToLog("to pay loans to bank in this turn!", player.getName());
+                    }else{
+                        addToLog("only " + player.getLoanTurn() + " turns to pay loan", player.getName());
+                    }
+                }
+            }
+        }
+
+        if(player.isInJail()){
+            player.incrementInJailTurnCount();
+        }
 
         if(player.isInJail() && hasRolledDouble){
             player.setInJail(false);
@@ -529,6 +551,7 @@ public class InGameManager {
      * 1 => NORMAL END
      * 2 => DID NOT PAID LOANS
      * 3 => GAME DONE, REMAINING PLAYER WINS!
+     * 4 => AUCTION
      */
     public int endTurn(){
         if(players.size() == 1){
@@ -566,6 +589,11 @@ public class InGameManager {
                 return 2;
             }
         }
+        Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
+        if(!lastSquareMadeSomething.isBought()){
+            createAuction();
+            return 4;
+        }
         this.currentPlayerId += 1;
         if(this.currentPlayerId > players.size() - 1){
             this.currentPlayerId = 0;
@@ -576,9 +604,9 @@ public class InGameManager {
         return 1;
     }
 
-    //************
+    //****
     // Action Related Functions
-    //************
+    //****
     public void buyProperty(){
         //Get changing data
         Player currentPlayer = players.get(currentPlayerId);
@@ -623,17 +651,14 @@ public class InGameManager {
     public void createAuction(){
         this.state = GameState.Auction;
         this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
-        PropertyCard card = bank.getPropertyCards().get(this.auctionPropertyIndex);
-        this.currentBid = card.getCost();
-        for(Player p : players){
-            if(!(p.getName().equals(players.get(currentPlayerId).getName()))){
-                participants.add(p);
-            }
-        }
+        this.currentBid = AUCTION_START_MONEY;
+        participants.addAll(players);
         this.currentPlayerAuctioning = 0;
+        addToLog("created auction on the property", players.get(currentPlayerId).getName());
     }
 
     public void continueAuction(int bidIncrease){
+        addToLog("increased bid by: " + bidIncrease, participants.get(currentPlayerAuctioning).getName());
         this.currentPlayerAuctioning += 1;
         if(this.currentPlayerAuctioning > participants.size()){
             this.currentPlayerAuctioning = 0;
@@ -643,6 +668,7 @@ public class InGameManager {
 
     //TODO: POSSIBLE LOGIC ERROR (but I think I solved it :D - Ali the Lele)
     public void pullOffAuction(){
+        addToLog("left auction", participants.get(currentPlayerAuctioning).getName());
         participants.remove(currentPlayerAuctioning);
         if(currentPlayerAuctioning == this.participants.size() - 1){
             //If last player
@@ -664,8 +690,9 @@ public class InGameManager {
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
+            addToLog("bought property for: " + this.currentBid, participants.get(currentPlayerAuctioning).getName());
+            this.state = GameState.Linear;
         }
-        this.state = GameState.Linear;
     }
 
     public void buildBuilding(Building buildingType, int squareIndex) {
@@ -970,9 +997,9 @@ public class InGameManager {
         return 3; // player is not even in jail, control return
     }
 
-    //************
+    //****
     // Bankman Mode Functions
-    //************
+    //****
     public boolean giveLoan(int amount) {
         Player player = players.get(currentPlayerId);
         if (player.isGetLoanCurrently()) {
@@ -1041,9 +1068,9 @@ public class InGameManager {
         return result;
     }
 
-    //************
+    //****
     // Checker Functions
-    //************
+    //****
 
     /*
      * RETURN VALUES
