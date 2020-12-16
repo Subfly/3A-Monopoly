@@ -6,9 +6,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
-import managers.InGameManager;
-import managers.LobbyManager;
-import managers.MainMenuManager;
 
 public class Main extends Application {
 

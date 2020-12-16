@@ -83,6 +83,7 @@ public class InGameManager {
             currentPlayerAuctioning = -1;
             brokenPlayersMoneyHash = new HashMap<>();
             gameMode = mode;
+            this.participants = new ArrayList<>();
 
             for (Player p : players){
                 p.setCurrentPosition(0);
@@ -91,9 +92,9 @@ public class InGameManager {
         }
     }
 
-    //****
+    //**
     // Functions
-    //****
+    //**
 
     public ArrayList<Currency> getCurrencies(){
         return this.bank.getCurrencyRates();
@@ -267,7 +268,9 @@ public class InGameManager {
             }
         }
         else if(result == 7){
-            if(checkBuyProperty(bot.getCurrentPosition()) && board.getSquares().get(bot.getCurrentPosition()).getType() == SquareType.NormalSquare){
+            Square squareToBuy = board.getSquares().get(bot.getCurrentPosition());
+            boolean isBuyable = (squareToBuy.getType() == SquareType.NormalSquare) || (squareToBuy.getType() == SquareType.RailroadSquare) || (squareToBuy.getType() == SquareType.UtilitySquare);
+            if(checkBuyProperty(bot.getCurrentPosition()) && isBuyable){
                 //Just buy the area
                 buyProperty();
             }
@@ -627,11 +630,11 @@ public class InGameManager {
         */
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
-
-        if(!lastSquareMadeSomething.isBought()){
-            createAuction(); //TODO: INTERCHANGEABLE BY SAIT
-            return 4;
-        }
+        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
+        //if(isBuyable && !lastSquareMadeSomething.isBought()){
+        //createAuction(); //TODO: INTERCHANGEABLE BY SAIT
+        //return 4;
+        //}
 
         this.currentPlayerId += 1;
 
@@ -654,13 +657,15 @@ public class InGameManager {
         Player currentPlayer = players.get(currentPlayerId);
         Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
         PropertyCard card = getSpecificProperty(square.getId());
+        System.out.println("Name of area is: " + card.getName());
+        System.out.println("Id of the square is: " + square.getId());
+        System.out.println("Id of the prop is: " + card.getId());
 
         //Make changes on data
         card.setOwnedBy(currentPlayerId);
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
         //Save changes on data
-        //players.set(currentPlayerId, currentPlayer);
         //TODO ponçik ali taha olur böyle şeyler
         bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
         board.buySquare(square.getId());
@@ -1231,11 +1236,10 @@ public class InGameManager {
         Player currentPlayer = players.get(currentPlayerId);
         Square squareToBuy = board.getSpecificSquare(index);
         PropertyCard toGetCostOfPropertyCard = getSpecificProperty(squareToBuy.getId());
-        boolean isBuyable = squareToBuy.getType() == SquareType.NormalSquare || squareToBuy.getType() == SquareType.UtilitySquare || squareToBuy.getType() == SquareType.RailroadSquare;
+        boolean isBuyable = (squareToBuy.getType() == SquareType.NormalSquare) || (squareToBuy.getType() == SquareType.UtilitySquare) || (squareToBuy.getType() == SquareType.RailroadSquare);
         if (isBuyable && currentPlayer.getCurrentPosition() == squareToBuy.getId()){
             if (!squareToBuy.isBought()){
                 if (currentPlayer.getMonopolyMoneyAmount() >= toGetCostOfPropertyCard.getCost()){
-                    //System.out.println("Player can buy this property ");
                     return true;
                 }
                 else {

@@ -141,14 +141,14 @@ public class InnerController {
 
     @FXML
     private void level_up() {
-        igm.levelUp(last_index_of_info_card);
+        igm.levelUp(last_index_of_info_card, 1);
         update_square_info();
         set_log();
     }
 
     @FXML
     private void level_down() {
-        igm.levelDown(last_index_of_info_card);
+        igm.levelDown(last_index_of_info_card, 1);
         update_square_info();
         set_log();
     }
@@ -185,6 +185,10 @@ public class InnerController {
                     int dice1 = igm.getDice().getDice1();
                     int dice2 = igm.getDice().getDice2();
                     int total = igm.getDice().getTotal();
+
+                    dice1 = 1;
+                    dice2 = 4;
+                    total = 5;
 
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
@@ -259,7 +263,7 @@ public class InnerController {
                     igm.endTurn();
                 }
                 else {
-                    igm.jailMakeDecision();
+                    igm.jailMakeDecision(1);
                     play_bot();
                 }
             }
@@ -359,7 +363,7 @@ public class InnerController {
 
     @FXML
     public void payforjail(){
-        igm.payForGetOutOfJail();
+        igm.payForGetOutOfJail(1);
     }
 
     boolean diceforjail = false;
@@ -496,10 +500,10 @@ public class InnerController {
                     get_player_jail(old_position_of_player);
                 }
                 else if (result_of_start_turn == 1){
-                    card_result_of_player = igm.drawCard(DrawableCardType.Chance);
+                    card_result_of_player = igm.drawCard(DrawableCardType.Chance, 1);
                 }
                 else if (result_of_start_turn == 2){
-                    card_result_of_player = igm.drawCard(DrawableCardType.Community);
+                    card_result_of_player = igm.drawCard(DrawableCardType.Community, 1);
                 }
                 else if (result_of_start_turn == 3){
                     System.out.println("Paid Tax");
