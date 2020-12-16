@@ -652,10 +652,10 @@ public class InGameManager {
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
         boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-        //if(isBuyable && !lastSquareMadeSomething.isBought()){
-        //createAuction(); //TODO: INTERCHANGEABLE BY SAIT
-        //return 4;
-        //}
+        if(isBuyable && !lastSquareMadeSomething.isBought()){
+            createAuction();
+            return 4;
+        }
 
         this.currentPlayerId += 1;
 
@@ -759,6 +759,13 @@ public class InGameManager {
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
             addToLog("bought property for: " + this.currentBid, participants.get(currentPlayerAuctioning).getName());
+
+            //Continue game in linear from the next player
+            this.currentPlayerId += 1;
+            if(this.currentPlayerId > players.size() - 1){
+                this.currentPlayerId = 0;
+            }
+
             this.state = GameState.Linear;
         }
     }
