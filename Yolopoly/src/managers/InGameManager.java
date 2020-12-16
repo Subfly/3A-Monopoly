@@ -543,7 +543,28 @@ public class InGameManager {
                     //Find rent amount
                     PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
-                    int rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
+                    int rentAmount = 0;
+
+                    if(square.getType() == SquareType.NormalSquare){
+                        rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
+                    }else if(square.getType() == SquareType.RailroadSquare){
+                        int counter = 0;
+                        for(PropertyCard p : player.getOwnedPlaces()){
+                            if(board.getSpecificSquare(p.getId()).getType() == SquareType.RailroadSquare){
+                                counter += 1;
+                            }
+                        }
+                        rentAmount = prop.getRentPrices().get(counter);
+                    }else if(square.getType() == SquareType.UtilitySquare){
+                        int counter = -1;
+                        for(PropertyCard p : player.getOwnedPlaces()){
+                            if(board.getSpecificSquare(p.getId()).getType() == SquareType.UtilitySquare){
+                                counter += 1;
+                            }
+                        }
+                        int baseRent = prop.getRentPrices().get(counter);
+                        rentAmount = baseRent * diceResult;
+                    }
 
                     //Remove money from current player
                     boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
@@ -751,9 +772,11 @@ public class InGameManager {
         int money;
         if ( buildingType == Building.House ){
             money = currentPlace.getHousePrice();
+            bank.decrementHouseCount();
         }
         else{
             money = currentPlace.getHotelPrice();
+            bank.decrementHotelCount();
         }
 
         board.build(buildingType, squareToBuild.getId());
@@ -772,16 +795,17 @@ public class InGameManager {
         int money;
         if ( buildingType == Building.House ){
             money = (int) (currentPlace.getHousePrice() / Bank.getReturnRate());
+            bank.incrementHouseCount();
         }
         else{
             money = currentPlace.getHotelPrice();
+            bank.decrementHotelCount();
         }
 
         board.destroy(buildingType, squareToDestruct.getId());
 
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
-        //players.set(currentPlayerId, player);
     }
 
     /*
@@ -1193,7 +1217,7 @@ public class InGameManager {
         return participants.size() == 1;
     }
 
-    public boolean checkMortgage( Player currentPlayer, Square squareToMortgage ){
+    public boolean checkMortgage(Player currentPlayer, Square squareToMortgage){
 
         int squareId = squareToMortgage.getId();
         int squareLevel = squareToMortgage.getLevel();
@@ -1264,6 +1288,17 @@ public class InGameManager {
         // Also, maybe the algorithm can change, according to the rulebook
         Map<Boolean, Integer> checkAndCountHouses = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotel = new HashMap<>();
+
+        //IF NO BUILDINGS AVAILABLE
+        if(!bank.checkBuildingAvailability(buildingType)){
+            if(buildingType == Building.House){
+                checkAndCountHouses.put(false, 0);
+                return checkAndCountHouses;
+            }else if(buildingType == Building.Hotel){
+                checkAndCountHotel.put(false, 0);
+                return checkAndCountHotel;
+            }
+        }
 
         Player currentPlayer = players.get(currentPlayerId);
 

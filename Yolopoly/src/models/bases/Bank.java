@@ -1,5 +1,6 @@
 package models.bases;
 
+import enumerations.Building;
 import enumerations.GameMode;
 import enumerations.GameTheme;
 import models.cards.PropertyCard;
@@ -87,11 +88,20 @@ public class Bank {
         }
 
         // Update the player's money
-        double rate = (double) currencyRates.stream().filter(s-> s.getName().equals(toCurrency)).collect(Collectors.toList()).get(0).getRate();
+        double rate = (double) (currencyRates.stream().filter(s-> s.getName().equals(toCurrency)).collect(Collectors.toList()).get(0).getRate());
         int newAmount = (int)(exchangeAmount / rate);
         p.addMoney(toCurrency, newAmount);
         p.removeMoney(fromCurrency, exchangeAmount);
         return 0;
+    }
+
+    public boolean checkBuildingAvailability(Building building){
+        if(building == Building.House){
+            return houseCount != 0;
+        }else if(building == Building.Hotel){
+            return hotelCount != 0;
+        }
+        return false;
     }
 
     public boolean decrementHouseCount() {
