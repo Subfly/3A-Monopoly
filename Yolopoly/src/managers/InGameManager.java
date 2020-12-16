@@ -93,7 +93,12 @@ public class InGameManager {
 
     //****
     // Functions
-    //****
+    //************
+
+    public int getCurrentPlayerCurrentPosition(){
+        return players.get(currentPlayerId).getCurrentPosition();
+    }
+
     public PropertyCard getSpecificProperty( int squareIndex ){
         for(PropertyCard p: bank.getPropertyCards()){
             if(p.getId() == squareIndex){
@@ -172,6 +177,18 @@ public class InGameManager {
      * -3 => MOVE BACKWARDS
      * VALUE BETWEEN 0 TO 39 => MOVE TO INDEX
      */
+    public void jailMakeDecision(){
+        Player bot = players.get(currentPlayerId);
+        //int jailDecision = (int) (Math.random() * 2 + 1);
+        if(true){
+            //Pay money and get out
+            bot.removeMoney(Constants.CURRENCY_NAMES[0], Bank.getJailPenalty());
+            bot.setInJail(false);
+            bot.resetInJailTurnCount();
+            bot.resetDoublesCount();
+        }
+    }
+
     public int makeDecision(int diceResult, boolean isDouble){
         double multiplier = 1;
         if (this.gameMode ==  GameMode.bankman) {
@@ -558,6 +575,12 @@ public class InGameManager {
             return 3;
         }
         Player player = players.get(currentPlayerId);
+
+        if (player.isInJail()){
+            player.incrementInJailTurnCount();
+            System.out.println(player.getInJailTurnCount() + " inner enginde");
+        }
+
         if(player.isBankrupt()){
             //Remove player
             players.remove(currentPlayerId);
@@ -1366,6 +1389,11 @@ public class InGameManager {
 
 
     //Getters and Setters
+
+    public void setDice1(){
+        dice.setDice1(3);
+        dice.setDice2(4);
+    }
 
     public ArrayList<String> getChat() {
         return chat;

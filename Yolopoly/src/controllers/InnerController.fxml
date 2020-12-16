@@ -36,7 +36,7 @@
             </image>
         </ImageView>
         <TextField layoutX="1105.0" layoutY="963.0" prefHeight="42.0" prefWidth="260.0" />
-        <ImageView fitHeight="42.0" fitWidth="50.0" layoutX="1375.0" layoutY="963.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="42.0" fitWidth="50.0" layoutX="1375.0" layoutY="963.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#view_card">
             <image>
                 <Image url="@sources/send-button.png" />
             </image>
@@ -51,7 +51,7 @@
                 <Image url="@sources/close-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#rolldiceoption">
             <image>
                 <Image url="@sources/settings-button.png" />
             </image>
@@ -253,7 +253,7 @@
             <Image url="@sources/pawns/pawn_8.png" />
          </image>
       </ImageView>
-      <Label fx:id="testTextField" layoutX="1301.0" layoutY="274.0" text="Label" />
+      <Label fx:id="testTextField" layoutX="1301.0" layoutY="274.0" text="Label" onMouseClicked="#payforjail"/>
         <ScrollPane id="scroll_pane" hbarPolicy="NEVER" layoutX="1530.0" layoutY="595.0" pannable="true" prefHeight="405.0" prefWidth="310.0" maxWidth="310.0">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="310.0">

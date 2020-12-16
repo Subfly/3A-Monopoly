@@ -76,7 +76,6 @@ public class MiddleController {
 
         me.getAdmin().setName(nickname);
         me.getAdmin().setPawnIndex(1);
-        me.getAdmin().setHuman(false);
 
         player_list_grid = new GridPane();
     }
