@@ -14,6 +14,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 
+import java.io.File;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -294,7 +296,15 @@ public class MiddleController {
 
     //Image Set Helper
     public void set_image_helper(ImageView iv, String path, String name){
-        iv.setImage(new Image(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(path + name + PNG))));
+        //FIXME images do not show
+        System.out.println(path + name + PNG);
+        File file = new File(path + name + PNG);
+        Image image = new Image(file.getClass().getClassLoader().getName());
+        iv.setImage(image);
+
+        //ClassLoader classLoader = getClass().getClassLoader();
+        //String imageUrl = classLoader.getResource("images/image.png").toExternalForm();
+        //Image image = new Image(imageUrl);
     }
 
 }
