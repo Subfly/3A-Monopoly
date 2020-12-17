@@ -39,6 +39,10 @@ public class LobbyManager {
         this.botCount = 0;
     }
 
+    public static synchronized void clear(){
+        middleEngine = new LobbyManager();
+    }
+
     public static LobbyManager getInstance(){
         if(middleEngine == null){
             middleEngine = new LobbyManager();
@@ -63,7 +67,7 @@ public class LobbyManager {
     }
 
     public boolean addBot(){
-        
+
         if (playerCount < 8 && playerCount < maxPlayerCount) {
             playerArrayList.add(new Player("Bot " + (botCount + 1), false));
 

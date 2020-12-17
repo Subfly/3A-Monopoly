@@ -1,6 +1,7 @@
 package managers;
 
 import enumerations.*;
+import javafx.beans.property.Property;
 import models.bases.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
@@ -64,6 +65,10 @@ public class InGameManager {
             innerEngine = new InGameManager();
         }
         return innerEngine;
+    }
+
+    public static synchronized void clear(){
+        innerEngine = new InGameManager();
     }
 
     public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
@@ -564,7 +569,7 @@ public class InGameManager {
                         rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
                     }else if(square.getType() == SquareType.RailroadSquare){
                         int counter = 0;
-                        for(PropertyCard p : player.getOwnedPlaces()){
+                        for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
                             if(board.getSpecificSquare(p.getId()).getType() == SquareType.RailroadSquare){
                                 counter += 1;
                             }
@@ -572,7 +577,7 @@ public class InGameManager {
                         rentAmount = prop.getRentPrices().get(counter);
                     }else if(square.getType() == SquareType.UtilitySquare){
                         int counter = -1;
-                        for(PropertyCard p : player.getOwnedPlaces()){
+                        for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
                             if(board.getSpecificSquare(p.getId()).getType() == SquareType.UtilitySquare){
                                 counter += 1;
                             }
@@ -666,11 +671,11 @@ public class InGameManager {
         */
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
-        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-        if(isBuyable && !lastSquareMadeSomething.isBought()){
-            createAuction();
-            return 4;
-        }
+//        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
+//        if(isBuyable && !lastSquareMadeSomething.isBought()){
+//            createAuction();
+//            return 4;
+//        }
 
         this.currentPlayerId += 1;
 
@@ -713,14 +718,14 @@ public class InGameManager {
         Player player = players.get(getCurrentPlayerId());
         player.getSpecificCard(squareIndex).setMortgaged(true);
         board.getSquares().get(squareIndex).setLevel(-1);
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
+        PropertyCard currentPlace = player.getSpecificCard(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(moneyToAdd * multiplier));
 
     }
     public boolean removeMortgageFromPlace(int squareIndex, double multiplier) {
         Player player = players.get(getCurrentPlayerId());
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
+        PropertyCard currentPlace = player.getSpecificCard(squareIndex);
         int mortgagePrice = currentPlace.getMortgagePrice();
         int mortgagePenalty = (int) (mortgagePrice * PropertyCard.getMortgagePenalty());
         if (player.removeMoney(Constants.CURRENCY_NAMES[0], (int)((mortgagePrice + mortgagePenalty) * multiplier))) {
@@ -1243,7 +1248,7 @@ public class InGameManager {
 
         int squareId = squareToMortgage.getId();
         int squareLevel = squareToMortgage.getLevel();
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+        PropertyCard currentPlace = currentPlayer.getSpecificCard(squareId);
 
         if ( currentPlayer.isOwned(currentPlace ) && squareLevel == 0 ) {
             //System.out.println("Player can mortgage this place");
@@ -1256,7 +1261,7 @@ public class InGameManager {
     public boolean checkDismortgage( Player currentPlayer, Square squareToDismortgage){
         int squareId = squareToDismortgage.getId();
         int squareLevel = squareToDismortgage.getLevel();
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+        PropertyCard currentPlace = currentPlayer.getSpecificCard(squareId);
         int dismortgageMoney = (int) (currentPlace.getMortgagePrice() * 1.10);
 
         if (currentPlayer.isOwned(currentPlace)) {
@@ -1305,65 +1310,74 @@ public class InGameManager {
     }
 
     public Map<Boolean, Integer> checkBuildBuilding(Building buildingType, Square squareToBuild){
-
-        // TODO: Check house&hotel count of bank
         // Also, maybe the algorithm can change, according to the rulebook
         Map<Boolean, Integer> checkAndCountHouses = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotel = new HashMap<>();
-
-        //IF NO BUILDINGS AVAILABLE
-        if(!bank.checkBuildingAvailability(buildingType)){
-            if(buildingType == Building.House){
-                checkAndCountHouses.put(false, 0);
-                return checkAndCountHouses;
-            }else if(buildingType == Building.Hotel){
-                checkAndCountHotel.put(false, 0);
-                return checkAndCountHotel;
+        if(squareToBuild.getType() == SquareType.NormalSquare){
+            //IF NO BUILDINGS AVAILABLE
+            if(!bank.checkBuildingAvailability(buildingType)){
+                if(buildingType == Building.House){
+                    checkAndCountHouses.put(false, 0);
+                    return checkAndCountHouses;
+                }else if(buildingType == Building.Hotel){
+                    checkAndCountHotel.put(false, 0);
+                    return checkAndCountHotel;
+                }
             }
-        }
 
-        Player currentPlayer = players.get(currentPlayerId);
+            Player currentPlayer = players.get(currentPlayerId);
 
-        int squareToBuildIndex = squareToBuild.getId();
+            int squareToBuildIndex = squareToBuild.getId();
 
-        int colorsCountOnBoard = board.countColors(squareToBuild);
-        int colorsCountOnPlayer = countPlayersColor(squareToBuild);
-        int houseCountOnSquare = squareToBuild.getHouseCount();
-        int hotelCountOnSquare = squareToBuild.getHotelCount();
-        int currentMoney = currentPlayer.getMonopolyMoneyAmount();
-        int squareLevel = squareToBuild.getLevel();
+            int colorsCountOnBoard = board.countColors(squareToBuild);
+            int colorsCountOnPlayer = countPlayersColor(squareToBuild);
+            int houseCountOnSquare = squareToBuild.getHouseCount();
+            int hotelCountOnSquare = squareToBuild.getHotelCount();
+            int currentMoney = currentPlayer.getMonopolyMoneyAmount();
+            int squareLevel = squareToBuild.getLevel();
 
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToBuildIndex);
+            PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToBuildIndex);
 
-        if ( colorsCountOnBoard == colorsCountOnPlayer ){   // Checks player has all squares with same the color (is there a mortgage or not check it!!!)
-            if ( buildingType == Building.House && squareLevel < 4 && squareLevel > -1 ){
+            if ( colorsCountOnBoard == colorsCountOnPlayer ){   // Checks player has all squares with same the color (is there a mortgage or not check it!!!)
+                if ( buildingType == Building.House && squareLevel < 4 && squareLevel > -1 ){
 
-                int priceOfAHouse = currentPlace.getHousePrice();
+                    int priceOfAHouse = currentPlace.getHousePrice();
 
-                if (squareToBuild.isHouseCheck()){  // Checks the square has a house once or not
+                    if (squareToBuild.isHouseCheck()){  // Checks the square has a house once or not
 
-                    if (board.hasHouseAllSquares(squareToBuild)){   // Checks other squares have houses or not
-                        int availableHouses = 4 - houseCountOnSquare;
-                        int count = 0;
-                        for ( int i = 1; i <= availableHouses; i++ ) {    // Calculates how many houses can be bought with player's money
-                            if (currentMoney >= i * priceOfAHouse){
-                                count++;
+                        if (board.hasHouseAllSquares(squareToBuild)){   // Checks other squares have houses or not
+                            int availableHouses = 4 - houseCountOnSquare;
+                            int count = 0;
+                            for ( int i = 1; i <= availableHouses; i++ ) {    // Calculates how many houses can be bought with player's money
+                                if (currentMoney >= i * priceOfAHouse){
+                                    count++;
+                                }
+                            }
+                            if (count > 0) { // checks if count is positive, count houses can be bought
+                                checkAndCountHouses.put(true, count);
+                                //System.out.println("Player can buy " + count + " houses on this square");
+                            }
+                            else {  // player cannot buy a house
+                                checkAndCountHouses.put(false, 0);
+                                //System.out.println("Max number of houses or not enough money");
                             }
                         }
-                        if (count > 0) { // checks if count is positive, count houses can be bought
-                            checkAndCountHouses.put(true, count);
-                            //System.out.println("Player can buy " + count + " houses on this square");
-                        }
-                        else {  // player cannot buy a house
+                        else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare > 0 ){ // if there is one house and other squares don't have a house
                             checkAndCountHouses.put(false, 0);
-                            //System.out.println("Max number of houses or not enough money");
+                            //System.out.println("Player has already a house in this square");
+                        }
+                        else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare == 0 ){
+                            if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
+                                checkAndCountHouses.put(true, 1);
+                                //System.out.println("Player can buy a house");
+                            }
+                            else {
+                                checkAndCountHouses.put(false, 0);
+                                //System.out.println("Not sufficient money or player is not on that square");
+                            }
                         }
                     }
-                    else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare > 0 ){ // if there is one house and other squares don't have a house
-                        checkAndCountHouses.put(false, 0);
-                        //System.out.println("Player has already a house in this square");
-                    }
-                    else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare == 0 ){
+                    else {  // if the square has no house
                         if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
                             checkAndCountHouses.put(true, 1);
                             //System.out.println("Player can buy a house");
@@ -1373,96 +1387,90 @@ public class InGameManager {
                             //System.out.println("Not sufficient money or player is not on that square");
                         }
                     }
+                    return checkAndCountHouses;
                 }
-                else {  // if the square has no house
-                    if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
-                        checkAndCountHouses.put(true, 1);
-                        //System.out.println("Player can buy a house");
-                    }
-                    else {
-                        checkAndCountHouses.put(false, 0);
-                        //System.out.println("Not sufficient money or player is not on that square");
-                    }
-                }
-                return checkAndCountHouses;
-            }
-            if ( buildingType == Building.Hotel && squareLevel == 4){
-                if ( (houseCountOnSquare == 4 && hotelCountOnSquare == 0)) { // checks square has 4 houses
-                    int priceOfAHotel = currentPlace.getHotelPrice();
-                    if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
-                        checkAndCountHotel.put(true, 1);
-                        //System.out.println("Player can buy an hotel");
+                if ( buildingType == Building.Hotel && squareLevel == 4){
+                    if ( (houseCountOnSquare == 4 && hotelCountOnSquare == 0)) { // checks square has 4 houses
+                        int priceOfAHotel = currentPlace.getHotelPrice();
+                        if ( currentMoney > priceOfAHotel ){ // checks money is enough or not
+                            checkAndCountHotel.put(true, 1);
+                            //System.out.println("Player can buy an hotel");
 
+                        }
+                        else {  //money is not enough
+                            checkAndCountHotel.put(false, 0);
+                            //System.out.println("Not sufficient money");
+                        }
                     }
-                    else {  //money is not enough
+                    else {  // houses are not enough or there is an hotel
                         checkAndCountHotel.put(false, 0);
-                        //System.out.println("Not sufficient money");
+                        //System.out.println("not enough houses or there is an hotel");
                     }
+                    return checkAndCountHotel;
                 }
-                else {  // houses are not enough or there is an hotel
-                    checkAndCountHotel.put(false, 0);
-                    //System.out.println("not enough houses or there is an hotel");
-                }
-                return checkAndCountHotel;
-            }
-            else{
+                else{
 
-                checkAndCountHouses.put(false, 0);
-                //System.out.println("place is mortgaged");
+                    checkAndCountHouses.put(false, 0);
+                    //System.out.println("place is mortgaged");
+                }
             }
+            else{   // player does not have all squares with that color
+                checkAndCountHouses.put(false, 0);
+                //System.out.println("Player haven't got all squares with that color");
+            }
+
         }
-        else{   // player does not have all squares with that color
+        else{
             checkAndCountHouses.put(false, 0);
-            //System.out.println("Player haven't got all squares with that color");
         }
         return checkAndCountHouses;
     }
     public Map<Boolean, Integer> checkDestructBuilding(Building buildingType, Square squareToDestruct){
-
-        // TODO: Increment house&hotel count of bank
         // Also, maybe the algorithm can change, according to the rulebook
 
         Map<Boolean, Integer> checkAndCountHousesDestruct = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotelDestruct = new HashMap<>();
+        if (squareToDestruct.getType() == SquareType.NormalSquare){
+            Player currentPlayer = players.get(currentPlayerId);
 
-        Player currentPlayer = players.get(currentPlayerId);
+            int houseCountOnSquare = squareToDestruct.getHouseCount();
+            int hotelCountOnSquare = squareToDestruct.getHotelCount();
 
-        int houseCountOnSquare = squareToDestruct.getHouseCount();
-        int hotelCountOnSquare = squareToDestruct.getHotelCount();
+            int squareToDestructId = squareToDestruct.getId();
+            PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToDestructId);
 
-        int squareToDestructId = squareToDestruct.getId();
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareToDestructId);
+            if ( currentPlace != null ){
+                if ( buildingType == Building.Hotel) {
+                    if ( hotelCountOnSquare == 1 ) {
+                        checkAndCountHotelDestruct.put(true, 1);
+                        //System.out.println("Player can destruct an hotel");
+                    }
+                    else{
+                        checkAndCountHotelDestruct.put(false, 0);
+                        //System.out.println("there is no hotel to destruct");
+                    }
+                    return checkAndCountHotelDestruct;
 
-        if ( currentPlace != null ){
-            if ( buildingType == Building.Hotel) {
-                if ( hotelCountOnSquare == 1 ) {
-                    checkAndCountHotelDestruct.put(true, 1);
-                    //System.out.println("Player can destruct an hotel");
                 }
-                else{
-                    checkAndCountHotelDestruct.put(false, 0);
-                    //System.out.println("there is no hotel to destruct");
+                if ( buildingType == Building.House ) {
+                    if (houseCountOnSquare > 0) {
+                        checkAndCountHousesDestruct.put(true, hotelCountOnSquare);
+                        //System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
+                    }
+                    else {
+                        checkAndCountHousesDestruct.put(false, 0);
+                        //System.out.println("There is no house to destruct");
+                    }
+                    return checkAndCountHousesDestruct;
                 }
-                return checkAndCountHotelDestruct;
-
             }
-            if ( buildingType == Building.House ) {
-                if (houseCountOnSquare > 0) {
-                    checkAndCountHousesDestruct.put(true, hotelCountOnSquare);
-                    //System.out.println("Player can destruct " + hotelCountOnSquare + " houses ");
-                }
-                else {
-                    checkAndCountHousesDestruct.put(false, 0);
-                    //System.out.println("There is no house to destruct");
-                }
+            else {
+                checkAndCountHousesDestruct.put(false, 0);
+                //System.out.println("Player does not have this square");
                 return checkAndCountHousesDestruct;
             }
         }
-        else {
-            checkAndCountHousesDestruct.put(false, 0);
-            //System.out.println("Player does not have this square");
-            return checkAndCountHousesDestruct;
-        }
+
         checkAndCountHousesDestruct.put(false, 0);
         return checkAndCountHousesDestruct;
 
