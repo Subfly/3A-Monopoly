@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.util.Duration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -607,7 +608,8 @@ public class InnerController {
     private void set_turn_GUI() {
         int i = 0;
         for (ImageView player_index : indexes_of_players) {
-            player_index.setImage(new Image(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("scenes/sources/circle.png"))));
+            player_index.setImage(new Image(new File("scenes/sources/circle.png").toURI().toString()));
+            //player_index.setImage(new Image(Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream("scenes/sources/circle.png"))));
             String tmp_pawn_name = pawns_of_players.get(i).getId().replace("pawn_button", "");
             tmp_pawn_name = tmp_pawn_name.replace("_", "-");
             set_image_helper(player_index, LOBBY_PAWNS, tmp_pawn_name);
