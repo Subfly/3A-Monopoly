@@ -1,6 +1,7 @@
 package managers;
 
 import enumerations.*;
+import javafx.beans.property.Property;
 import models.bases.*;
 import models.cards.PlaceCard;
 import models.cards.PropertyCard;
@@ -560,6 +561,7 @@ public class InGameManager {
                     assert prop != null;
                     int rentAmount = 0;
 
+                    //TODO square - player
                     if(square.getType() == SquareType.NormalSquare){
                         rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
                     }else if(square.getType() == SquareType.RailroadSquare){
@@ -666,11 +668,11 @@ public class InGameManager {
         */
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
-        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-        if(isBuyable && !lastSquareMadeSomething.isBought()){
-            createAuction();
-            return 4;
-        }
+//        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
+//        if(isBuyable && !lastSquareMadeSomething.isBought()){
+//            createAuction();
+//            return 4;
+//        }
 
         this.currentPlayerId += 1;
 
@@ -713,14 +715,14 @@ public class InGameManager {
         Player player = players.get(getCurrentPlayerId());
         player.getSpecificCard(squareIndex).setMortgaged(true);
         board.getSquares().get(squareIndex).setLevel(-1);
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
+        PropertyCard currentPlace = player.getSpecificCard(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(moneyToAdd * multiplier));
 
     }
     public boolean removeMortgageFromPlace(int squareIndex, double multiplier) {
         Player player = players.get(getCurrentPlayerId());
-        PlaceCard currentPlace = (PlaceCard) player.getSpecificCard(squareIndex);
+        PropertyCard currentPlace = player.getSpecificCard(squareIndex);
         int mortgagePrice = currentPlace.getMortgagePrice();
         int mortgagePenalty = (int) (mortgagePrice * PropertyCard.getMortgagePenalty());
         if (player.removeMoney(Constants.CURRENCY_NAMES[0], (int)((mortgagePrice + mortgagePenalty) * multiplier))) {
@@ -1243,7 +1245,7 @@ public class InGameManager {
 
         int squareId = squareToMortgage.getId();
         int squareLevel = squareToMortgage.getLevel();
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+        PropertyCard currentPlace = currentPlayer.getSpecificCard(squareId);
 
         if ( currentPlayer.isOwned(currentPlace ) && squareLevel == 0 ) {
             //System.out.println("Player can mortgage this place");
@@ -1256,7 +1258,7 @@ public class InGameManager {
     public boolean checkDismortgage( Player currentPlayer, Square squareToDismortgage){
         int squareId = squareToDismortgage.getId();
         int squareLevel = squareToDismortgage.getLevel();
-        PlaceCard currentPlace = (PlaceCard) currentPlayer.getSpecificCard(squareId);
+        PropertyCard currentPlace = currentPlayer.getSpecificCard(squareId);
         int dismortgageMoney = (int) (currentPlace.getMortgagePrice() * 1.10);
 
         if (currentPlayer.isOwned(currentPlace)) {
