@@ -10,7 +10,7 @@
     "s1":{
       "id":1,
       "type":9,
-      "name":"Aydın",
+      "name":"Antalya",
       "price":600000,
       "color":0
     },
@@ -24,7 +24,7 @@
     "s3":{
       "id":3,
       "type":9,
-      "name":"Afyonkarahisar",
+      "name":"Bursa",
       "price":600000,
       "color":0
     },
@@ -38,14 +38,14 @@
     "s5":{
       "id":5,
       "type":7,
-      "name":"Sirkeci Train Station",
+      "name":"Tram",
       "price":2000000,
       "color":8
     },
     "s6":{
       "id":6,
       "type":9,
-      "name":"Bursa",
+      "name":"Adana",
       "price":1000000,
       "color":1
     },
@@ -59,14 +59,14 @@
     "s8":{
       "id":8,
       "type":9,
-      "name":"Adana",
+      "name":"Kocaeli",
       "price":1000000,
       "color":1
     },
     "s9":{
       "id":9,
       "type":9,
-      "name":"Diyarbakır",
+      "name":"Gaziantep",
       "price":1200000,
       "color":1
     },
@@ -80,42 +80,42 @@
     "s11":{
       "id":11,
       "type":9,
-      "name":"Malatya",
+      "name":"Kastamonu",
       "price":1400000,
       "color":2
     },
     "s12":{
       "id":12,
       "type":8,
-      "name":"The Electricity Company",
+      "name":"Telecom",
       "price":1500000,
       "color":8
     },
     "s13":{
       "id":13,
       "type":9,
-      "name":"Eskişehir",
+      "name":"Çanakkale",
       "price":1400000,
       "color":2
     },
     "s14":{
       "id":14,
       "type":9,
-      "name":"Rize",
+      "name":"Çorum",
       "price":1600000,
       "color":2
     },
     "s15":{
       "id":15,
       "type":7,
-      "name":"Bandırma Train Station",
+      "name":"Airport",
       "price":2000000,
       "color":8
     },
     "s16":{
       "id":16,
       "type":9,
-      "name":"Edirne",
+      "name":"Mersin",
       "price":1800000,
       "color":3
     },
@@ -129,14 +129,14 @@
     "s18":{
       "id":18,
       "type":9,
-      "name":"Hatay",
+      "name":"Samsun",
       "price":1800000,
       "color":3
     },
     "s19":{
       "id":19,
       "type":9,
-      "name":"Muğla",
+      "name":"Erzurum",
       "price":2000000,
       "color":3
     },
@@ -150,7 +150,7 @@
     "s21":{
       "id":21,
       "type":9,
-      "name":"Konya",
+      "name":"Ordu",
       "price":2200000,
       "color":4
     },
@@ -164,49 +164,49 @@
     "s23":{
       "id":23,
       "type":9,
-      "name":"İzmir",
+      "name":"Rize",
       "price":2200000,
       "color":4
     },
     "s24":{
       "id":24,
       "type":9,
-      "name":"Kastamonu",
+      "name":"Trabzon",
       "price":2400000,
       "color":4
     },
     "s25":{
       "id":25,
       "type":7,
-      "name":"Haydarpaşa Train Station",
+      "name":"Sea Lines",
       "price":2000000,
       "color":8
     },
     "s26":{
       "id":26,
       "type":9,
-      "name":"Bitlis",
+      "name":"Malatya",
       "price":2600000,
       "color":5
     },
     "s27":{
       "id":27,
       "type":9,
-      "name":"Gaziantep",
+      "name":"Elazığ",
       "price":2600000,
       "color":5
     },
     "s28":{
       "id":28,
       "type":8,
-      "name":"Water Works",
+      "name":"Neutral Gas",
       "price":1500000,
       "color":8
     },
     "s29":{
       "id":29,
       "type":9,
-      "name":"Muş",
+      "name":"Angara",
       "price":2800000,
       "color":5
     },
@@ -220,14 +220,14 @@
     "s31":{
       "id":31,
       "type":9,
-      "name":"Tunceli",
+      "name":"Eskişehir",
       "price":3000000,
       "color":6
     },
     "s32":{
       "id":32,
       "type":9,
-      "name":"Giresun",
+      "name":"SİVAS",
       "price":3000000,
       "color":6
     },
@@ -241,14 +241,14 @@
     "s34":{
       "id":34,
       "type":9,
-      "name":"Kars",
+      "name":"İzmir",
       "price":3200000,
       "color":6
     },
     "s35":{
       "id":35,
       "type":7,
-      "name":"Edirne Train Station",
+      "name":"Subway",
       "price":2000000,
       "color":8
     },
@@ -262,7 +262,7 @@
     "s37":{
       "id":37,
       "type":9,
-      "name":"Ankara",
+      "name":"İstanbul",
       "price":3500000,
       "color":7
     },
@@ -276,7 +276,7 @@
     "s39":{
       "id":39,
       "type":9,
-      "name":"İstanbul",
+      "name":"Giresun",
       "price":4000000,
       "color":7
     }
@@ -352,7 +352,7 @@
         "isDrawingChanceCard": false
       },
       "ch5":{
-        "message": "Go To Ankara",
+        "message": "Go To İstanbul",
         "isComposed": true,
         "isMoving": true,
         "moveToIndex": 37,
@@ -386,7 +386,7 @@
         "isDrawingChanceCard": false
       },
       "ch7":{
-        "message": "Go To Tunceli",
+        "message": "Go To Eskişehir",
         "isComposed": true,
         "isMoving": true,
         "moveToIndex": 31,
@@ -420,7 +420,7 @@
         "isDrawingChanceCard": false
       },
       "ch9":{
-        "message": "Go To Eskişehir",
+        "message": "Go To Çanakkale",
         "isComposed": true,
         "isMoving": true,
         "moveToIndex": 13,
@@ -471,7 +471,7 @@
         "isDrawingChanceCard": false
       },
       "ch12":{
-        "message": "Go To Muğla",
+        "message": "Go To Erzurum",
         "isComposed": true,
         "isMoving": true,
         "moveToIndex": 19,
@@ -728,7 +728,7 @@
         "isDrawingChanceCard": false
       },
       "co11":{
-        "message": "Go To Istanbul",
+        "message": "Go To Giresun",
         "isComposed": false,
         "isMoving": true,
         "moveToIndex": 39,
@@ -813,7 +813,7 @@
         "isDrawingChanceCard": false
       },
       "co16":{
-        "message": "Go To Giresun",
+        "message": "Go To Sivas",
         "isComposed": true,
         "isMoving": true,
         "moveToIndex": 32,
@@ -834,7 +834,7 @@
       "p0": {
         "id": 1,
         "color": 0,
-        "name": "Aydın",
+        "name": "Antalya",
         "cost": 600000,
         "rentPrices": [20000, 100000, 300000, 900000, 1600000, 2500000],
         "mortgagePrice": 300000,
@@ -844,7 +844,7 @@
       "p1": {
         "id": 3,
         "color": 0,
-        "name": "Afyonkarahisar",
+        "name": "Bursa",
         "cost": 600000,
         "rentPrices": [40000, 200000, 600000, 1800000, 3200000, 4500000],
         "mortgagePrice": 300000,
@@ -854,7 +854,7 @@
       "p2": {
         "id": 6,
         "color": 1,
-        "name": "Bursa",
+        "name": "Adana",
         "cost": 1000000,
         "rentPrices": [60000, 300000, 900000, 2700000, 4000000, 5500000],
         "mortgagePrice": 500000,
@@ -864,7 +864,7 @@
       "p3": {
         "id": 8,
         "color": 1,
-        "name": "Adana",
+        "name": "Kocaeli",
         "cost": 1000000,
         "rentPrices": [60000, 300000, 900000, 2700000, 4000000, 5500000],
         "mortgagePrice": 500000,
@@ -874,7 +874,7 @@
       "p4": {
         "id": 9,
         "color": 1,
-        "name": "Diyarbakır",
+        "name": "Gaziantep",
         "cost": 1200000,
         "rentPrices": [80000, 400000, 1000000, 3000000, 4500000, 6000000],
         "mortgagePrice": 600000,
@@ -884,7 +884,7 @@
       "p5": {
         "id": 11,
         "color": 2,
-        "name": "Malatya",
+        "name": "Kastamonu",
         "cost": 1400000,
         "rentPrices": [100000, 500000, 1500000, 4500000, 6250000, 7500000],
         "mortgagePrice": 700000,
@@ -894,7 +894,7 @@
       "p6": {
         "id": 13,
         "color": 2,
-        "name": "Eskişehir",
+        "name": "Çanakkale",
         "cost": 1400000,
         "rentPrices": [100000, 500000, 1500000, 4500000, 6250000, 7500000],
         "mortgagePrice": 700000,
@@ -904,7 +904,7 @@
       "p7": {
         "id": 14,
         "color": 2,
-        "name": "Rize",
+        "name": "Çorum",
         "cost": 1600000,
         "rentPrices": [120000, 600000, 1800000, 5000000, 7000000, 9000000],
         "mortgagePrice": 800000,
@@ -914,7 +914,7 @@
       "p8": {
         "id": 16,
         "color": 3,
-        "name": "Edirne",
+        "name": "Mersin",
         "cost": 1800000,
         "rentPrices": [140000, 700000, 2000000, 5500000, 7500000, 9500000],
         "mortgagePrice": 900000,
@@ -924,7 +924,7 @@
       "p9": {
         "id": 18,
         "color": 3,
-        "name": "Hatay",
+        "name": "Samsun",
         "cost": 1800000,
         "rentPrices": [140000, 700000, 2000000, 5500000, 7500000, 9500000],
         "mortgagePrice": 900000,
@@ -934,7 +934,7 @@
       "p10": {
         "id": 19,
         "color": 3,
-        "name": "Muğla",
+        "name": "Erzurum",
         "cost": 2000000,
         "rentPrices": [160000, 800000, 2200000, 6000000, 8000000, 10000000],
         "mortgagePrice": 1000000,
@@ -944,7 +944,7 @@
       "p11": {
         "id": 21,
         "color": 4,
-        "name": "Konya",
+        "name": "Ordu",
         "cost": 2200000,
         "rentPrices": [180000, 900000, 2500000, 7000000, 8750000, 10500000],
         "mortgagePrice": 1000000,
@@ -954,7 +954,7 @@
       "p12": {
         "id": 23,
         "color": 4,
-        "name": "İzmir",
+        "name": "Rize",
         "cost": 2200000,
         "rentPrices": [180000, 900000, 2500000, 7000000, 8750000, 10500000],
         "mortgagePrice": 1000000,
@@ -964,7 +964,7 @@
       "p13": {
         "id": 24,
         "color": 4,
-        "name": "Kastamonu",
+        "name": "Trabzon",
         "cost": 2400000,
         "rentPrices": [200000, 1000000, 3000000, 7500000, 9250000, 11000000],
         "mortgagePrice": 1200000,
@@ -974,7 +974,7 @@
       "p14": {
         "id": 26,
         "color": 5,
-        "name": "Bitlis",
+        "name": "Malatya",
         "cost": 2600000,
         "rentPrices": [220000, 1100000, 3300000, 8000000, 9750000, 11500000],
         "mortgagePrice": 1300000,
@@ -984,7 +984,7 @@
       "p15": {
         "id": 27,
         "color": 5,
-        "name": "Gaziantep",
+        "name": "Elazığ",
         "cost": 2600000,
         "rentPrices": [220000, 1100000, 3300000, 8000000, 9750000, 11500000],
         "mortgagePrice": 1300000,
@@ -994,7 +994,7 @@
       "p16": {
         "id": 29,
         "color": 5,
-        "name": "Muş",
+        "name": "Angara",
         "cost": 2800000,
         "rentPrices": [240000, 1200000, 3600000, 8500000, 10250000, 12000000],
         "mortgagePrice": 1400000,
@@ -1004,7 +1004,7 @@
       "p17": {
         "id": 31,
         "color": 6,
-        "name": "Tunceli",
+        "name": "Eskişehir",
         "cost": 3000000,
         "rentPrices": [260000, 1300000, 3900000, 9000000, 11000000, 12750000],
         "mortgagePrice": 1500000,
@@ -1014,7 +1014,7 @@
       "p18": {
         "id": 32,
         "color": 6,
-        "name": "Giresun",
+        "name": "Sivas",
         "cost": 3000000,
         "rentPrices": [260000, 1300000, 3900000, 9000000, 11000000, 12750000],
         "mortgagePrice": 1500000,
@@ -1024,7 +1024,7 @@
       "p19": {
         "id": 34,
         "color": 6,
-        "name": "Kars",
+        "name": "İzmir",
         "cost": 3200000,
         "rentPrices": [280000, 1500000, 4500000, 10000000, 12000000, 14000000],
         "mortgagePrice": 1600000,
@@ -1034,7 +1034,7 @@
       "p20": {
         "id": 37,
         "color": 7,
-        "name": "Ankara",
+        "name": "İstanbul",
         "cost": 3500000,
         "rentPrices": [350000, 1750000, 5000000, 11000000, 13000000, 15000000],
         "mortgagePrice": 1750000,
@@ -1044,7 +1044,7 @@
       "p21": {
         "id": 39,
         "color": 7,
-        "name": "İstanbul",
+        "name": "Giresun",
         "cost": 4000000,
         "rentPrices": [500000, 2000000, 6000000, 14000000, 17000000, 20000000],
         "mortgagePrice": 2000000,
@@ -1056,7 +1056,7 @@
       "r1":{
         "id": 5,
         "color": 8,
-        "name": "Sirkeci Train Station",
+        "name": "Tram",
         "cost": 2000000,
         "rentPrices": [250000, 500000, 1000000, 2000000],
         "mortgagePrice": 1000000
@@ -1064,7 +1064,7 @@
       "r2":{
         "id": 15,
         "color": 8,
-        "name": "Bandırma Train Station",
+        "name": "Airport",
         "cost": 2000000,
         "rentPrices": [250000, 500000, 1000000, 2000000],
         "mortgagePrice": 1000000
@@ -1072,7 +1072,7 @@
       "r3":{
         "id": 25,
         "color": 8,
-        "name": "Haydarpaşa Train Station",
+        "name": "Sea Lines",
         "cost": 2000000,
         "rentPrices": [250000, 500000, 1000000, 2000000],
         "mortgagePrice": 1000000
@@ -1080,7 +1080,7 @@
       "r4":{
         "id": 35,
         "color": 8,
-        "name": "Edirne Train Station",
+        "name": "Subway",
         "cost": 2000000,
         "rentPrices": [250000, 500000, 1000000, 2000000],
         "mortgagePrice": 1000000
@@ -1090,7 +1090,7 @@
       "u1":{
         "id": 12,
         "color": 8,
-        "name": "The Electricity Company",
+        "name": "Telecom",
         "cost": 1500000,
         "rentPrices": [40000, 100000],
         "mortgagePrice": 750000
@@ -1098,7 +1098,7 @@
       "u2":{
         "id": 28,
         "color": 8,
-        "name": "Water Works",
+        "name": "Neutral Gas",
         "cost": 1500000,
         "rentPrices": [40000, 100000],
         "mortgagePrice": 750000

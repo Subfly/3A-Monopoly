@@ -1313,7 +1313,9 @@ public class InGameManager {
         // Also, maybe the algorithm can change, according to the rulebook
         Map<Boolean, Integer> checkAndCountHouses = new HashMap<>();
         Map<Boolean, Integer> checkAndCountHotel = new HashMap<>();
-        if(squareToBuild.getType() == SquareType.NormalSquare){
+        if(squareToBuild.getType() == SquareType.NormalSquare){// TODO: Check house&hotel count of bank
+
+
             //IF NO BUILDINGS AVAILABLE
             if(!bank.checkBuildingAvailability(buildingType)){
                 if(buildingType == Building.House){

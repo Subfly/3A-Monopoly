@@ -10,6 +10,7 @@ public class PlaceCard extends PropertyCard{
     private static final int RENT_MULTIPLIER = 2;
     private int housePrice;
     private int hotelPrice;
+    private int mortgagePrice;
 
     public PlaceCard(int id, Colors color, String name, int cost, ArrayList<Integer> rentPrices, int mortgagePrice, int housePrice, int hotelPrice) {
         super(id, color, name, cost, rentPrices, mortgagePrice);
@@ -29,4 +30,6 @@ public class PlaceCard extends PropertyCard{
     public int getHotelPrice() {
         return hotelPrice;
     }
+
+    public int getMortgagePrice(){ return mortgagePrice;}
 }
