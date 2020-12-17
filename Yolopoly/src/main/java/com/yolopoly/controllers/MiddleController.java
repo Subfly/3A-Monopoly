@@ -296,15 +296,10 @@ public class MiddleController {
 
     //Image Set Helper
     public void set_image_helper(ImageView iv, String path, String name){
-        //FIXME images do not show
-        System.out.println(path + name + PNG);
-        File file = new File(path + name + PNG);
-        Image image = new Image(file.getClass().getClassLoader().getName());
+        ClassLoader classLoader = getClass().getClassLoader();
+        String imageUrl = Objects.requireNonNull(classLoader.getResource(path + name + PNG)).toExternalForm();
+        Image image = new Image(imageUrl);
         iv.setImage(image);
-
-        //ClassLoader classLoader = getClass().getClassLoader();
-        //String imageUrl = classLoader.getResource("images/image.png").toExternalForm();
-        //Image image = new Image(imageUrl);
     }
 
 }

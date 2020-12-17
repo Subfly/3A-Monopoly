@@ -18,6 +18,7 @@ import javafx.util.Duration;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.yolopoly.Main.changeScreen;
 
@@ -65,8 +66,8 @@ public class InnerController {
 
     boolean pressedEndTurn = false;
 
-    final String LOBBY_SETTINGS = "sources/lobby-settings/";
-    final String LOBBY_PAWNS = "sources/lobby-settings/pawns/";
+    final String LOBBY_SETTINGS = "scenes/sources/lobby-settings/";
+    final String LOBBY_PAWNS = "/scenes/sources/lobby-settings/pawns/";
     final String PNG = ".png";
 
 
@@ -211,8 +212,8 @@ public class InnerController {
 
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
-                    set_image_helper(dice_1, "sources/dice/" , "dice_" + dice1);
-                    set_image_helper(dice_2, "sources/dice/" , "dice_" + dice2);
+                    set_image_helper(dice_1, "/scenes/sources/dice/" , "dice_" + dice1);
+                    set_image_helper(dice_2, "/scenes/sources/dice/" , "dice_" + dice2);
                     //dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
                     //dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
@@ -410,14 +411,14 @@ public class InnerController {
     private void start_turn(){
         System.out.println(drawable_card_info);
         if (drawable_card_info == 1){
-            set_image_helper(cards, "sources/drawable-cards/", "chance-back");
+            set_image_helper(cards, "scenes/sources/drawable-cards/", "chance-back");
             //cards.setImage(new Image(getClass().getResourceAsStream("sources/drawable-cards/chance-back.png")));
             cards.setVisible(true);
             cards_background.setVisible(true);
             cards_anchor.setVisible(true);
         }
         else if (drawable_card_info == 2){
-            set_image_helper(cards, "sources/drawable-cards/", "chest-back");
+            set_image_helper(cards, "scenes/sources/drawable-cards/", "chest-back");
             //cards.setImage(new Image(getClass().getResourceAsStream("sources/drawable-cards/chest-back.png")));
             cards.setVisible(true);
             cards_background.setVisible(true);
@@ -500,8 +501,8 @@ public class InnerController {
 
             boolean is_double = dice1 == dice2;
 
-            set_image_helper(dice_1, "sources/dice/", "dice_" + dice1);
-            set_image_helper(dice_2, "sources/dice/", "dice_" + dice2);
+            set_image_helper(dice_1, "/scenes/sources/dice/", "dice_" + dice1);
+            set_image_helper(dice_2, "/scenes/sources/dice/", "dice_" + dice2);
             //dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
             //dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
@@ -608,8 +609,8 @@ public class InnerController {
         if (is_square(tmpSquare, "buy")) {
             int tmpSquareLevel = tmpSquare.getLevel();
             card_image.setVisible(true);
-            set_image_helper(card_image, "sources/property-cards/", last_tmp_index_of_info_card);
-            set_image_helper(info_card, "sources/property-cards/", "info-card");
+            set_image_helper(card_image, "/scenes/sources/property-cards/", last_tmp_index_of_info_card);
+            set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
             //card_image.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/" + last_tmp_index_of_info_card + ".png")));
             //info_card.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/info-card.png")));
             buy_button.setVisible(true);
@@ -678,7 +679,7 @@ public class InnerController {
     private void set_turn_GUI() {
         int i = 0;
         for (ImageView player_index : indexes_of_players) {
-            set_image_helper(player_index,"sources/", "circle");
+            set_image_helper(player_index,"/scenes/sources/", "circle");
             //player_index.setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
             String tmp_pawn_name = pawns_of_players.get(i).getId().replace("pawn_button", "");
             tmp_pawn_name = tmp_pawn_name.replace("_", "-");
@@ -698,16 +699,13 @@ public class InnerController {
             } else
                 position = "h";
             if (is_square(s, "build")) {
-                String deneme;
                 if (s.getLevel() == 0) {
                     square_bars[i].setVisible(false);
                 } else if (s.getLevel() == 5) {
-                    deneme = "sources/squares/sq-hotel-" + position + ".png";
-                    set_image_helper(square_bars[i],"sources/squares/", "sq-hotel-" + position );
+                    set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-hotel-" + position );
                     //square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
                 } else {
-                    deneme = "sources/squares/sq-house-" + s.getLevel() + "-" + position + ".png";
-                    set_image_helper(square_bars[i],"sources/squares/", "sq-house-" + s.getLevel() + "-" + position);
+                    set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-house-" + s.getLevel() + "-" + position);
                     //square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
                 }
                 i++;
@@ -762,7 +760,6 @@ public class InnerController {
                 house_slot3.setImage(null);
                 house_slot2.setImage(null);
                 house_slot1.setImage(null);
-//                house_slot0.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
                 set_image_helper(house_slot0, PROPERTY_CARDS, "house");
             }
             case 2 -> {
@@ -770,17 +767,12 @@ public class InnerController {
                 house_slot2.setImage(null);
                 set_image_helper(house_slot0, PROPERTY_CARDS, "house");
                 set_image_helper(house_slot1, PROPERTY_CARDS, "house");
-//                house_slot1.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot0.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
             }
             case 3 -> {
                 set_image_helper(house_slot0, PROPERTY_CARDS, "house");
                 set_image_helper(house_slot1, PROPERTY_CARDS, "house");
                 set_image_helper(house_slot2, PROPERTY_CARDS, "house");
                 house_slot3.setImage(null);
-//                house_slot2.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot1.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot0.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
             }
             case 4 -> {
                 set_image_helper(house_slot0, PROPERTY_CARDS, "house");
@@ -809,11 +801,14 @@ public class InnerController {
 
     //Image Set Helper
     public void set_image_helper(ImageView iv, String path, String name){
-        iv.setImage(new Image(new File(path + name + PNG).toURI().toString()));
+        System.out.println(path + name + PNG);
+        String imageUrl = getClass().getResource(path + name + PNG).toExternalForm();
+        Image image = new Image(imageUrl);
+        iv.setImage(image);
     }
 
     @FXML
     public void closeButtonPressed() throws Exception {
-        changeScreen("../controllers/OuterController.fxml");
+        changeScreen("src/main/resources/scenes/OuterController.fxml");
     }
 }
