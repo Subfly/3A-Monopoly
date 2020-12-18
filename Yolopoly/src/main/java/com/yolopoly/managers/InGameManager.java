@@ -167,7 +167,7 @@ public class InGameManager {
     }
 
     public void addToLog(String logAction, String userName){
-        log.add("Player " + userName + " has " + logAction);
+        log.add(userName + " has " + logAction);
     }
 
     //**
@@ -568,7 +568,7 @@ public class InGameManager {
                     if(square.getType() == SquareType.NormalSquare){
                         rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
                     }else if(square.getType() == SquareType.RailroadSquare){
-                        int counter = 0;
+                        int counter = -1;
                         for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
                             if(board.getSpecificSquare(p.getId()).getType() == SquareType.RailroadSquare){
                                 counter += 1;
@@ -632,7 +632,6 @@ public class InGameManager {
 
         if (player.isInJail()){
             player.incrementInJailTurnCount();
-            System.out.println(player.getInJailTurnCount() + " inner enginde");
         }
 
         if(player.isBankrupt()){
@@ -698,9 +697,6 @@ public class InGameManager {
         Player currentPlayer = players.get(currentPlayerId);
         Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
         PropertyCard card = getSpecificProperty(square.getId());
-        System.out.println("Name of area is: " + card.getName());
-        System.out.println("Id of the square is: " + square.getId());
-        System.out.println("Id of the prop is: " + card.getId());
 
         //Make changes on data
         card.setOwnedBy(currentPlayerId);
@@ -861,7 +857,6 @@ public class InGameManager {
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                System.out.println("helal lan alitahasubuçak");
                 return 5200;
             }else{
                 if(cardDrawn.isComposed()){
@@ -872,7 +867,7 @@ public class InGameManager {
                         int moveInCounts = cardDrawn.getMoveInCounts();
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
-                            player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
+                            //player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
                             return -3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -883,7 +878,7 @@ public class InGameManager {
                                     player.addMoney(Constants.CURRENCY_NAMES[0], (int) (Constants.GO_SQUARE_MONEY * multiplier));
                                 }
                             }
-                            player.setCurrentPosition(moveToIndex);
+                            //player.setCurrentPosition(moveToIndex);
                             return moveToIndex;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
@@ -936,7 +931,6 @@ public class InGameManager {
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                System.out.println("helal lan alitahasubuçak");
                 return 5200;
             }else if(cardDrawn.isDrawingChanceCard()){
                 //Needed to be handled in front-end.
@@ -950,7 +944,7 @@ public class InGameManager {
                         int moveInCounts = cardDrawn.getMoveInCounts();
                         if(moveToIndex == -1 && moveInCounts != -1){
                             //If card specifies to move forward
-                            player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
+                            //player.setCurrentPosition(player.getCurrentPosition() + moveInCounts);
                             return -3;
                         }else if(moveToIndex != -1 && moveInCounts == -1){
                             //If card specifies to move to another square
@@ -961,7 +955,7 @@ public class InGameManager {
                                     player.addMoney(Constants.CURRENCY_NAMES[0], (int)(Constants.GO_SQUARE_MONEY * multiplier));
                                 }
                             }
-                            player.setCurrentPosition(moveToIndex);
+                            //player.setCurrentPosition(moveToIndex);
                             return moveToIndex;
                         }
                     }else if(cardDrawn.isRelatedToBuildings()){
