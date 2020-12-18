@@ -9,6 +9,7 @@ import com.yolopoly.managers.LobbyManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class FirebaseUtil {
     public FirebaseUtil() {
@@ -30,7 +31,7 @@ public class FirebaseUtil {
 
         DatabaseReference ref = database.getReference("rooms");
 
-        ref.child(hosterNick).addValueEventListener(new ValueEventListener() {
+        ref.child(hosterNick).child("inner").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 InGameManager post = dataSnapshot.getValue(InGameManager.class);
@@ -57,9 +58,9 @@ public class FirebaseUtil {
 
     public void sendData(InGameManager innerEngine, String hosterNick){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("");
+        DatabaseReference ref = database.getReference("rooms");
 
-        ref.child("rooms").child(hosterNick).setValue(innerEngine, (databaseError, databaseReference) -> {
+        ref.child(hosterNick).child("inner").setValue(innerEngine, (databaseError, databaseReference) -> {
             System.out.println("Data sent to server!\n\nDEBUG\nhosterNick: " + hosterNick + "\nlast player id: " + innerEngine.getCurrentPlayerId() + "\n");
         });
     }
@@ -68,20 +69,67 @@ public class FirebaseUtil {
 
     //TODO: ADD A METHOD TO CREATE A ROOM
     public void createRoom(LobbyManager middleEngine, String hosterNick){
-
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("rooms");
+        ref.child(hosterNick).child("middle").setValue(middleEngine, (databaseError, databaseReference) -> {
+            System.out.println("Data sent to server!\n\nDEBUG\nhosterNick: " + hosterNick + "\n");
+        });
     }
 
     //TODO: ADD A METHOD TO JOIN A ROOM
     public void join(String hosterNick, String nickName){
-
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("rooms");
+        ref.child(hosterNick).child("middle");
+        //TODO CONTINUE METHOD FROM HERE
     }
 
     //TODO: ADD A METHOD TO LEAVE A ROOM
+    public void leaveLobby(String hosterNick, String nickName){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("rooms");
+        ref.child(hosterNick).child("middle");
+        //TODO CONTINUE METHOD FROM HERE
+    }
 
+    //TODO ADD A METHOD TO LEAVE A GAME
+    public void leaveGame(String hosterNick, String nickName){
 
-    //TODO ADD A METHOD TO CLOSE A GAME
+    }
 
     //TODO: ADD A METHOD TO GET LOBBIES
+    public HashMap<String, HashMap<String, String>> getLobbies(){
+        HashMap<String, HashMap<String, String>> returningHash = new HashMap<>();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("rooms");
+        ref.orderByKey().limitToFirst(10).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                HashMap<String, String> dataHash = new HashMap<>();
+                // TODO: ADD READING FROM DATA
+                // returningHash.put(dataSnapshot.getKey(), )
+            }
 
-    //TODO: ADD A METHOD TO JOIN LOBBIES
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        return returningHash;
+    }
 }
