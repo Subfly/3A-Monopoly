@@ -181,6 +181,10 @@ public class InnerController {
         set_turn_GUI();
         state_of_bot = 0;
         igm.endTurn();
+
+        if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
+            can_roll_dice = true;
+        }
     }
 
     int state_of_bot = 0;
@@ -226,11 +230,7 @@ public class InnerController {
                         state_of_bot = 1;
                     }
                     else {
-                        turn++;
-                        turn = turn % pawns_of_players.size();
-                        set_turn_GUI();
-                        state_of_bot = 0;
-                        igm.endTurn();
+                        end_turn();
                     }
                 }
                 else if (state_of_bot == 1){
@@ -255,12 +255,7 @@ public class InnerController {
                         state_of_bot = 1;
                     }
                     else {
-                        turn++;
-                        turn = turn % pawns_of_players.size();
-                        set_turn_GUI();
-                        state_of_bot = 0;
-                        igm.endTurn();
-                        can_roll_dice = true;
+                        end_turn();
                     }
                 }
             }
@@ -274,11 +269,7 @@ public class InnerController {
                         move_count_of_bot = 50 - old_position_of_bot;
                     }
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
-                    turn++;
-                    turn = turn % pawns_of_players.size();
-                    set_turn_GUI();
-                    state_of_bot = 0;
-                    igm.endTurn();
+                    end_turn();
                 }
                 else {
                     igm.jailMakeDecision(1);
@@ -288,21 +279,14 @@ public class InnerController {
             set_log();
         }
         else {
-            can_roll_dice = true;
         }
     }
 
-    boolean can_press_button = false;
-
     @FXML
     public void actionButtonPressed() {
-        if (can_press_button) {
+        if (!can_roll_dice) {
             if(igm.isCurrentPlayerHuman()){
-                turn++;
-                turn = turn % pawns_of_players.size();
-                set_turn_GUI();
-                can_press_button = true;
-                igm.endTurn();
+                end_turn();
                 play_bot();
             }
         } else
@@ -430,7 +414,6 @@ public class InnerController {
             }
         }
         else {
-            can_roll_dice = false;
             play_bot();
         }
     }
@@ -451,10 +434,7 @@ public class InnerController {
         }
         movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
         is_player_get_jailed = false;
-        turn++;
-        turn = turn % pawns_of_players.size();
-        set_turn_GUI();
-        igm.endTurn();
+        end_turn();
     }
 
     boolean player_goes_jail = false;
@@ -492,7 +472,6 @@ public class InnerController {
             boolean is_double = dice1 == dice2;
 
             can_roll_dice = is_double;
-            can_press_button = true;
 
             set_image_helper(dice_1, "/scenes/sources/dice/", "dice_" + dice1);
             set_image_helper(dice_2, "/scenes/sources/dice/", "dice_" + dice2);
@@ -509,7 +488,7 @@ public class InnerController {
 
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
-                System.out.println(result_of_start_turn);
+                //System.out.println(result_of_start_turn);
 
                 if (result_of_start_turn == -2){
                     get_player_jail(old_position_of_player);
