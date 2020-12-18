@@ -101,6 +101,42 @@ public class InGameManager {
     // Functions
     //**
 
+    public int getRent(int diceResult){
+
+        int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
+        PropertyCard prop = getSpecificProperty(currentPlayerIndex);
+        Square square = board.getSpecificSquare(currentPlayerIndex);
+        int rentAmount = 0;
+        Player paidToPlayer = players.get(prop.getOwnedBy());
+
+        if(square.getType() == SquareType.NormalSquare){
+            int countPlayersColor = countPlayersColor(square);
+            int countBoardColor = board.countColors(square);
+            rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
+            if (countBoardColor == countPlayersColor){
+                rentAmount = rentAmount * 2;
+            }
+
+        }else if(square.getType() == SquareType.RailroadSquare){
+            int counter = -1;
+            for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
+                if(board.getSpecificSquare(p.getId()).getType() == SquareType.RailroadSquare){
+                    counter += 1;
+                }
+            }
+            rentAmount = prop.getRentPrices().get(counter);
+        }else if(square.getType() == SquareType.UtilitySquare){
+            int counter = -1;
+            for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
+                if(board.getSpecificSquare(p.getId()).getType() == SquareType.UtilitySquare){
+                    counter += 1;
+                }
+            }
+            int baseRent = prop.getRentPrices().get(counter);
+            rentAmount = baseRent * diceResult;
+        }
+        return rentAmount;
+    }
     public ArrayList<Currency> getCurrencies(){
         return this.bank.getCurrencyRates();
     }
@@ -553,9 +589,10 @@ public class InGameManager {
                 return 5;
             }else{
                 //If pawn of the player landed on a property square :D Hardest part coming...
-                if(square.isBought()){
+                int buyerIdOfProperty = getBuyer(square.getId());
+                if(square.isBought() && buyerIdOfProperty != currentPlayerId){
                     //Find the player who bought that square
-                    int buyerIdOfProperty = getBuyer(square.getId());
+
 
                     //Create a dummy player holder to change players data in the end
                     Player paidToPlayer = players.get(buyerIdOfProperty);
@@ -563,28 +600,8 @@ public class InGameManager {
                     //Find rent amount
                     PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
-                    int rentAmount = 0;
+                    int rentAmount = getRent(diceResult);
 
-                    if(square.getType() == SquareType.NormalSquare){
-                        rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
-                    }else if(square.getType() == SquareType.RailroadSquare){
-                        int counter = 0;
-                        for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
-                            if(board.getSpecificSquare(p.getId()).getType() == SquareType.RailroadSquare){
-                                counter += 1;
-                            }
-                        }
-                        rentAmount = prop.getRentPrices().get(counter);
-                    }else if(square.getType() == SquareType.UtilitySquare){
-                        int counter = -1;
-                        for(PropertyCard p : paidToPlayer.getOwnedPlaces()){
-                            if(board.getSpecificSquare(p.getId()).getType() == SquareType.UtilitySquare){
-                                counter += 1;
-                            }
-                        }
-                        int baseRent = prop.getRentPrices().get(counter);
-                        rentAmount = baseRent * diceResult;
-                    }
 
                     //Remove money from current player
                     boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
@@ -598,8 +615,8 @@ public class InGameManager {
                     //Add money to other player
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
 
-                    addToLog("paid " + parser(rentAmount) + " as rent", player.getName());
-                    addToLog("received " + parser(rentAmount) + " as rent income", paidToPlayer.getName());
+                    addToLog("paid " + parser(rentAmount) + " as rent to " + paidToPlayer.getName(), player.getName());
+
                     return 6;
                 }else{
                     //Not bought, this part left to frontend
