@@ -45,12 +45,10 @@
     <orderEntry type="library" name="Maven: com.google.apis:google-api-services-storage:v1-rev20200430-1.30.9" level="project" />
     <orderEntry type="library" name="Maven: com.google.code.gson:gson:2.8.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.cloud:google-cloud-core:1.93.6" level="project" />
-    <orderEntry type="library" name="Maven: com.google.api.grpc:proto-google-common-protos:1.18.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.cloud:google-cloud-core-http:1.93.6" level="project" />
     <orderEntry type="library" name="Maven: com.google.http-client:google-http-client-appengine:1.35.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.api:gax-httpjson:0.74.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.api:gax:1.57.0" level="project" />
-    <orderEntry type="library" name="Maven: io.grpc:grpc-context:1.30.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.api.grpc:proto-google-iam-v1:0.13.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:3.12.2" level="project" />
     <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java-util:3.12.2" level="project" />
@@ -69,7 +67,6 @@
     <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf:1.30.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-protobuf-lite:1.30.0" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.codehaus.mojo:animal-sniffer-annotations:1.18" level="project" />
-    <orderEntry type="library" name="Maven: io.grpc:grpc-api:1.30.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.api:gax-grpc:1.57.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-auth:1.30.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-netty-shaded:1.30.0" level="project" />
@@ -88,6 +85,5 @@
     <orderEntry type="library" name="Maven: io.netty:netty-resolver:4.1.50.Final" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-transport:4.1.50.Final" level="project" />
     <orderEntry type="library" name="Maven: com.google.oauth-client:google-oauth-client:1.30.4" level="project" />
-    <orderEntry type="library" name="Maven: com.google.code.findbugs:jsr305:3.0.2" level="project" />
   </component>
 </module>

@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.database.*;
 import com.yolopoly.managers.InGameManager;
+import com.yolopoly.managers.LobbyManager;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -24,17 +25,27 @@ public class FirebaseUtil {
         }
     }
 
-    public void getData(InGameManager innerEngine){
+    public void getData(InGameManager innerEngine, String hosterNick){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
 
-        //TODO: ADD ROAD TO DATABASE VALUE IN PATH
-        DatabaseReference ref = database.getReference("");
+        DatabaseReference ref = database.getReference("rooms");
 
-        ref.addValueEventListener(new ValueEventListener() {
+        ref.child(hosterNick).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 InGameManager post = dataSnapshot.getValue(InGameManager.class);
-                //TODO: SET DATA COMING FROM POST
+                innerEngine.setAuctionPropertyIndex(post.getAuctionPropertyIndex());
+                innerEngine.setBank(post.getBank());
+                innerEngine.setBoard(post.getBoard());
+                innerEngine.setBrokenPlayersMoneyHash(post.getBrokenPlayersMoneyHash());
+                innerEngine.setCurrentBid(post.getCurrentBid());
+                innerEngine.setChat(post.getChat());
+                innerEngine.setCurrentPlayerAuctioning(post.getCurrentPlayerAuctioning());
+                innerEngine.setCurrentPlayerId(post.getCurrentPlayerId());
+                innerEngine.setDice(post.getDice());
+                innerEngine.setLog(post.getLog());
+                innerEngine.setParticipants(post.getParticipants());
+                innerEngine.setState(post.getState());
             }
 
             @Override
@@ -44,22 +55,29 @@ public class FirebaseUtil {
         });
     }
 
-    public void sendData(InGameManager innerEngine){
+    public void sendData(InGameManager innerEngine, String hosterNick){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("");
 
-        //TODO: ADD HOSTER NICK COMING FROM MIDDLE ENGINE
-        //TODO: SET CHILD TO COMING NICK
-        //TODO: PUSH VALUES
+        ref.child("rooms").child(hosterNick).setValue(innerEngine, (databaseError, databaseReference) -> {
+            System.out.println("Data sent to server!\n\nDEBUG\nhosterNick: " + hosterNick + "\nlast player id: " + innerEngine.getCurrentPlayerId() + "\n");
+        });
     }
 
     //TODO: ADD A METHOD TO CONSTANTLY CHECK FOR UPDATES IN ENGINE
 
     //TODO: ADD A METHOD TO CREATE A ROOM
+    public void createRoom(LobbyManager middleEngine, String hosterNick){
+
+    }
 
     //TODO: ADD A METHOD TO JOIN A ROOM
+    public void join(String hosterNick, String nickName){
+
+    }
 
     //TODO: ADD A METHOD TO LEAVE A ROOM
+
 
     //TODO ADD A METHOD TO CLOSE A GAME
 

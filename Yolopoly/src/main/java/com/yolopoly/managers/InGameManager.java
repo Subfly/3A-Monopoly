@@ -1481,11 +1481,6 @@ public class InGameManager {
 
     //Getters and Setters
 
-    public void setDice1(){
-        dice.setDice1(3);
-        dice.setDice2(4);
-    }
-
     public ArrayList<String> getChat() {
         return chat;
     }
@@ -1550,6 +1545,14 @@ public class InGameManager {
         this.state = state;
     }
 
+    public GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
+
     public int getCurrentBid() {
         return currentBid;
     }
@@ -1580,5 +1583,13 @@ public class InGameManager {
 
     public void setParticipants(ArrayList<Player> participants) {
         this.participants = participants;
+    }
+
+    public HashMap<Integer, HashMap<Integer, Integer>> getBrokenPlayersMoneyHash() {
+        return brokenPlayersMoneyHash;
+    }
+
+    public void setBrokenPlayersMoneyHash(HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash) {
+        this.brokenPlayersMoneyHash = brokenPlayersMoneyHash;
     }
 }
