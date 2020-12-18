@@ -411,15 +411,13 @@ public class InnerController {
     private void start_turn(){
         System.out.println(drawable_card_info);
         if (drawable_card_info == 1){
-            set_image_helper(cards, "scenes/sources/drawable-cards/", "chance-back");
-            //cards.setImage(new Image(getClass().getResourceAsStream("sources/drawable-cards/chance-back.png")));
+            set_image_helper(cards, "/scenes/sources/drawable-cards/", "chance-back");
             cards.setVisible(true);
             cards_background.setVisible(true);
             cards_anchor.setVisible(true);
         }
         else if (drawable_card_info == 2){
-            set_image_helper(cards, "scenes/sources/drawable-cards/", "chest-back");
-            //cards.setImage(new Image(getClass().getResourceAsStream("sources/drawable-cards/chest-back.png")));
+            set_image_helper(cards, "/scenes/sources/drawable-cards/", "chest-back");
             cards.setVisible(true);
             cards_background.setVisible(true);
             cards_anchor.setVisible(true);
