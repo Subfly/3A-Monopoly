@@ -409,16 +409,20 @@ public class InGameManager {
     // Private Functions
     //**
     private String parser(int amount){
-        double million = 0;
-        double thousand = 0;
+        int million = 0;
+        int remainder = 0;
+        int thousand = 0;
         if(amount >= 1000000){
-            million = (float)(amount / 1000000);
-            double ten = million / 10;
-            double one = (million % 10)/10;
-            return "" + ten + one + " M";
+            million = amount / 1_000_000;
+            remainder = (amount - (million * 1_000_000)) / 1_000;
+            return "" + million + "." + remainder + " M";
         }else if(amount >= 100000){
-            thousand = (float) (amount / 100);
+            thousand = amount/ 1000;
             return "" + thousand + " K";
+        }
+        else if (amount >= 0) {
+            int value = amount / 1000;
+            return "" + value + "K";
         }
         return "";
     }
