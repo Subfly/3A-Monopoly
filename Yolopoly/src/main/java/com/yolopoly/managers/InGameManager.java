@@ -110,11 +110,13 @@ public class InGameManager {
         Player paidToPlayer = players.get(prop.getOwnedBy());
 
         if(square.getType() == SquareType.NormalSquare){
-            int countPlayersColor = countPlayersColor(square);
+
+            int countPlayersColor = countPlayersColor(paidToPlayer, square);
             int countBoardColor = board.countColors(square);
             rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
             if (countBoardColor == countPlayersColor){
                 rentAmount = rentAmount * 2;
+                System.out.println(square + " iki kat kira");
             }
 
         }else if(square.getType() == SquareType.RailroadSquare){
@@ -319,11 +321,11 @@ public class InGameManager {
             int randomArea = (int)(Math.random() * totalBoughtProperties + 1);
             if(checkBuildBuilding(Building.House, board.getSpecificSquare(randomArea)).containsKey(true)){
                 //Build house
-                buildBuilding(Building.House, randomArea, multiplier);
+                levelUp(randomArea, multiplier);
             }
             if(checkBuildBuilding(Building.Hotel, board.getSpecificSquare(randomArea)).containsKey(true)){
                 //Build hotel
-                buildBuilding(Building.Hotel, randomArea, multiplier);
+                levelUp(randomArea, multiplier);
             }
             return -97;
         }
@@ -436,8 +438,8 @@ public class InGameManager {
         return -1;
     }
 
-    private int countPlayersColor(Square square){
-        return (int) players.get(currentPlayerId).getOwnedPlaces().stream().filter(s-> s.getColor() == square.getColor()).count();
+    private int countPlayersColor(Player player, Square square){
+        return (int) player.getOwnedPlaces().stream().filter(s-> s.getColor() == square.getColor()).count();
     }
 
     //**
@@ -1353,7 +1355,7 @@ public class InGameManager {
             int squareToBuildIndex = squareToBuild.getId();
 
             int colorsCountOnBoard = board.countColors(squareToBuild);
-            int colorsCountOnPlayer = countPlayersColor(squareToBuild);
+            int colorsCountOnPlayer = countPlayersColor(currentPlayer, squareToBuild);
             int houseCountOnSquare = squareToBuild.getHouseCount();
             int hotelCountOnSquare = squareToBuild.getHotelCount();
             int currentMoney = currentPlayer.getMonopolyMoneyAmount();
