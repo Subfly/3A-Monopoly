@@ -3,7 +3,7 @@ module Yolopoly {
     requires javafx.fxml;
     requires org.json;
     requires firebase.admin;
-    requires google.api.client;
+    requires com.google.auth;
     requires com.google.auth.oauth2;
 
     opens com.yolopoly to javafx.fxml;
