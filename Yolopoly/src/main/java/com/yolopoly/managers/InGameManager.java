@@ -17,7 +17,7 @@ public class InGameManager {
 
     // Constants
     private final static int JAIL_TURN_COUNT = 3;
-    private final static int AUCTION_START_MONEY = 500000;
+    private final static int AUCTION_START_MONEY = 100000;
 
     private static InGameManager innerEngine = null;
     private EffectManager effectManager;
@@ -36,6 +36,7 @@ public class InGameManager {
     private GameMode gameMode;
 
     //Auction Related
+    private String currentHighestBidName;
     private int currentBid;
     private int auctionPropertyIndex;
     private int currentPlayerAuctioning;
@@ -787,22 +788,44 @@ public class InGameManager {
         this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
         this.currentBid = AUCTION_START_MONEY;
         participants.addAll(players);
+        participants.removeIf(p -> p.getMonopolyMoneyAmount() < AUCTION_START_MONEY);
         this.currentPlayerAuctioning = 0;
+        this.currentHighestBidName = participants.get(0).getName();
         addToLog("created auction on the property", players.get(currentPlayerId).getName());
     }
 
     public void continueAuction(int bidIncrease){
-        addToLog("increased bid by: " + parser(bidIncrease), participants.get(currentPlayerAuctioning).getName());
+        if(bidIncrease != 0){
+            addToLog("increased bid by: " + parser(bidIncrease), participants.get(currentPlayerAuctioning).getName());
+            this.currentHighestBidName = participants.get(currentPlayerAuctioning).getName();
+            this.currentBid += bidIncrease;
+            for(Player p : participants){
+                if(p.getMonopolyMoneyAmount() < currentBid){
+                    addToLog("has been removed from auction cause has not enough money to continue", p.getName());
+                    if(participants.indexOf(p) == currentPlayerAuctioning){
+                        pullOffAuction(true);
+                    }else{
+                        if(currentPlayerAuctioning > participants.indexOf(p)){
+                            this.currentPlayerAuctioning -= 1;
+                        }
+                    }
+                    participants.remove(p);
+                }
+            }
+        }else{
+            addToLog("passed this turn", participants.get(currentPlayerAuctioning).getName());
+        }
         this.currentPlayerAuctioning += 1;
         if(this.currentPlayerAuctioning > participants.size()){
             this.currentPlayerAuctioning = 0;
         }
-        this.currentBid += bidIncrease;
     }
 
     //TODO: POSSIBLE LOGIC ERROR (but I think I solved it :D - Ali the Lele)
-    public void pullOffAuction(){
-        addToLog("left auction", participants.get(currentPlayerAuctioning).getName());
+    public void pullOffAuction(boolean isAutomatic){
+        if(!isAutomatic){
+            addToLog("left auction", participants.get(currentPlayerAuctioning).getName());
+        }
         participants.remove(currentPlayerAuctioning);
         if(currentPlayerAuctioning == this.participants.size() - 1){
             //If last player
@@ -813,7 +836,7 @@ public class InGameManager {
         continueAuction(0);
     }
 
-    public void endAuction(){
+    public boolean endAuction(){
         if(checkAuctionStatus()){
             Player currentPlayer = participants.get(currentPlayerAuctioning);
             Square square = board.getSpecificSquare(auctionPropertyIndex);
@@ -831,9 +854,10 @@ public class InGameManager {
             if(this.currentPlayerId > players.size() - 1){
                 this.currentPlayerId = 0;
             }
-
             this.state = GameState.Linear;
+            return true;
         }
+        return false;
     }
 
     public void buildBuilding(Building buildingType, int squareIndex, double multiplier) {
