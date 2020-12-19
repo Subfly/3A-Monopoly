@@ -46,6 +46,61 @@ public class EffectManager {
         mediaPlayer.play();
     }
 
+    public void playJailEffect() {
+        MediaPlayer mediaPlayer;
+        Media media;
+        String path = new File("src/main/resources/sounds/go-to-jail-effect.wav").getAbsolutePath();
+        media = new Media (new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume((double) volume / 100);
+        // Media View??
+        mediaPlayer.play();
+    }
+
+    public void playDrawCardEffect() {
+        MediaPlayer mediaPlayer;
+        Media media;
+        String path = new File("src/main/resources/sounds/draw-card-effect.wav").getAbsolutePath();
+        media = new Media (new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume((double) volume / 100);
+        // Media View??
+        mediaPlayer.play();
+    }
+
+    public void playFreeParkingEffect() {
+        MediaPlayer mediaPlayer;
+        Media media;
+        String path = new File("src/main/resources/sounds/free-parking-effect.wav").getAbsolutePath();
+        media = new Media (new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume((double) volume / 100);
+        // Media View??
+        mediaPlayer.play();
+    }
+
+    public void playClickEffect() {
+        MediaPlayer mediaPlayer;
+        Media media;
+        String path = new File("src/main/resources/sounds/click-effect.wav").getAbsolutePath();
+        media = new Media (new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume((double) volume / 100);
+        // Media View??
+        mediaPlayer.play();
+    }
+
+    public void playBankruptEffect() {
+        MediaPlayer mediaPlayer;
+        Media media;
+        String path = new File("src/main/resources/sounds/bankrupt-effect.wav").getAbsolutePath();
+        media = new Media (new File(path).toURI().toString());
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setVolume((double) volume / 100);
+        // Media View??
+        mediaPlayer.play();
+    }
+
     public int getVolume() {
         return volume;
     }

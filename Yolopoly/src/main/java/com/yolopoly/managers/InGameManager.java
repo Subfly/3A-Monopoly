@@ -342,6 +342,7 @@ public class InGameManager {
     //**
     public boolean payDebt(double multiplier){
         Player player = players.get(currentPlayerId);
+        effectManager.playMoneyEffect();
         var debtData = brokenPlayersMoneyHash.get(currentPlayerId);
         int moneyPayIndex = debtData.entrySet().iterator().next().getKey();
         int debt = debtData.get(moneyPayIndex);
@@ -537,6 +538,7 @@ public class InGameManager {
         }
 
         if(player.isThreeTimesDoubled()){
+            effectManager.playJailEffect();
             player.setInJail(true);
             player.setCurrentPosition(10);
             player.resetDoublesCount();
@@ -549,6 +551,9 @@ public class InGameManager {
 
         if(oldPosition > player.getCurrentPosition()){
             //Passed GO! Square
+            if (player.isHuman()) {
+                effectManager.playMoneyEffect();
+            }
             player.addMoney(Constants.CURRENCY_NAMES[0], (int)(Constants.GO_SQUARE_MONEY * multiplier));
         }
 
@@ -559,10 +564,16 @@ public class InGameManager {
         //If chance square
         if(player.getCurrentPosition() == square.getId()){
             if(square.getType() == SquareType.ChanceSquare){
+                if (player.isHuman()) {
+                    effectManager.playDrawCardEffect();
+                }
                 return 1;
             }
             //If Community Chest Square
             else if(square.getType() == SquareType.CommunityChestSquare){
+                if (player.isHuman()) {
+                    effectManager.playDrawCardEffect();
+                }
                 return 2;
             }
             //If Tax Square
@@ -582,6 +593,7 @@ public class InGameManager {
             }
             //If Go to Jail Square
             else if(square.getType() == SquareType.GoToJailSquare){
+                effectManager.playJailEffect();
                 player.setCurrentPosition(10); //Move to jail hardcode
                 player.setInJail(true);
                 addToLog("sent to the jail", player.getName());
@@ -589,8 +601,14 @@ public class InGameManager {
             }
             //If Free Parking Square, get money...
             else if(square.getType() == SquareType.FreeParkingSquare){
+                if (player.isHuman()) {
+                    effectManager.playFreeParkingEffect();
+                }
                 int taxAmountOnBoard = board.getMoneyOnBoard();
                 if (taxAmountOnBoard != 0) {
+                    if (player.isHuman()) {
+                        effectManager.playMoneyEffect();
+                    }
                     player.addMoney(Constants.CURRENCY_NAMES[0], (int)(taxAmountOnBoard * multiplier));
                     board.removeFromTaxMoney();
                     addToLog("got the money on the board with the amount of " + parser(taxAmountOnBoard) + " Monopoly Dollars", player.getName());
@@ -746,6 +764,9 @@ public class InGameManager {
         board.getSquares().get(squareIndex).setLevel(-1);
         PropertyCard currentPlace = player.getSpecificCard(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
+        if (player.isHuman()) {
+            effectManager.playMoneyEffect();
+        }
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(moneyToAdd * multiplier));
 
     }
@@ -857,6 +878,9 @@ public class InGameManager {
 
         board.destroy(buildingType, squareToDestruct.getId());
 
+        if (player.isHuman()) {
+            effectManager.playMoneyEffect();
+        }
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
         addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
     }
@@ -906,6 +930,9 @@ public class InGameManager {
                                 //If passed GO! Square during move
                                 int currentPosition = player.getCurrentPosition();
                                 if(currentPosition > moveToIndex){
+                                    if (player.isHuman()) {
+                                        effectManager.playMoneyEffect();
+                                    }
                                     player.addMoney(Constants.CURRENCY_NAMES[0], (int) (Constants.GO_SQUARE_MONEY * multiplier));
                                 }
                             }
@@ -1006,6 +1033,9 @@ public class InGameManager {
                         int moneyToHouses = housesOwned * cardDrawn.getMoneyForHouses();
                         int moneyForHotels = hotelsOwned * cardDrawn.getMoneyForHotels();
                         if(player.removeMoney(Constants.CURRENCY_NAMES[0], (int)((moneyToHouses + moneyForHotels) * multiplier))){
+                            if (player.isHuman()) {
+                                effectManager.playMoneyEffect();
+                            }
                             return 6000;
                         }else{
                             player.setBankrupt(true);
@@ -1015,6 +1045,9 @@ public class InGameManager {
                             return -99;
                         }
                     }else if(cardDrawn.isEachPlayerIncluded()){
+                        if (player.isHuman()) {
+                            effectManager.playMoneyEffect();
+                        }
                         //Or paying money to other players
                         for (int i = 0; i < players.size(); i++) {
                             if(i != currentPlayerId){
@@ -1031,6 +1064,9 @@ public class InGameManager {
                 }else{
                     //If not composed or moving, hence paying money
                     if(player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(cardDrawn.getMoneyOwe() * multiplier))){
+                        if (player.isHuman()) {
+                            effectManager.playMoneyEffect();
+                        }
                         return 6100;
                     }else{
                         player.setBankrupt(true);
@@ -1106,6 +1142,9 @@ public class InGameManager {
         Player player = players.get(currentPlayerId);
         if (player.isInJail()) {
             if (player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier))) {
+                if (player.isHuman()) {
+                    effectManager.playMoneyEffect();
+                }
                 addToLog("has got out of jail", player.getName());
                 player.setInJail(false);
                 player.resetInJailTurnCount();
@@ -1145,6 +1184,9 @@ public class InGameManager {
         }
         int amount = player.getLoan();
         if(player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(amount * multiplier))){
+            if (player.isHuman()) {
+                effectManager.playMoneyEffect();
+            }
             System.out.println("Player paid his/her loan " + player.getName());
             addToLog("paid loan back with amount of: " + parser(amount), player.getName());
             player.resetLoan();
