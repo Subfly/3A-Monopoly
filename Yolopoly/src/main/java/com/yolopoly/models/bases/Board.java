@@ -81,7 +81,6 @@ public class Board {
         Square square = squares.get(squareIndex);
         if(!square.isBought()){
             square.setBought(true);
-            squares.set(squareIndex, square);
             return true;
         }
         return false;

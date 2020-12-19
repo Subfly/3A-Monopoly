@@ -397,6 +397,7 @@ public class StorageUtil {
         jo.put("state", engine.getState());
         writer.write(jo.toString());
         writer.close();
+        System.out.println("Save successful!");
         return true;
     }
 
