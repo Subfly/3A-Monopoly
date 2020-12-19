@@ -7,6 +7,7 @@ module Yolopoly {
     requires com.google.auth;
     requires com.google.auth.oauth2;
     requires com.google.gson;
+    requires java.mail;
 
     opens com.yolopoly to javafx.fxml;
     opens com.yolopoly.controllers to javafx.fxml;
