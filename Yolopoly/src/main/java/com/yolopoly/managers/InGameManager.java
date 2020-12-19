@@ -220,6 +220,9 @@ public class InGameManager {
 
     /*
      * RETURN VALUES
+     * -104 => BOT SELECTED DEWAM ON AUCTION
+     * -103 => BOT SELECTED PULL OFF AUCTION
+     * -102 => BOT SELECTED PASS THIS TURN ON AUCTION
      * -101 => BOT SELECTED TO ROLL DICE IN JAIL
      * -100 => ERROR OCCUR
      * -99 => BANKRUPT, ACCEPT DIRECTLY
@@ -238,7 +241,28 @@ public class InGameManager {
     }
 
     public int makeDecision(int diceResult, boolean isDouble){
+        if(state == GameState.Auction){
+            int decision = (int)(Math.random() * 100);
+            if(decision < 15){
+                continueAuction(0);
+                return -102;
+            }else if(decision > 85){
+                pullOffAuction(false);
+                return -103;
+            }else{
+                if(decision < 35){
+                    continueAuction(100000);
+                }else if(decision < 65){
+                    continueAuction(250000);
+                }else{
+                    continueAuction(500000);
+                }
+                return -104;
+            }
+        }
+
         double multiplier = 1;
+
         if (this.gameMode ==  GameMode.bankman) {
             int decision = (int)(Math.random() * 2 + 1);
             if(decision == 1){
@@ -712,8 +736,9 @@ public class InGameManager {
         */
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
+        PropertyCard lastSquareMadeSomethingPropertyCard = getSpecificProperty(lastSquareMadeSomething.getId());
 //        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-//        if(isBuyable && !lastSquareMadeSomething.isBought()){
+//        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1)){
 //            createAuction();
 //            return 4;
 //        }
