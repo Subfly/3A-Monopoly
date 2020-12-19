@@ -253,7 +253,41 @@
                 <Image url="@sources/pawns/pawn_8.png" />
             </image>
         </ImageView>
-        <Label fx:id="testTextField" layoutX="1301.0" layoutY="274.0" text="Label" />
+        <Label fx:id="testTextField" layoutX="1301.0" layoutY="200.0" text="Label" />
+      <AnchorPane fx:id="deck_card_field" layoutX="1115.0" layoutY="280.0" prefHeight="200.0" prefWidth="570.0">
+         <children>
+             <ImageView fx:id="d_c1" fitHeight="200.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true"/>
+             <ImageView fx:id="d_c2" fitHeight="200.0" fitWidth="120.0" layoutX="20.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c3" fitHeight="200.0" fitWidth="120.0" layoutX="40.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c4" fitHeight="200.0" fitWidth="120.0" layoutX="60.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c5" fitHeight="200.0" fitWidth="120.0" layoutX="80.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c6" fitHeight="200.0" fitWidth="120.0" layoutX="100.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c7" fitHeight="200.0" fitWidth="120.0" layoutX="120.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c8" fitHeight="200.0" fitWidth="120.0" layoutX="140.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c9" fitHeight="200.0" fitWidth="120.0" layoutX="160.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c10" fitHeight="200.0" fitWidth="120.0" layoutX="180.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c11" fitHeight="200.0" fitWidth="120.0" layoutX="200.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c12" fitHeight="200.0" fitWidth="120.0" layoutX="220.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c13" fitHeight="200.0" fitWidth="120.0" layoutX="240.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c14" fitHeight="200.0" fitWidth="120.0" layoutX="260.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c15" fitHeight="200.0" fitWidth="120.0" layoutX="280.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c16" fitHeight="200.0" fitWidth="120.0" layoutX="300.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c17" fitHeight="200.0" fitWidth="120.0" layoutX="320.0" pickOnBounds="true" preserveRatio="true" />
+<!--             <ImageView fx:id="d_c18" fitHeight="200.0" fitWidth="120.0" layoutX="340.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c19" fitHeight="200.0" fitWidth="120.0" layoutX="360.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c20" fitHeight="200.0" fitWidth="120.0" layoutX="380.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c21" fitHeight="200.0" fitWidth="120.0" layoutX="400.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c22" fitHeight="200.0" fitWidth="120.0" layoutX="420.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c23" fitHeight="200.0" fitWidth="120.0" layoutX="440.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c24" fitHeight="200.0" fitWidth="120.0" layoutX="460.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c25" fitHeight="200.0" fitWidth="120.0" layoutX="480.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c26" fitHeight="200.0" fitWidth="120.0" layoutX="500.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c27" fitHeight="200.0" fitWidth="120.0" layoutX="520.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c28" fitHeight="200.0" fitWidth="120.0" layoutX="540.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c29" fitHeight="200.0" fitWidth="120.0" layoutX="560.0" pickOnBounds="true" preserveRatio="true" />-->
+<!--             <ImageView fx:id="d_c30" fitHeight="200.0" fitWidth="120.0" layoutX="580.0" pickOnBounds="true" preserveRatio="true" />-->
+         </children>
+      </AnchorPane>
         <ScrollPane id="scroll_pane" hbarPolicy="NEVER" layoutX="1530.0" layoutY="595.0" maxWidth="310.0" pannable="true" prefHeight="405.0" prefWidth="310.0">
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="310.0">
@@ -275,12 +309,12 @@
                         <Image url="@sources/jail-controller/jail_ask.png" />
                     </image>
                 </ImageView>
-                <ImageView fx:id="pay_option" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#payforjailoption">
+                <ImageView fx:id="pay_option" fitHeight="100.0" fitWidth="250.0" layoutX="695.0" layoutY="540.0" onMouseClicked="#payforjailoption" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@sources/jail-controller/jail_pay.png" />
                     </image>
                 </ImageView>
-                <ImageView fx:id="roll_option" fitHeight="100.0" fitWidth="250.0" layoutX="975.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#rolldiceoption">
+                <ImageView fx:id="roll_option" fitHeight="100.0" fitWidth="250.0" layoutX="975.0" layoutY="540.0" onMouseClicked="#rolldiceoption" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@sources/jail-controller/jail_roll.png" />
                     </image>

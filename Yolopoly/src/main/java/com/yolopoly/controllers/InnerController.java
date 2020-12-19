@@ -8,7 +8,10 @@ import com.yolopoly.models.bases.Player;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.PropertyCard;
 import javafx.animation.TranslateTransition;
+import javafx.beans.property.Property;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -57,6 +60,10 @@ public class InnerController {
     @FXML
     AnchorPane cards_anchor;
 
+    @FXML
+    ImageView d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18;//,d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30;
+
+    ImageView[] deck_card_list;
     ImageView[] pawns;
     ImageView[] player_indexes;
     ImageView[] square_bars;
@@ -86,9 +93,14 @@ public class InnerController {
         dice_1 = new ImageView();
         dice_2 = new ImageView();
 
+        //cards
+        d_c1 = new ImageView();d_c2 = new ImageView();d_c3 = new ImageView();d_c4 = new ImageView();d_c5 = new ImageView();d_c6 = new ImageView();d_c7 = new ImageView();d_c8 = new ImageView();d_c9 = new ImageView();d_c10 = new ImageView();d_c11 = new ImageView();d_c12 = new ImageView();d_c13 = new ImageView();d_c14 = new ImageView();d_c15 = new ImageView();d_c16 = new ImageView();d_c17 = new ImageView();d_c18 = new ImageView();//d_c19 = new ImageView();d_c20 = new ImageView();d_c21 = new ImageView();d_c22 = new ImageView();d_c23 = new ImageView();d_c24 = new ImageView();d_c25 = new ImageView();d_c26 = new ImageView();d_c27 = new ImageView();d_c28 = new ImageView();d_c29 = new ImageView();d_c30 = new ImageView();
+
         cards_background = new ImageView();
         cards = new ImageView();
         cards_anchor = new AnchorPane();
+
+        deck_card_field = new AnchorPane();
 
         pay_option = new ImageView();
         roll_option = new ImageView();
@@ -116,6 +128,8 @@ public class InnerController {
         player_indexes = new ImageView[]{player_index1, player_index2, player_index3, player_index4, player_index5, player_index6, player_index7, player_index8};
         pawnTeam1 = new ArrayList<>();
         pawnTeam2 = new ArrayList<>();
+
+        deck_card_list = new ImageView[]{d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18}; //d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30
 
         int tmpIndex = 0;
 
@@ -146,6 +160,10 @@ public class InnerController {
 
         set_turn_GUI();
         initializeSettings();
+
+        for (ImageView iv :deck_card_list){
+            iv.setVisible(false);
+        }
     }
 
     InGameManager igm;
@@ -165,7 +183,9 @@ public class InnerController {
     private void level_up() {
         igm.levelUp(last_index_of_info_card, 1);
         update_square_info();
+        update_deck();
         set_log();
+        update_square_info();
     }
 
     @FXML
@@ -173,6 +193,8 @@ public class InnerController {
         igm.levelDown(last_index_of_info_card, 1);
         update_square_info();
         set_log();
+        update_deck();
+        update_square_info();
     }
 
     private void end_turn(){
@@ -284,8 +306,10 @@ public class InnerController {
 
     @FXML
     public void actionButtonPressed() {
+        System.out.println("noluyo aq");
         if (!can_roll_dice) {
             if(igm.isCurrentPlayerHuman()){
+                update_deck();
                 end_turn();
                 play_bot();
             }
@@ -386,6 +410,28 @@ public class InnerController {
         cards_background.setVisible(false);
     }
 
+    @FXML
+    AnchorPane deck_card_field;
+
+    int current_deck = 0;
+
+    public void update_deck(){
+        Player player = igm.getPlayers().get(current_deck);
+        System.out.println(player.getName());
+        ArrayList<PropertyCard> cards = player.getOwnedPlaces();
+
+        int counter = 0;
+        if (cards != null){
+            for (PropertyCard c : cards){
+                int index = c.getId();
+                deck_card_list[counter].setVisible(true);
+                set_image_helper(deck_card_list[counter],"/scenes/sources/property-cards/", "index" + index);
+                deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 8, 0, 0, 0);");
+                counter++;
+            }
+        }
+    }
+
     private void start_turn(){
         Player p = igm.getPlayers().get(igm.getCurrentPlayerId());
         if (p.isHuman()){
@@ -464,6 +510,7 @@ public class InnerController {
     public void roll_dice() {
 
         if (can_roll_dice){
+            can_roll_dice = false;
             igm.rollDice();
             int dice1 = igm.getDice().getDice1();
             int dice2 = igm.getDice().getDice2();
