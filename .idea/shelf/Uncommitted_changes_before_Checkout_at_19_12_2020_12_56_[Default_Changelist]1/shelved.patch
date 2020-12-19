@@ -1,0 +1,35 @@
+Index: Yolopoly/pom.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project xmlns=\"http://maven.apache.org/POM/4.0.0\"\r\n         xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n         xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">\r\n    <modelVersion>4.0.0</modelVersion>\r\n\r\n    <groupId>3A</groupId>\r\n    <artifactId>Yolopoly</artifactId>\r\n    <version>2.0-SNAPSHOT</version>\r\n    <properties>\r\n        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>\r\n        <maven.compiler.source>15</maven.compiler.source>\r\n        <maven.compiler.target>15</maven.compiler.target>\r\n    </properties>\r\n    <dependencies>\r\n        <dependency>\r\n            <groupId>org.openjfx</groupId>\r\n            <artifactId>javafx-controls</artifactId>\r\n            <version>15.0.1</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.openjfx</groupId>\r\n            <artifactId>javafx-fxml</artifactId>\r\n            <version>15</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>org.json</groupId>\r\n            <artifactId>json</artifactId>\r\n            <version>20201115</version>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.google.firebase</groupId>\r\n            <artifactId>firebase-admin</artifactId>\r\n            <version>7.1.0</version>\r\n            <exclusions>\r\n                <exclusion>\r\n                    <groupId>com.google.code.findbugs</groupId>\r\n                    <artifactId>jsr305</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>com.google.api.grpc</groupId>\r\n                    <artifactId>proto-google-common-protos</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>io.grpc</groupId>\r\n                    <artifactId>grpc-api</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>io.grpc</groupId>\r\n                    <artifactId>grpc-context</artifactId>\r\n                </exclusion>\r\n            </exclusions>\r\n        </dependency>\r\n        <dependency>\r\n            <groupId>com.google.oauth-client</groupId>\r\n            <artifactId>google-oauth-client</artifactId>\r\n            <version>1.30.4</version>\r\n            <exclusions>\r\n                <exclusion>\r\n                    <groupId>com.google.code.findbugs</groupId>\r\n                    <artifactId>jsr305</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>io.grpc</groupId>\r\n                    <artifactId>grpc-api</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>io.grpc</groupId>\r\n                    <artifactId>grpc-context</artifactId>\r\n                </exclusion>\r\n                <exclusion>\r\n                    <groupId>com.google.api.grpc</groupId>\r\n                    <artifactId>proto-google-common-protos</artifactId>\r\n                </exclusion>\r\n            </exclusions>\r\n        </dependency>\r\n    </dependencies>\r\n    <build>\r\n        <resources>\r\n            <resource>\r\n                <directory>src/main/resources/</directory>\r\n            </resource>\r\n        </resources>\r\n        <plugins>\r\n            <plugin>\r\n                <groupId>org.apache.maven.plugins</groupId>\r\n                <artifactId>maven-compiler-plugin</artifactId>\r\n                <version>3.8.0</version>\r\n                <configuration>\r\n                    <release>15</release>\r\n                    <excludes>\r\n                        <exclude>io/grpc/*/.class</exclude>\r\n                    </excludes>\r\n                </configuration>\r\n            </plugin>\r\n            <plugin>\r\n                <groupId>org.openjfx</groupId>\r\n                <artifactId>javafx-maven-plugin</artifactId>\r\n                <version>0.0.4</version>\r\n                <configuration>\r\n                    <mainClass>com.yolopoly.Main</mainClass>\r\n                </configuration>\r\n            </plugin>\r\n        </plugins>\r\n    </build>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Yolopoly/pom.xml	(revision 5dea06cdb8e8f776fd2b85ff0bc53230a65401c6)
++++ Yolopoly/pom.xml	(date 1608371130950)
+@@ -91,6 +91,8 @@
+                     <excludes>
+                         <exclude>io/grpc/*/.class</exclude>
+                     </excludes>
++                    <source>14</source>
++                    <target>14</target>
+                 </configuration>
+             </plugin>
+             <plugin>
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <annotationProcessing>\r\n      <profile name=\"Maven default annotation processors profile\" enabled=\"true\">\r\n        <sourceOutputDir name=\"target/generated-sources/annotations\" />\r\n        <sourceTestOutputDir name=\"target/generated-test-sources/test-annotations\" />\r\n        <outputRelativeToContentRoot value=\"true\" />\r\n        <module name=\"Yolopoly\" />\r\n      </profile>\r\n    </annotationProcessing>\r\n    <bytecodeTargetLevel>\r\n      <module name=\"Yolopoly\" target=\"15\" />\r\n    </bytecodeTargetLevel>\r\n  </component>\r\n</project>
+===================================================================
+--- .idea/compiler.xml	(revision 5dea06cdb8e8f776fd2b85ff0bc53230a65401c6)
++++ .idea/compiler.xml	(date 1608371133468)
+@@ -10,7 +10,7 @@
+       </profile>
+     </annotationProcessing>
+     <bytecodeTargetLevel>
+-      <module name="Yolopoly" target="15" />
++      <module name="Yolopoly" target="14" />
+     </bytecodeTargetLevel>
+   </component>
+ </project>
+\ No newline at end of file
