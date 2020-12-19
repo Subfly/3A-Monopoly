@@ -770,6 +770,7 @@ public class InGameManager {
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(moneyToAdd * multiplier));
 
     }
+
     public boolean removeMortgageFromPlace(int squareIndex, double multiplier) {
         Player player = players.get(getCurrentPlayerId());
         PropertyCard currentPlace = player.getSpecificCard(squareIndex);
