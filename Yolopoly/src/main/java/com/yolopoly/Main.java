@@ -1,5 +1,8 @@
 package com.yolopoly;
 
+import com.yolopoly.managers.MusicManager;
+import com.yolopoly.models.bases.GameListData;
+import com.yolopoly.storage.FirebaseUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +19,7 @@ public class Main extends Application {
     private static int height = 1080;
 
     static Stage primaryStage;
+    private static MusicManager musicManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -36,7 +40,10 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        FirebaseUtil util = FirebaseUtil.getInstance();
+        util.initGameList();
+        //musicManager = MusicManager.getInstance();
         launch(args);
     }
 

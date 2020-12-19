@@ -30,22 +30,24 @@ public class LobbyManager {
     //Lobi Ayarları
     private String lobbyPassword;
 
-    private LobbyManager() {
+    public LobbyManager(){}
+
+    private LobbyManager(int playerCount) {
         this.playerArrayList = new ArrayList<>();
         this.admin = new Player(adminDummyName, true);
         this.playerArrayList.add(this.admin);
-        this.playerCount = 1;
+        this.playerCount = playerCount;
         this.maxPlayerCount = 2;
         this.botCount = 0;
     }
 
     public static synchronized void clear(){
-        middleEngine = new LobbyManager();
+        middleEngine = new LobbyManager(1);
     }
 
     public static LobbyManager getInstance(){
         if(middleEngine == null){
-            middleEngine = new LobbyManager();
+            middleEngine = new LobbyManager(1);
         }
         return middleEngine;
     }
@@ -67,7 +69,6 @@ public class LobbyManager {
     }
 
     public boolean addBot(){
-
         if (playerCount < 8 && playerCount < maxPlayerCount) {
             playerArrayList.add(new Player("Bot " + (botCount + 1), false));
 

@@ -919,4 +919,15 @@ public class InnerController {
     public void closeButtonPressed() throws Exception {
         changeScreen("src/main/resources/scenes/OuterController.fxml");
     }
+
+    @FXML
+    public void saveGame(){
+        //TODO: SAİDCAN BURAYI DOĞRU ŞEKİLDE EDİTLE
+        igm.saveAndExit();
+        try{
+            closeButtonPressed();
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
 }

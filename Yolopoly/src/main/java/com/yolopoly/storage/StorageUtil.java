@@ -386,6 +386,8 @@ public class StorageUtil {
         FileWriter writer = new FileWriter(file);
         writer.write("");
         JSONObject jo = new JSONObject();
+
+        jo.put("board", engine.getBoard());
         jo.put("squares", engine.getBoard().getSquares());
         jo.put("chances", engine.getBoard().getChanceCards());
         jo.put("comms", engine.getBoard().getCommCards());
@@ -397,6 +399,7 @@ public class StorageUtil {
         jo.put("state", engine.getState());
         writer.write(jo.toString());
         writer.close();
+        System.out.println("Save successful!");
         return true;
     }
 
