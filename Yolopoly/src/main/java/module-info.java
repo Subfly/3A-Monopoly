@@ -11,6 +11,7 @@ module Yolopoly {
     opens com.yolopoly to javafx.fxml;
     opens com.yolopoly.controllers to javafx.fxml;
     opens com.yolopoly.models.bases to firebase.admin;
+    opens com.yolopoly.managers to firebase.admin;
 
     exports com.yolopoly;
     exports com.yolopoly.controllers;

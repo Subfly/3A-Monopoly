@@ -7,7 +7,9 @@ import com.google.firebase.database.*;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.managers.InGameManager;
+import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.models.bases.GameListData;
+import com.yolopoly.models.bases.Player;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +17,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class FirebaseUtil {
-    public FirebaseUtil() {
+    private static FirebaseUtil util = null;
+    public static ArrayList<GameListData> gameListData = new ArrayList<>();
+    private LobbyManager lobbyManager;
+    private InGameManager inGameManager;
+
+    public static synchronized FirebaseUtil getInstance(){
+        if(util == null){
+            util = new FirebaseUtil();
+        }
+        return util;
+    }
+
+    private FirebaseUtil() {
         try{
             FileInputStream serviceAccount =
                     new FileInputStream("src/main/resources/META-INF/key.json");
@@ -24,23 +38,73 @@ public class FirebaseUtil {
                     .setDatabaseUrl("https://yolopoly-120e5.firebaseio.com")
                     .build();
             FirebaseApp.initializeApp(options);
+            lobbyManager = LobbyManager.getInstance();
+            inGameManager = InGameManager.getInstance();
         } catch (IOException e){
             System.out.println(e.getMessage());
         }
     }
 
+    public void initGameList(){
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference refGameList = database.getReference("gameList");
+        refGameList.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                gameListData.clear();
+                for(DataSnapshot ds1 : dataSnapshot.getChildren()){
+                    GameListData data = ds1.getValue(GameListData.class);
+                    gameListData.add(data);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println(databaseError.getMessage());
+            }
+        });
+    }
+
+    //TODO: FIRST STEP FOR CREATE A GAME
     public void createRoom(String hosterNick){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refGameList = database.getReference("gameList");
-        //Create game hash
+        DatabaseReference refMiddle = database.getReference("middle");
+        //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
-
         //Send data
         refGameList.child(hosterNick).setValue(data, (databaseError, databaseReference) -> {
             System.out.println("Game created successfully for player:" + hosterNick + "!");
         });
+        refMiddle.child(hosterNick).setValue(lobbyManager, (err, ref)->{
+            System.out.println("Engine initialized on server successfully!");
+        });
     }
 
+    //TODO: SECOND STEP FOR CREATE A GAME
+    public void setMiddleEngine(int selectedIndex){
+        String hosterNick = gameListData.get(selectedIndex).getAdmin();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference refMiddle = database.getReference("middle");
+        refMiddle.child(hosterNick).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                LobbyManager middleEngine = dataSnapshot.getValue(LobbyManager.class);
+                lobbyManager.setAdmin(middleEngine.getPlayerArrayList().get(0));
+                lobbyManager.setGameMode(middleEngine.getGameMode());
+                lobbyManager.setGameTheme(middleEngine.getGameTheme());
+                lobbyManager.setMaxPlayerCount(middleEngine.getMaxPlayerCount());
+                lobbyManager.setIsAllReady(middleEngine.getIsAllReady());
+                lobbyManager.setPawns(middleEngine.getPawns());
+                //TODO: HANDLE PAWN
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                System.out.println("Error happened on setMiddleEngine()");
+            }
+        });
+    }
+
+    //TODO: REST HERE IS INTERNAL STEPS OF CREATE A GAME
     public void setPassword(String hosterNick, String password){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refGameList = database.getReference("gameList");
@@ -73,35 +137,9 @@ public class FirebaseUtil {
         });
     }
 
-    public ArrayList<GameListData> getGameList(){
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference refGameList = database.getReference("gameList");
-
-        ArrayList<GameListData> dataList = new ArrayList<>();
-
-        refGameList.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot ds1 : dataSnapshot.getChildren()){
-                    System.out.println(ds1);
-                    GameListData data = ds1.getValue(GameListData.class);
-                    System.out.println(data);
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                System.out.println(databaseError.getMessage());
-            }
-        });
-        return dataList;
-    }
-
     public void getData(InGameManager innerEngine, String hosterNick){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-
         DatabaseReference ref = database.getReference("rooms");
-
         ref.child(hosterNick).child("inner").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -127,17 +165,7 @@ public class FirebaseUtil {
         });
     }
 
-    public void sendData(InGameManager innerEngine, String hosterNick){
-        final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference ref = database.getReference("rooms");
-
-        ref.child(hosterNick).child("inner").setValue(innerEngine, (databaseError, databaseReference) -> {
-            System.out.println("Data sent to server!\n\nDEBUG\nhosterNick: " + hosterNick + "\nlast player id: " + innerEngine.getCurrentPlayerId() + "\n");
-        });
-    }
-
     //TODO: ADD A METHOD TO CONSTANTLY CHECK FOR UPDATES IN ENGINE
-
     public void join(String hosterNick, String nickName){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference("rooms");

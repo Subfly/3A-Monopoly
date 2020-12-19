@@ -10,6 +10,8 @@ public class GameListData {
     private int playerCount;
     private String password;
 
+    public GameListData() {}
+
     public GameListData(String admin, GameMode mode, GameTheme theme, int playerCount, String password) {
         this.admin = admin;
         this.mode = mode;

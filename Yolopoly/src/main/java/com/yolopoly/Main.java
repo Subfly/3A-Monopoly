@@ -40,19 +40,11 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) {
-
-        FirebaseUtil util = new FirebaseUtil();
-        util.createRoom("holyguard");
-
-        var list = util.getGameList();
-
-        for(GameListData d : list){
-            System.out.println(d.getAdmin());
-        }
-
-        musicManager = MusicManager.getInstance();
-        //launch(args);
+    public static void main(String[] args) throws InterruptedException {
+        FirebaseUtil util = FirebaseUtil.getInstance();
+        util.initGameList();
+        //musicManager = MusicManager.getInstance();
+        launch(args);
     }
 
 }

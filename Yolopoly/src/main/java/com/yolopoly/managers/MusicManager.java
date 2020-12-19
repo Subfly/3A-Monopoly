@@ -2,6 +2,7 @@ package com.yolopoly.managers;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
 import java.io.File;
 
@@ -15,8 +16,8 @@ public class MusicManager {
         media = new Media (new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
         mediaPlayer.setVolume(0.05);
-        // Media View??
-        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
+        mediaPlayer.play();
     }
 
     public static synchronized MusicManager getInstance() {
