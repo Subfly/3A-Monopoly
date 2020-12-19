@@ -51,7 +51,7 @@
                 <Image url="@sources/close-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#saveGame">
             <image>
                 <Image url="@sources/settings-button.png" />
             </image>
