@@ -709,6 +709,16 @@ public class InGameManager {
                 Square s = board.getSpecificSquare(p.getId());
                 //Return houses and hotels
                 if(s.getHotelCount() > 0 || s.getHouseCount() > 0){
+                    int hotelCount = s.getHotelCount();
+                    int houseCount = s.getHouseCount();
+                    while(hotelCount != 0){
+                        bank.incrementHotelCount();
+                        hotelCount--;
+                    }
+                    while(houseCount != 0){
+                        bank.incrementHouseCount();
+                        houseCount--;
+                    }
                     s.setHotelCount(0);
                     s.setHouseCount(0);
                     s.setLevel(0);
