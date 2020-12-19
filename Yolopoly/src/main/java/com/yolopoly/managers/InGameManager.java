@@ -102,7 +102,6 @@ public class InGameManager {
     //**
     // Functions
     //**
-
     public int getRent(int diceResult){
 
         int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
@@ -141,6 +140,7 @@ public class InGameManager {
         }
         return rentAmount;
     }
+
     public ArrayList<Currency> getCurrencies(){
         return this.bank.getCurrencyRates();
     }
