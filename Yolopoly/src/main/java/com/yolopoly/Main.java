@@ -37,6 +37,12 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
+        // get music player
+        // music.play
+        // music Class
+        //  -> get instance
+        //  -> set volume
+        //  -> get volume
         launch(args);
     }
 
