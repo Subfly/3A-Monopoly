@@ -64,8 +64,6 @@ public class InnerController {
     ArrayList<ImageView> pawnTeam2;
 
 
-    boolean pressedEndTurn = false;
-
     final String LOBBY_SETTINGS = "scenes/sources/lobby-settings/";
     final String LOBBY_PAWNS = "/scenes/sources/lobby-settings/pawns/";
     final String PNG = ".png";
@@ -105,7 +103,6 @@ public class InnerController {
 
     @FXML
     public void initialize() {
-        pressedEndTurn = true;
         card_image.setVisible(false);
 
         igm = InGameManager.getInstance();
@@ -181,10 +178,13 @@ public class InnerController {
     private void end_turn(){
         turn++;
         turn = turn % pawns_of_players.size();
-        is_players_turn = false;
         set_turn_GUI();
         state_of_bot = 0;
         igm.endTurn();
+
+        if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
+            can_roll_dice = true;
+        }
     }
 
     int state_of_bot = 0;
@@ -214,8 +214,6 @@ public class InnerController {
 
                     set_image_helper(dice_1, "/scenes/sources/dice/" , "dice_" + dice1);
                     set_image_helper(dice_2, "/scenes/sources/dice/" , "dice_" + dice2);
-                    //dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
-                    //dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
                     movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
@@ -232,11 +230,7 @@ public class InnerController {
                         state_of_bot = 1;
                     }
                     else {
-                        turn++;
-                        turn = turn % pawns_of_players.size();
-                        set_turn_GUI();
-                        state_of_bot = 0;
-                        igm.endTurn();
+                        end_turn();
                     }
                 }
                 else if (state_of_bot == 1){
@@ -255,18 +249,13 @@ public class InnerController {
                     // TODO bişiler var burda go'dan sonra dert oğlu dert
                     // FIXME Bot GO square'e gittiğinde indexi yanlış kalıyo
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
-                    System.out.println("move count " + move_count_of_bot + " old pos " + old_position_of_bot + " card res " + result_of_bots_cards);
                     result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
 
                     if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
                         state_of_bot = 1;
                     }
                     else {
-                        turn++;
-                        turn = turn % pawns_of_players.size();
-                        set_turn_GUI();
-                        state_of_bot = 0;
-                        igm.endTurn();
+                        end_turn();
                     }
                 }
             }
@@ -280,11 +269,7 @@ public class InnerController {
                         move_count_of_bot = 50 - old_position_of_bot;
                     }
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
-                    turn++;
-                    turn = turn % pawns_of_players.size();
-                    set_turn_GUI();
-                    state_of_bot = 0;
-                    igm.endTurn();
+                    end_turn();
                 }
                 else {
                     igm.jailMakeDecision(1);
@@ -294,21 +279,14 @@ public class InnerController {
             set_log();
         }
         else {
-            is_players_turn = true;
         }
     }
 
     @FXML
     public void actionButtonPressed() {
-        if (!pressedEndTurn) {
+        if (!can_roll_dice) {
             if(igm.isCurrentPlayerHuman()){
-                pressedEndTurn = true;
-                turn++;
-                turn = turn % pawns_of_players.size();
-                set_turn_GUI();
-                //square_update_GUI();
-                igm.endTurn();
-
+                end_turn();
                 play_bot();
             }
         } else
@@ -374,7 +352,7 @@ public class InnerController {
 //            tmpPawn.setLayoutY(pawnYtmp);
 
         }
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1500), tmpPawn);
+        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
         tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
         tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
         tt.setOnFinished(e -> {
@@ -409,22 +387,21 @@ public class InnerController {
     }
 
     private void start_turn(){
-        System.out.println(drawable_card_info);
-        if (drawable_card_info == 1){
-            set_image_helper(cards, "/scenes/sources/drawable-cards/", "chance-back");
-            cards.setVisible(true);
-            cards_background.setVisible(true);
-            cards_anchor.setVisible(true);
-        }
-        else if (drawable_card_info == 2){
-            set_image_helper(cards, "/scenes/sources/drawable-cards/", "chest-back");
-            cards.setVisible(true);
-            cards_background.setVisible(true);
-            cards_anchor.setVisible(true);
-        }
         Player p = igm.getPlayers().get(igm.getCurrentPlayerId());
         if (p.isHuman()){
-            if (player_goes_jail){
+            if (drawable_card_info == 1){
+                set_image_helper(cards, "/scenes/sources/drawable-cards/", "chance-back");
+                cards.setVisible(true);
+                cards_background.setVisible(true);
+                cards_anchor.setVisible(true);
+            }
+            else if (drawable_card_info == 2){
+                set_image_helper(cards, "/scenes/sources/drawable-cards/", "chest-back");
+                cards.setVisible(true);
+                cards_background.setVisible(true);
+                cards_anchor.setVisible(true);
+            }
+            else if (player_goes_jail){
                 get_player_jail(old_position_of_player);
                 player_goes_jail = false;
             }
@@ -455,18 +432,12 @@ public class InnerController {
         else {
             move_count_of_player = 50 - current_place;
         }
-        System.out.println(current_place + "cp. " + move_count_of_player + " mp. ");
         movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
         is_player_get_jailed = false;
-        pressedEndTurn = true;
-        turn++;
-        turn = turn % pawns_of_players.size();
-        set_turn_GUI();
-        igm.endTurn();
+        end_turn();
     }
 
     boolean player_goes_jail = false;
-    boolean is_players_turn = true;
     int old_position_of_player = 0;
     int new_position_of_player = 0;
     int card_result_of_player = -98;
@@ -485,13 +456,14 @@ public class InnerController {
      * UNKNOWN VALUE > 100000 => EITHER PAY MONEY OR DRAW CHANCE CARD
      */
 
+    boolean can_roll_dice = true;
 
     int drawable_card_info = 0;
 
     @FXML
     public void roll_dice() {
 
-        if (pressedEndTurn){
+        if (can_roll_dice){
             igm.rollDice();
             int dice1 = igm.getDice().getDice1();
             int dice2 = igm.getDice().getDice2();
@@ -499,10 +471,10 @@ public class InnerController {
 
             boolean is_double = dice1 == dice2;
 
+            can_roll_dice = is_double;
+
             set_image_helper(dice_1, "/scenes/sources/dice/", "dice_" + dice1);
             set_image_helper(dice_2, "/scenes/sources/dice/", "dice_" + dice2);
-            //dice_1.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice1 + ".png")));
-            //dice_2.setImage(new Image(getClass().getResourceAsStream("sources/dice/dice_" + dice2 + ".png")));
 
             if ((diceforjail && is_double) || !diceforjail){
 
@@ -516,14 +488,15 @@ public class InnerController {
 
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
-                System.out.println(result_of_start_turn);
+                //System.out.println(result_of_start_turn);
 
                 if (result_of_start_turn == -2){
                     get_player_jail(old_position_of_player);
+                    can_roll_dice = false;
                 }
                 else if (result_of_start_turn == 1){
-                    card_result_of_player = igm.drawCard(DrawableCardType.Chance, 1);
                     drawable_card_info = 1;
+                    card_result_of_player = igm.drawCard(DrawableCardType.Chance, 1);
                 }
                 else if (result_of_start_turn == 2){
                     drawable_card_info = 2;
@@ -537,13 +510,15 @@ public class InnerController {
                 }
                 else if (result_of_start_turn == 7){
                 }
-                pressedEndTurn = dice1 == dice2;
                 diceforjail = false;
             }
             else if (diceforjail && !is_double){
                 diceforjail = false;
                 end_turn();
                 movePawn(pawns_of_players.get(turn), 40 , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), 10);
+            }
+            else if (!can_roll_dice){
+                testTextField.setText("la tur sende değil dur bi");
             }
         }
         set_log();
@@ -556,14 +531,13 @@ public class InnerController {
             move_count_of_player = 37;
             int result = igm.startTurn(move_count_of_player, false, 1);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
-            System.out.println("move count " + move_count_of_player + " old pos " + old_position_of_bot + " card res " + card_result_of_player);
             if (result == 2){
                 check_drawable_cards();
             }
         }
         else if (card_result_of_player >= 0 && card_result_of_player <= 39){
             int move_count_of_player;
-            old_position_of_player = old_position_of_player + igm.getDice().getTotal();
+            old_position_of_player = igm.getCurrentPlayerCurrentPosition();
             if (card_result_of_player > old_position_of_player){
                 move_count_of_player = card_result_of_player - old_position_of_player;
             }
@@ -571,15 +545,18 @@ public class InnerController {
                 move_count_of_player = 40 - (old_position_of_player - card_result_of_player);
             }
             igm.startTurn(move_count_of_player, false, 1);
-            System.out.println("move count " + move_count_of_player + " old pos " + old_position_of_player + " card res " + card_result_of_player);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
         }
         else if (card_result_of_player == 5200) {
             get_player_jail((old_position_of_player + igm.getDice().getTotal()) % 40);
+            player_drawed_jail_card = true;
+            can_roll_dice = false;
         }
         else {
         }
     }
+
+    boolean player_drawed_jail_card = false;
 
     @FXML
     public void close_drawable_cards(){
@@ -799,7 +776,6 @@ public class InnerController {
 
     //Image Set Helper
     public void set_image_helper(ImageView iv, String path, String name){
-        System.out.println(path + name + PNG);
         String imageUrl = getClass().getResource(path + name + PNG).toExternalForm();
         Image image = new Image(imageUrl);
         iv.setImage(image);
