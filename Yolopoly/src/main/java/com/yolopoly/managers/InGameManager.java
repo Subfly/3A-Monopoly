@@ -542,6 +542,7 @@ public class InGameManager {
             player.setInJail(true);
             player.setCurrentPosition(10);
             player.resetDoublesCount();
+            player.resetInJailTurnCount();
             return -2;
         }
 
@@ -618,9 +619,6 @@ public class InGameManager {
                 //If pawn of the player landed on a property square :D Hardest part coming...
                 int buyerIdOfProperty = getBuyer(square.getId());
                 if(square.isBought() && buyerIdOfProperty != currentPlayerId){
-                    //Find the player who bought that square
-
-
                     //Create a dummy player holder to change players data in the end
                     Player paidToPlayer = players.get(buyerIdOfProperty);
 
@@ -628,7 +626,6 @@ public class InGameManager {
                     PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
                     int rentAmount = getRent(diceResult);
-
 
                     //Remove money from current player
                     boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
@@ -643,7 +640,6 @@ public class InGameManager {
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
 
                     addToLog("paid " + parser(rentAmount) + " as rent to " + paidToPlayer.getName(), player.getName());
-
                     return 6;
                 }else{
                     //Not bought, this part left to frontend
@@ -749,6 +745,9 @@ public class InGameManager {
         //Make changes on data
         card.setOwnedBy(currentPlayerId);
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
+
+        //Bura sürekli siniliniyor kafayı yiyeceğim - Ali
+        currentPlayer.removeMoney(Constants.CURRENCY_NAMES[0], card.getCost());
 
         //Save changes on data
         //TODO ponçik ali taha olur böyle şeyler
@@ -857,7 +856,7 @@ public class InGameManager {
 
         player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
 
-        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
+        addToLog("built structure on the property: " + currentPlace.getName(), player.getName());
     }
 
     public void destructBuilding(Building buildingType, int squareIndex, double multiplier){
@@ -882,7 +881,7 @@ public class InGameManager {
             effectManager.playMoneyEffect();
         }
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
-        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
+        addToLog("destroyed structure on the property: " + currentPlace.getName(), player.getName());
     }
 
     /*
