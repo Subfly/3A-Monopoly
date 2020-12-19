@@ -61,6 +61,12 @@ public class InnerController {
     AnchorPane cards_anchor;
 
     @FXML
+    Label players_name, players_money, players_money_edit;
+
+    @FXML
+    ImageView players_pawn;
+
+    @FXML
     ImageView d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18;//,d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30;
 
     ImageView[] deck_card_list;
@@ -108,6 +114,11 @@ public class InnerController {
 
         //For Debug Issues
         testTextField = new Label();
+        players_money = new Label();
+        players_money_edit = new Label();
+        players_name = new Label();
+
+        players_pawn = new ImageView();
     }
 
     ArrayList<ImageView> pawns_of_players;
@@ -160,6 +171,7 @@ public class InnerController {
 
         set_turn_GUI();
         initializeSettings();
+        update_deck();
 
         for (ImageView iv :deck_card_list){
             iv.setVisible(false);
@@ -306,7 +318,6 @@ public class InnerController {
 
     @FXML
     public void actionButtonPressed() {
-        System.out.println("noluyo aq");
         if (!can_roll_dice) {
             if(igm.isCurrentPlayerHuman()){
                 update_deck();
@@ -417,8 +428,12 @@ public class InnerController {
 
     public void update_deck(){
         Player player = igm.getPlayers().get(current_deck);
-        System.out.println(player.getName());
         ArrayList<PropertyCard> cards = player.getOwnedPlaces();
+
+        players_name.setText(player.getName());
+        players_money.setText(player.getMonopolyMoneyAmount() + "");
+        String pawn_index = pawns_of_players.get(current_deck).getId().replace("pawn_","");
+        set_image_helper(players_pawn,"/scenes/sources/lobby-settings/pawns/", "pawn-" + pawn_index);
 
         int counter = 0;
         if (cards != null){
@@ -426,10 +441,84 @@ public class InnerController {
                 int index = c.getId();
                 deck_card_list[counter].setVisible(true);
                 set_image_helper(deck_card_list[counter],"/scenes/sources/property-cards/", "index" + index);
-                deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 8, 0, 0, 0);");
+                deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 2, 0, 0, 0);");
                 counter++;
             }
         }
+    }
+
+    @FXML
+    public void set_deck(MouseEvent e){
+        String tmp_index = e.getPickResult().getIntersectedNode().getId().replace("player_index", "");
+        int index = Integer.parseInt(tmp_index);
+        current_deck = index - 1;
+        for (ImageView iv : deck_card_list) {
+            iv.setImage(null);
+        }
+        update_deck();
+    }
+
+    @FXML
+    public void show_decks_card(MouseEvent e){
+        Player player = igm.getPlayers().get(current_deck);
+        ArrayList<PropertyCard> cards = player.getOwnedPlaces();
+        String tmp_index = e.getPickResult().getIntersectedNode().getId().replace("d_c", "");
+        int index = Integer.parseInt(tmp_index) - 1;
+
+        int squareId = igm.getBoard().getSquares().get(cards.get(index).getId()).getId();
+        System.out.println(player.getName() + " " + index + " " + squareId);
+        PropertyCard tmpcard = igm.getSpecificProperty(squareId);
+        Square tmpSquare = igm.getBoard().getSpecificSquare(squareId);
+        if (is_square(tmpSquare, "buy")) {
+            int tmpSquareLevel = tmpSquare.getLevel();
+            card_image.setVisible(true);
+            System.out.println("/scenes/sources/property-cards/index" + cards.get(index).getId() + "");
+            set_image_helper(card_image, "/scenes/sources/property-cards/index", cards.get(index).getId() + "");
+            set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
+            buy_button.setVisible(true);
+            sell_button.setVisible(true);
+            assert tmpcard != null;
+            if (igm.getOwner(squareId) != null) {
+                if (tmpSquareLevel != -1){
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                }
+                else {
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), 0);
+                }
+            } else {
+                setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
+            }
+        } else {
+            System.out.println("ehelelele");
+        }
+
+        try {
+            boolean levelUp = igm.checkLevelStatus(cards.get(index).getId()).get(lvup);
+            boolean levelDown = igm.checkLevelStatus(cards.get(index).getId()).get(lvdw);
+            if (levelUp) {
+                buy_button.setDisable(false);
+                buy_button.setStyle("-fx-opacity: 1");
+            } else {
+                buy_button.setDisable(true);
+                buy_button.setStyle("-fx-opacity: 0.5");
+            }
+            if (levelDown) {
+                sell_button.setDisable(false);
+                sell_button.setStyle("-fx-opacity: 1");
+            } else {
+                sell_button.setDisable(true);
+                sell_button.setStyle("-fx-opacity: 0.5");
+            }
+        } catch (NullPointerException npe) {
+            //TODO bak bulcaz artık
+            System.out.println(npe.getMessage());
+        }
+    }
+
+    @FXML
+    public void clear_decks_card(){
+        clear_indexes();
+        last_index_of_info_card = -1;
     }
 
     private void start_turn(){
@@ -633,8 +722,6 @@ public class InnerController {
             card_image.setVisible(true);
             set_image_helper(card_image, "/scenes/sources/property-cards/", last_tmp_index_of_info_card);
             set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
-            //card_image.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/" + last_tmp_index_of_info_card + ".png")));
-            //info_card.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/info-card.png")));
             buy_button.setVisible(true);
             sell_button.setVisible(true);
             assert tmpcard != null;
