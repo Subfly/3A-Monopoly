@@ -1101,6 +1101,7 @@ public class InGameManager {
         Player player = players.get(currentPlayerId);
         if (player.isInJail()) {
             if (player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier))) {
+                addToLog("has got out of jail", player.getName());
                 player.setInJail(false);
                 player.resetInJailTurnCount();
                 return 1;
@@ -1185,6 +1186,7 @@ public class InGameManager {
         else {
             result = 2.0;
         }
+        addToLog("has a chance multiplier of " + result + "for the turn", players.get(currentPlayerId).getName());
         return result;
     }
 
