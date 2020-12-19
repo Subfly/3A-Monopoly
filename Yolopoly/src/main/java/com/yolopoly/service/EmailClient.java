@@ -9,14 +9,31 @@ public class EmailClient {
     private static final String senderEmail = "3ayolopoly@gmail.com";
     private static final String senderPassword = "Kissa+12345";
 
-    public static void sendAsHtml(String to, String title, String html) throws MessagingException {
-        System.out.println("Sending email to " + to);
+    public static void sendMailToPlayer(String playerEmail) throws MessagingException {
+        System.out.println("Sending email to " + playerEmail);
 
         Session session = createSession();
 
         //create message using session
+        String title = "We have received your feedback!";
+        String html = "<h2>Thank you for your feedback</h2><p>We value your comments. We will enhance the YOLOPOLY game with your special feedbacks.</p>";
         MimeMessage message = new MimeMessage(session);
-        prepareEmailMessage(message, to, title, html);
+        prepareEmailMessage(message, playerEmail, title, html);
+
+        //sending message
+        Transport.send(message);
+        System.out.println("Done");
+    }
+
+    public static void sendMailToSelf(String playerEmail, String mailContent) throws MessagingException {
+        System.out.println("Sending email to " + playerEmail);
+        Session session = createSession();
+
+        //create message using session
+        String title = "You have a new feedback";
+        String html = "<h4>" + playerEmail + " says:\n" + "</h4><p>" + mailContent + "</p>";
+        MimeMessage message = new MimeMessage(session);
+        prepareEmailMessage(message, senderEmail, title, html);
 
         //sending message
         Transport.send(message);
@@ -46,9 +63,8 @@ public class EmailClient {
         return session;
     }
 
-    public static void main(String[] args) throws MessagingException {
-        EmailClient.sendAsHtml("3ayolopoly@gmail.com",
-                "Test email",
-                "<h2>Java Mail Example</h2><p>hi there!</p>");
-    }
+    /*public static void main(String[] args) throws MessagingException {
+        EmailClient.sendMailToPlayer("benningkayleigh@gmail.com");
+        EmailClient.sendMailToSelf("benningkayleigh@gmail.com", "i love you game so much");
+    }*/
 }
