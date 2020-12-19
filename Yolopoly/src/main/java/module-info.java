@@ -1,6 +1,7 @@
 module Yolopoly {
     requires javafx.controls;
     requires javafx.fxml;
+    requires javafx.media;
     requires org.json;
     requires firebase.admin;
     requires com.google.auth;

@@ -1,5 +1,6 @@
 package com.yolopoly;
 
+import com.yolopoly.managers.MusicManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,6 +17,7 @@ public class Main extends Application {
     private static int height = 1080;
 
     static Stage primaryStage;
+    private static MusicManager musicManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -43,6 +45,7 @@ public class Main extends Application {
         //  -> get instance
         //  -> set volume
         //  -> get volume
+        musicManager = MusicManager.getInstance();
         launch(args);
     }
 

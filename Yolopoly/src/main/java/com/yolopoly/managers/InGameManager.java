@@ -20,6 +20,7 @@ public class InGameManager {
     private final static int AUCTION_START_MONEY = 500000;
 
     private static InGameManager innerEngine = null;
+    private EffectManager effectManager;
 
     //**
     // Variables
@@ -89,6 +90,7 @@ public class InGameManager {
             brokenPlayersMoneyHash = new HashMap<>();
             gameMode = mode;
             this.participants = new ArrayList<>();
+            effectManager = EffectManager.getInstance();
 
             for (Player p : players){
                 p.setCurrentPosition(0);
@@ -446,6 +448,7 @@ public class InGameManager {
     // Turn Related Functions
     //**
     public void rollDice(){
+        effectManager.playRollEffect();
         dice.roll();
     }
 
