@@ -1,6 +1,8 @@
 package com.yolopoly;
 
 import com.yolopoly.managers.MusicManager;
+import com.yolopoly.models.bases.GameListData;
+import com.yolopoly.storage.FirebaseUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -39,14 +41,18 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        // get music player
-        // music.play
-        // music Class
-        //  -> get instance
-        //  -> set volume
-        //  -> get volume
+
+        FirebaseUtil util = new FirebaseUtil();
+        util.createRoom("holyguard");
+
+        var list = util.getGameList();
+
+        for(GameListData d : list){
+            System.out.println(d.getAdmin());
+        }
+
         musicManager = MusicManager.getInstance();
-        launch(args);
+        //launch(args);
     }
 
 }

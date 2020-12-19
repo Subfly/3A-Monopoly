@@ -6,9 +6,11 @@ module Yolopoly {
     requires firebase.admin;
     requires com.google.auth;
     requires com.google.auth.oauth2;
+    requires com.google.gson;
 
     opens com.yolopoly to javafx.fxml;
     opens com.yolopoly.controllers to javafx.fxml;
+    opens com.yolopoly.models.bases to firebase.admin;
 
     exports com.yolopoly;
     exports com.yolopoly.controllers;
