@@ -103,11 +103,10 @@ public class InGameManager {
     //**
     // Functions
     //**
-    public int getRent(int diceResult){
+    public int getRent(int diceResult, int index){
 
-        int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
-        PropertyCard prop = getSpecificProperty(currentPlayerIndex);
-        Square square = board.getSpecificSquare(currentPlayerIndex);
+        PropertyCard prop = getSpecificProperty(index);
+        Square square = board.getSpecificSquare(index);
         int rentAmount = 0;
         Player paidToPlayer = players.get(prop.getOwnedBy());
 
@@ -650,7 +649,8 @@ public class InGameManager {
                     //Find rent amount
                     PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
-                    int rentAmount = getRent(diceResult);
+                    int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
+                    int rentAmount = getRent(diceResult, currentPlayerIndex);
 
                     //Remove money from current player
                     boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
