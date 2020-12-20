@@ -17,7 +17,7 @@ public class InGameManager {
 
     // Constants
     private final static int JAIL_TURN_COUNT = 3;
-    private final static int AUCTION_START_MONEY = 500000;
+    private final static int AUCTION_START_MONEY = 100000;
 
     private static InGameManager innerEngine = null;
     private EffectManager effectManager;
@@ -36,6 +36,7 @@ public class InGameManager {
     private GameMode gameMode;
 
     //Auction Related
+    private String currentHighestBidName;
     private int currentBid;
     private int auctionPropertyIndex;
     private int currentPlayerAuctioning;
@@ -102,12 +103,10 @@ public class InGameManager {
     //**
     // Functions
     //**
+    public int getRent(int diceResult, int index){
 
-    public int getRent(int diceResult){
-
-        int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
-        PropertyCard prop = getSpecificProperty(currentPlayerIndex);
-        Square square = board.getSpecificSquare(currentPlayerIndex);
+        PropertyCard prop = getSpecificProperty(index);
+        Square square = board.getSpecificSquare(index);
         int rentAmount = 0;
         Player paidToPlayer = players.get(prop.getOwnedBy());
 
@@ -141,6 +140,7 @@ public class InGameManager {
         }
         return rentAmount;
     }
+
     public ArrayList<Currency> getCurrencies(){
         return this.bank.getCurrencyRates();
     }
@@ -219,6 +219,9 @@ public class InGameManager {
 
     /*
      * RETURN VALUES
+     * -104 => BOT SELECTED DEWAM ON AUCTION
+     * -103 => BOT SELECTED PULL OFF AUCTION
+     * -102 => BOT SELECTED PASS THIS TURN ON AUCTION
      * -101 => BOT SELECTED TO ROLL DICE IN JAIL
      * -100 => ERROR OCCUR
      * -99 => BANKRUPT, ACCEPT DIRECTLY
@@ -236,8 +239,34 @@ public class InGameManager {
         bot.resetDoublesCount();
     }
 
+    public int auctionMakeDecision(){
+        if(state == GameState.Auction){
+            int decision = (int)(Math.random() * 100);
+            if(decision < 15){
+                continueAuction(0);
+                return -102;
+            }else if(decision > 85){
+                pullOffAuction(false);
+                return -103;
+            }else{
+                if(decision < 35){
+                    continueAuction(100000);
+                }else if(decision < 65){
+                    continueAuction(250000);
+                }else{
+                    continueAuction(500000);
+                }
+                return -104;
+            }
+        }
+        else
+            return 0;
+    }
+
     public int makeDecision(int diceResult, boolean isDouble){
+
         double multiplier = 1;
+
         if (this.gameMode ==  GameMode.bankman) {
             int decision = (int)(Math.random() * 2 + 1);
             if(decision == 1){
@@ -413,7 +442,7 @@ public class InGameManager {
     //**
     // Private Functions
     //**
-    private String parser(int amount){
+    public String parser(int amount){
         int million = 0;
         int remainder = 0;
         int thousand = 0;
@@ -542,6 +571,7 @@ public class InGameManager {
             player.setInJail(true);
             player.setCurrentPosition(10);
             player.resetDoublesCount();
+            player.resetInJailTurnCount();
             return -2;
         }
 
@@ -618,17 +648,14 @@ public class InGameManager {
                 //If pawn of the player landed on a property square :D Hardest part coming...
                 int buyerIdOfProperty = getBuyer(square.getId());
                 if(square.isBought() && buyerIdOfProperty != currentPlayerId){
-                    //Find the player who bought that square
-
-
                     //Create a dummy player holder to change players data in the end
                     Player paidToPlayer = players.get(buyerIdOfProperty);
 
                     //Find rent amount
                     PropertyCard prop = getSpecificProperty(square.getId());
                     assert prop != null;
-                    int rentAmount = getRent(diceResult);
-
+                    int currentPlayerIndex = players.get(getCurrentPlayerId()).getCurrentPosition();
+                    int rentAmount = getRent(diceResult, currentPlayerIndex);
 
                     //Remove money from current player
                     boolean isAbleToPay = player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
@@ -643,7 +670,6 @@ public class InGameManager {
                     paidToPlayer.addMoney(Constants.CURRENCY_NAMES[0], (int)(rentAmount * multiplier));
 
                     addToLog("paid " + parser(rentAmount) + " as rent to " + paidToPlayer.getName(), player.getName());
-
                     return 6;
                 }else{
                     //Not bought, this part left to frontend
@@ -688,6 +714,16 @@ public class InGameManager {
                 Square s = board.getSpecificSquare(p.getId());
                 //Return houses and hotels
                 if(s.getHotelCount() > 0 || s.getHouseCount() > 0){
+                    int hotelCount = s.getHotelCount();
+                    int houseCount = s.getHouseCount();
+                    while(hotelCount != 0){
+                        bank.incrementHotelCount();
+                        hotelCount--;
+                    }
+                    while(houseCount != 0){
+                        bank.incrementHouseCount();
+                        houseCount--;
+                    }
                     s.setHotelCount(0);
                     s.setHouseCount(0);
                     s.setLevel(0);
@@ -715,11 +751,12 @@ public class InGameManager {
         */
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
-//        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-//        if(isBuyable && !lastSquareMadeSomething.isBought()){
-//            createAuction();
-//            return 4;
-//        }
+        PropertyCard lastSquareMadeSomethingPropertyCard = getSpecificProperty(lastSquareMadeSomething.getId());
+        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
+        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1)){
+            createAuction();
+            return 4;
+        }
 
         this.currentPlayerId += 1;
 
@@ -750,6 +787,9 @@ public class InGameManager {
         card.setOwnedBy(currentPlayerId);
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
+        //Bura sürekli siniliniyor kafayı yiyeceğim - Ali
+        currentPlayer.removeMoney(Constants.CURRENCY_NAMES[0], card.getCost());
+
         //Save changes on data
         //TODO ponçik ali taha olur böyle şeyler
         bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
@@ -770,6 +810,7 @@ public class InGameManager {
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(moneyToAdd * multiplier));
 
     }
+
     public boolean removeMortgageFromPlace(int squareIndex, double multiplier) {
         Player player = players.get(getCurrentPlayerId());
         PropertyCard currentPlace = player.getSpecificCard(squareIndex);
@@ -788,22 +829,51 @@ public class InGameManager {
         this.auctionPropertyIndex = players.get(currentPlayerId).getCurrentPosition();
         this.currentBid = AUCTION_START_MONEY;
         participants.addAll(players);
+        participants.removeIf(p -> p.getMonopolyMoneyAmount() < AUCTION_START_MONEY);
         this.currentPlayerAuctioning = 0;
+        this.currentHighestBidName = participants.get(0).getName();
         addToLog("created auction on the property", players.get(currentPlayerId).getName());
     }
 
     public void continueAuction(int bidIncrease){
-        addToLog("increased bid by: " + parser(bidIncrease), participants.get(currentPlayerAuctioning).getName());
-        this.currentPlayerAuctioning += 1;
-        if(this.currentPlayerAuctioning > participants.size()){
-            this.currentPlayerAuctioning = 0;
+        if(bidIncrease != 0){
+            addToLog("increased bid by: " + parser(bidIncrease), participants.get(currentPlayerAuctioning).getName());
+            this.currentHighestBidName = participants.get(currentPlayerAuctioning).getName();
+            this.currentBid += bidIncrease;
+            for(Player p : participants){
+                if(p.getMonopolyMoneyAmount() < currentBid){
+                    addToLog("has been removed from auction cause has not enough money to continue", p.getName());
+                    if(participants.indexOf(p) == currentPlayerAuctioning){
+                        pullOffAuction(true);
+                    }else{
+                        if(currentPlayerAuctioning > participants.indexOf(p)){
+                            this.currentPlayerAuctioning -= 1;
+                        }
+                    }
+                    participants.remove(p);
+                }
+            }
+            this.currentPlayerAuctioning += 1;
+            if(this.currentPlayerAuctioning >= participants.size()){
+                this.currentPlayerAuctioning = 0;
+            }
+        }else{
+            this.currentPlayerAuctioning += 1;
+            if(this.currentPlayerAuctioning >= participants.size()){
+                this.currentPlayerAuctioning = 0;
+            }
+            if (auctionPropertyIndex != 0){
+                System.out.println(currentPlayerAuctioning + " ingameflaan");
+                addToLog("passed this turn", participants.get(currentPlayerAuctioning).getName());
+            }
         }
-        this.currentBid += bidIncrease;
     }
 
     //TODO: POSSIBLE LOGIC ERROR (but I think I solved it :D - Ali the Lele)
-    public void pullOffAuction(){
-        addToLog("left auction", participants.get(currentPlayerAuctioning).getName());
+    public void pullOffAuction(boolean isAutomatic){
+        if(!isAutomatic){
+            addToLog("left auction", participants.get(currentPlayerAuctioning).getName());
+        }
         participants.remove(currentPlayerAuctioning);
         if(currentPlayerAuctioning == this.participants.size() - 1){
             //If last player
@@ -814,27 +884,26 @@ public class InGameManager {
         continueAuction(0);
     }
 
-    public void endAuction(){
+    public boolean endAuction(){
+        System.out.println("buraya giro");
         if(checkAuctionStatus()){
+            System.out.println("buraya da giro");
             Player currentPlayer = participants.get(currentPlayerAuctioning);
             Square square = board.getSpecificSquare(auctionPropertyIndex);
-            PropertyCard card = bank.getPropertyCards().get(square.getId());
+            PropertyCard card = getSpecificProperty(square.getId());
 
             //Make changes on data
-            card.setOwnedBy(currentPlayerAuctioning);
+            card.setOwnedBy(players.indexOf(currentPlayer));
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
             addToLog("bought property for: " + parser(this.currentBid), participants.get(currentPlayerAuctioning).getName());
 
             //Continue game in linear from the next player
-            this.currentPlayerId += 1;
-            if(this.currentPlayerId > players.size() - 1){
-                this.currentPlayerId = 0;
-            }
-
             this.state = GameState.Linear;
+            return true;
         }
+        return false;
     }
 
     public void buildBuilding(Building buildingType, int squareIndex, double multiplier) {
@@ -857,7 +926,7 @@ public class InGameManager {
 
         player.removeMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
 
-        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToBuild.getId()).getName(), player.getName());
+        addToLog("built structure on the property: " + currentPlace.getName(), player.getName());
     }
 
     public void destructBuilding(Building buildingType, int squareIndex, double multiplier){
@@ -882,7 +951,7 @@ public class InGameManager {
             effectManager.playMoneyEffect();
         }
         player.addMoney(Constants.CURRENCY_NAMES[0], (int)(money * multiplier));
-        addToLog("built structures on the property: " + bank.getPropertyCards().get(squareToDestruct.getId()).getName(), player.getName());
+        addToLog("destroyed structure on the property: " + currentPlace.getName(), player.getName());
     }
 
     /*

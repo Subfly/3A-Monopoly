@@ -39,6 +39,7 @@ public class Bank {
         }
         houseCount = 32;
         hotelCount = 12;
+        currencyRates = new ArrayList<>();
     }
 
     //Functions
