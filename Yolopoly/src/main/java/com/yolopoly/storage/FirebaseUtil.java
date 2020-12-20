@@ -133,12 +133,7 @@ public class FirebaseUtil {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 LobbyManager middleEngine = dataSnapshot.getValue(LobbyManager.class);
-                lobbyManager.setAdmin(middleEngine.getPlayerArrayList().get(0));
-                lobbyManager.setGameMode(middleEngine.getGameMode());
-                lobbyManager.setGameTheme(middleEngine.getGameTheme());
-                lobbyManager.setMaxPlayerCount(middleEngine.getMaxPlayerCount());
-                lobbyManager.setIsAllReady(middleEngine.getIsAllReady());
-                lobbyManager.setPawns(middleEngine.getPawns());
+                lobbyManager.setInstance(middleEngine);
                 //TODO: HANDLE PAWN
             }
             @Override

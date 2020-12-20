@@ -47,26 +47,6 @@
                 <Image url="@sources/Action.png" />
             </image>
         </ImageView>
-      <Label fx:id="currency_try" layoutX="1720.0" layoutY="280.0" onMouseClicked="#change_currency" text="Label">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="currency_eur" layoutX="1720.0" layoutY="200.0" onMouseClicked="#change_currency" text="Label">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="currency_usd" layoutX="1720.0" layoutY="240.0" onMouseClicked="#change_currency" text="Label">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
-      <Label fx:id="multiplier_label" layoutX="1720.0" layoutY="160.0" text="Label">
-         <font>
-            <Font name="System Bold" size="18.0" />
-         </font>
-      </Label>
       <ImageView fx:id="loan_button" fitHeight="42.0" fitWidth="115.0" layoutX="1720.0" layoutY="381.0" onMouseClicked="#loan_action" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/bankman/loan_button.png" />
@@ -284,7 +264,6 @@
                 <Image url="@sources/pawns/pawn_8.png" />
             </image>
         </ImageView>
-        <Label fx:id="testTextField" layoutX="1500.0" layoutY="200.0" text="Label" />
       <ImageView fx:id="players_pawn" fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="165.0" pickOnBounds="true" preserveRatio="true" />
       <Label fx:id="players_name" layoutX="1185.0" layoutY="165.0" text="Label">
          <font>
@@ -301,6 +280,72 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
+      <ImageView fx:id="to_0" fitHeight="25.0" fitWidth="80.0" layoutX="1415.0" layoutY="234.0" onMouseClicked="#add_money_to_exchange" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/to_0.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="add_10k" fitHeight="25.0" fitWidth="80.0" layoutX="1500.0" layoutY="234.0" onMouseClicked="#add_money_to_exchange" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/add_10K.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="add_100k" fitHeight="25.0" fitWidth="80.0" layoutX="1585.0" layoutY="234.0" onMouseClicked="#add_money_to_exchange" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/add_100M.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="add_1m" fitHeight="25.0" fitWidth="80.0" layoutX="1670.0" layoutY="234.0" onMouseClicked="#add_money_to_exchange" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/add_1M.png" />
+         </image>
+      </ImageView>
+      <ImageView onMouseClicked="#make_exchange" fitHeight="25.0" fitWidth="80.0" layoutX="1755.0" layoutY="234.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/empty_field.png" />
+         </image>
+      </ImageView>
+      <Label onMouseClicked="#make_exchange" fx:id="add_field" alignment="CENTER" layoutX="1760.0" layoutY="234.0" prefHeight="27.0" prefWidth="70.0" text="Label" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="try_parity" layoutX="1415.0" layoutY="165.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="eur_parity" layoutX="1415.0" layoutY="200.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="try_balance" layoutX="1570.0" layoutY="165.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="eur_balance" layoutX="1570.0" layoutY="200.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="to_from" layoutX="1773.0" layoutY="184.0" text="To" />
+      <ImageView onMouseClicked="#exchange" fx:id="exchange" fitHeight="25.0" fitWidth="36.0" layoutX="1725.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/exchange.png" />
+         </image>
+      </ImageView>
+      <ImageView onMouseClicked="#change_parity" fx:id="change_eur" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/eur_off.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="change_try" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="166.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/try_on.png" />
+         </image>
+      </ImageView>
       <AnchorPane fx:id="auction_anchor" layoutX="50.0" layoutY="50.0" prefHeight="980.0" prefWidth="980.0">
          <children>
             <ImageView fitHeight="980.0" fitWidth="980.0" pickOnBounds="true" preserveRatio="true">

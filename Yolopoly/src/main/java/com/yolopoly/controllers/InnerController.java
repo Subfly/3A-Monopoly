@@ -9,6 +9,7 @@ import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.models.bases.Player;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.PropertyCard;
+import com.yolopoly.storage.Constants;
 import javafx.animation.TranslateTransition;
 import javafx.beans.property.Property;
 import javafx.collections.ObservableList;
@@ -91,6 +92,12 @@ public class InnerController {
 
     @FXML
     AnchorPane in_game_menu, settings;
+
+    @FXML
+    ImageView to_0, add_10k, add_100k, add_1m, change_eur, change_try, exchange;
+
+    @FXML
+    Label add_field, try_parity, eur_parity, try_balance, eur_balance, to_from;
 
     ImageView[] deck_card_list;
     ImageView[] pawns;
@@ -229,6 +236,8 @@ public class InnerController {
         for (ImageView iv :deck_card_list){
             iv.setVisible(false);
         }
+
+        multiplier_label = new Label();
 
         if (igm.getGameMode() != GameMode.bankman){
             loan_button.setVisible(false);
@@ -556,6 +565,67 @@ public class InnerController {
     }
 
     @FXML
+    public void make_exchange(){
+        int index = 0;
+
+        if (chosen_cur == "eur"){
+            index = 2;
+        }
+        else if (chosen_cur == "try"){
+            index = 1;
+        }
+
+        if (ex_direction.equals("to")){
+            igm.exchangeCurrency(Constants.CURRENCY_NAMES[0], Constants.CURRENCY_NAMES[index],amount);
+        }
+        else {
+            igm.exchangeCurrency(Constants.CURRENCY_NAMES[index], Constants.CURRENCY_NAMES[0],amount);
+        }
+    }
+
+    int amount = 0;
+    String chosen_cur = "eur";
+
+    @FXML
+    public void add_money_to_exchange(MouseEvent e){
+        String s = ((ImageView)e.getSource()).getId();
+        switch (s){
+            case "to_0" : amount = 0;
+            case "add_10k" : amount+= 10000;
+            case "add_100k" : amount+= 100000;
+            case "add_1m" : amount+= 1000000;
+        }
+        add_field.setText(igm.parser(amount));
+    }
+
+    public String ex_direction = "to";
+
+    @FXML
+    public void exchange(){
+        if(ex_direction.equals("to")){
+            ex_direction = "from";
+        }
+        else {
+            ex_direction = "to";
+        }
+    }
+
+    @FXML
+    public void change_parity(MouseEvent e){
+        String s = ((ImageView)e.getSource()).getId().replace("change_","");
+        if (s.equals("eur")){
+            last_currency = "eur";
+            set_image_helper(change_eur, "/scenes/sources/bankman/", "eur_on");
+            set_image_helper(change_try, "/scenes/sources/bankman/", "try_off");
+        }
+        else {
+            last_currency = "try";
+            set_image_helper(change_eur, "/scenes/sources/bankman/", "eur_off");
+            set_image_helper(change_try, "/scenes/sources/bankman/", "try_on");
+        }
+    }
+
+    @FXML
     public void actionButtonPressed() {
         if (!can_roll_dice) {
             if(igm.isCurrentPlayerHuman()){
@@ -868,8 +938,6 @@ public class InnerController {
 
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
-                //System.out.println(result_of_start_turn);
-
                 if (result_of_start_turn == -2){
                     get_player_jail(old_position_of_player);
                     can_roll_dice = false;
@@ -1034,7 +1102,6 @@ public class InnerController {
         int i = 0;
         for (ImageView player_index : indexes_of_players) {
             set_image_helper(player_index,"/scenes/sources/", "circle");
-            //player_index.setImage(new Image(getClass().getResourceAsStream("sources/circle.png")));
             String tmp_pawn_name = pawns_of_players.get(i).getId().replace("pawn_button", "");
             tmp_pawn_name = tmp_pawn_name.replace("_", "-");
             set_image_helper(player_index, LOBBY_PAWNS, tmp_pawn_name);
@@ -1057,10 +1124,8 @@ public class InnerController {
                     square_bars[i].setVisible(false);
                 } else if (s.getLevel() == 5) {
                     set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-hotel-" + position );
-                    //square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
                 } else {
                     set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-house-" + s.getLevel() + "-" + position);
-                    //square_bars[i].setImage(new Image(getClass().getResourceAsStream(deneme)));
                 }
                 i++;
             }
@@ -1133,20 +1198,12 @@ public class InnerController {
                 set_image_helper(house_slot1, PROPERTY_CARDS, "house");
                 set_image_helper(house_slot2, PROPERTY_CARDS, "house");
                 set_image_helper(house_slot3, PROPERTY_CARDS, "house");
-//                house_slot3.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot2.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot1.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
-//                house_slot0.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/house.png")));
             }
             case 5 -> {
                 set_image_helper(house_slot0, PROPERTY_CARDS, "hotel-bottom");
                 set_image_helper(house_slot1, PROPERTY_CARDS, "hotel-middle");
                 set_image_helper(house_slot2, PROPERTY_CARDS, "hotel-middle");
                 set_image_helper(house_slot3, PROPERTY_CARDS, "hotel-top");
-//                house_slot0.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/hotel-bottom.png")));
-//                house_slot1.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/hotel-middle.png")));
-//                house_slot2.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/hotel-middle.png")));
-//                house_slot3.setImage(new Image(getClass().getResourceAsStream("sources/property-cards/hotel-top.png")));
             }
         }
     }

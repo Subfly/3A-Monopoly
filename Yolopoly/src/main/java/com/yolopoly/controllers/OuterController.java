@@ -149,7 +149,7 @@ public class OuterController {
 
     @FXML
     public void single_player() throws Exception{
-
+        me.setOnline(false);
         changeScreen("src/main/resources/scenes/MiddleController.fxml");
     }
 
@@ -166,10 +166,9 @@ public class OuterController {
     }
 
     @FXML
-    public void multiplayer(){
-        multip_options.setDisable(false);
-        multip_options.setVisible(true);
-        set_menu_enable_disable();
+    public void multiplayer() throws Exception{
+        me.setOnline(true);
+        changeScreen("src/main/resources/scenes/MiddleController.fxml");
     }
 
     @FXML
