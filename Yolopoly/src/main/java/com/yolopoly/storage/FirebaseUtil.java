@@ -74,10 +74,9 @@ public class FirebaseUtil {
         DatabaseReference refMiddle = database.getReference("middle");
         lobbyManager = LobbyManager.getInstance();
         lobbyManager.setOnline(true);
-        lobbyManager.addBot();
-        lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1).setHuman(true);
-        lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1).setName(hosterNick);
-        lobbyManager.setAdmin(lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1));
+        lobbyManager.getPlayerArrayList().get(0).setName(hosterNick);
+        lobbyManager.getPlayerArrayList().get(0).setHuman(true);
+        lobbyManager.setAdmin(lobbyManager.getPlayerArrayList().get(0));
         playerCount++;
         //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
