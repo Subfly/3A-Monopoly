@@ -75,14 +75,19 @@ public class MiddleController {
         oe = MainMenuManager.getInstance();
         ie = InGameManager.getInstance();
 
-        this.nickname = oe.getHosterNick();
-        this.player_count = 1;
-        this.bot_count = 0;
+        if (me.isOnline()){
 
-        me.getAdmin().setName(nickname);
-        me.getAdmin().setPawnIndex(1);
+        }
+        else {
+            this.nickname = oe.getHosterNick();
+            this.player_count = 1;
+            this.bot_count = 0;
 
-        player_list_grid = new GridPane();
+            me.getAdmin().setName(nickname);
+            me.getAdmin().setPawnIndex(1);
+
+            player_list_grid = new GridPane();
+        }
     }
 
     @FXML
