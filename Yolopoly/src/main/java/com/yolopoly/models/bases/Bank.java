@@ -40,6 +40,9 @@ public class Bank {
         houseCount = 32;
         hotelCount = 12;
         currencyRates = new ArrayList<>();
+        for (int i = 0; i < Constants.CURRENCY_NAMES.length; i++) {
+            currencyRates.add(new Currency(Constants.CURRENCY_NAMES[i], 1));
+        }
     }
 
     //Functions

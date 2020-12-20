@@ -247,9 +247,9 @@ public class InnerController {
             multiplier_label.setVisible(true);
         }
 
-        currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2));
-        currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1));
-        currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(1));
+        currency_usd.setText("$ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(0).getRate()));
+        currency_try.setText("₺ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(1).getRate()));
+        currency_eur.setText("€ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(2).getRate()));
     }
 
     InGameManager igm;
@@ -682,9 +682,9 @@ public class InnerController {
         }
 
         if (igm.getGameMode() == GameMode.bankman){
-            currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(0).getRate());
-            currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1).getRate());
-            currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2).getRate());
+            currency_usd.setText("$ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(0).getRate()));
+            currency_try.setText("₺ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(1).getRate()));
+            currency_eur.setText("€ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(2).getRate()));
         }
     }
 
