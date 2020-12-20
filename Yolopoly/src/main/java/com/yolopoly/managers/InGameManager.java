@@ -41,6 +41,7 @@ public class InGameManager {
     private int auctionPropertyIndex;
     private int currentPlayerAuctioning;
     private ArrayList<Player> participants;
+    private GameTheme theme;
 
     //Broken player related
     /**
@@ -60,6 +61,10 @@ public class InGameManager {
     // Constructor
     //**
     private InGameManager(){
+    }
+
+    public void setInstance(InGameManager manager){
+        innerEngine = manager;
     }
 
     public static InGameManager getInstance(){
@@ -92,6 +97,7 @@ public class InGameManager {
             gameMode = mode;
             this.participants = new ArrayList<>();
             effectManager = EffectManager.getInstance();
+            this.theme = theme;
 
             for (Player p : players){
                 p.setCurrentPosition(0);
@@ -115,7 +121,7 @@ public class InGameManager {
             int countPlayersColor = countPlayersColor(paidToPlayer, square);
             int countBoardColor = board.countColors(square);
             rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
-            if (countBoardColor == countPlayersColor){
+            if (countBoardColor == countPlayersColor && square.getLevel() == 0){
                 rentAmount = rentAmount * 2;
                 System.out.println(square + " iki kat kira");
             }
@@ -168,12 +174,7 @@ public class InGameManager {
 
     public int saveAndExit(){
         StorageUtil util = new StorageUtil();
-        try{
-            return util.saveGame(this) ? 1 : 0;
-        }catch (IOException e){
-            System.out.println("ERROR (3001) SAVE FAILED");
-        }
-        return 0;
+        return util.saveGame(this) ? 1 : 0;
     }
 
     public ArrayList<Integer> getSettings(){
@@ -792,7 +793,6 @@ public class InGameManager {
 
         //Save changes on data
         //TODO ponçik ali taha olur böyle şeyler
-        bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
         board.buySquare(square.getId());
 
         addToLog("bought property named : " + card.getName(), currentPlayer.getName());
@@ -1730,5 +1730,21 @@ public class InGameManager {
 
     public void setBrokenPlayersMoneyHash(HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash) {
         this.brokenPlayersMoneyHash = brokenPlayersMoneyHash;
+    }
+
+    public String getCurrentHighestBidName() {
+        return currentHighestBidName;
+    }
+
+    public void setCurrentHighestBidName(String currentHighestBidName) {
+        this.currentHighestBidName = currentHighestBidName;
+    }
+
+    public GameTheme getTheme() {
+        return theme;
+    }
+
+    public void setTheme(GameTheme theme) {
+        this.theme = theme;
     }
 }

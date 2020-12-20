@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.Label?>
 <AnchorPane prefHeight="1080.0" prefWidth="1920.0" stylesheets="@OuterController.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yolopoly.controllers.OuterController">
    <children>
       <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
@@ -17,13 +16,13 @@
          </image>
       </ImageView>
 
-      <AnchorPane fx:id="menu" prefHeight="1080.0" prefWidth="1920.0">
-         <ImageView id="single-player" fitHeight="500.0" fitWidth="250.0" layoutX="695.0" layoutY="95.0" onMouseClicked="#lobbyScreen" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+      <AnchorPane fx:id="menu" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+         <ImageView id="single-player" fitHeight="500.0" fitWidth="250.0" layoutX="695.0" layoutY="95.0" onMouseClicked="#single_player" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
             <image>
                <Image url="@sources/outer-controller/singleplayer.png" />
             </image>
          </ImageView>
-         <ImageView id="multiplayer" fitHeight="500.0" fitWidth="250.0" layoutX="975.0" layoutY="95.0" onMouseClicked="#coming_soon" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+         <ImageView id="multiplayer" fitHeight="500.0" fitWidth="250.0" layoutX="975.0" layoutY="95.0" onMouseClicked="#multiplayer" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
             <image>
                <Image url="@sources/outer-controller/multiplayer.png" />
             </image>
@@ -55,7 +54,7 @@
          </ImageView>
       </AnchorPane>
 
-      <AnchorPane id="quit-game-ask" fx:id="quit_game_ask" disable="true" opacity="0.0" prefHeight="1080.0" prefWidth="1920.0">
+      <AnchorPane fx:id="quit_game_ask" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
          <children>
             <ImageView fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
                <image>
@@ -74,7 +73,8 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane id="quit-game-ask" fx:id="coming_soon" disable="true" opacity="0.0" prefHeight="1080.0" prefWidth="1920.0">
+
+      <AnchorPane fx:id="coming_soon" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
          <children>
             <ImageView fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
                <image>
@@ -93,24 +93,23 @@
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane id="settings" fx:id="settings" disable="true" opacity="0.0" prefHeight="1080.0" prefWidth="1920.0">
+      <AnchorPane id="settings" fx:id="settings" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
          <children>
-            <Slider fx:id="music_slider" blockIncrement="0.1" layoutX="800.0" layoutY="440.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" />
-            <TextField fx:id="music_field" layoutX="950.0" layoutY="440.0" prefHeight="25.0" prefWidth="75.0" />
-            <Label layoutX="43.0" layoutY="103.0" text="Label" />
-            <ImageView id="ok" fitHeight="100.0" fitWidth="250.0" layoutX="690.0" layoutY="510.0" onMouseClicked="#close_settings" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+            <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="660.0" layoutY="340.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@sources/outer-controller/ok.png" />
+                  <Image url="@sources/settings/settings-field.png" />
                </image>
             </ImageView>
-            <ImageView id="ok_but_green" fitHeight="100.0" fitWidth="250.0" layoutX="980.0" layoutY="510.0" onMouseClicked="#close_settings" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+            <Slider fx:id="music_slider" blockIncrement="0.1" layoutX="860.0" layoutY="530.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+            <Slider fx:id="sound_slider" blockIncrement="0.1" layoutX="860.0" layoutY="430.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+            <ImageView id="ok" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="600.0" onMouseClicked="#close_settings" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
                <image>
-                  <Image url="@sources/outer-controller/ok-but-green.png" />
+                  <Image url="@sources/settings/save-button.png" />
                </image>
             </ImageView>
          </children>
       </AnchorPane>
-      <AnchorPane id="nick-handler" opacity="0.0" disable="true" fx:id="nick_handler" prefHeight="1080.0" prefWidth="1920.0">
+      <AnchorPane id="nick-handler" fx:id="nick_handler" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
          <children>
             <ImageView fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
                <image>
@@ -122,6 +121,164 @@
                   <Font name="System Bold" size="20.0" />
                </font>
             </TextArea>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="game_list" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+         <children>
+            <ImageView fitHeight="900.0" fitWidth="1200.0" layoutX="360.0" layoutY="90.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-list-field.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-field.png" />
+               </image>
+            </ImageView>
+            <Label id="join_0" fx:id="join_0" layoutX="1420.0" layoutY="215.0" onMouseClicked="#join_game" text="Join" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="size_0" layoutX="1110.0" layoutY="215.0" text="5/8" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="settings_0" layoutX="760.0" layoutY="215.0" text="Vanilla - Bankman" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="name_0" layoutX="460.0" layoutY="215.0" text="Etophiana's Lobby" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-field.png" />
+               </image>
+            </ImageView>
+            <Label id="join_1" fx:id="join_1" layoutX="1420.0" layoutY="335.0" onMouseClicked="#join_game" text="Join" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="size_1" layoutX="1110.0" layoutY="335.0" text="5/8" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="settings_1" layoutX="760.0" layoutY="335.0" text="Vanilla - Bankman" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="name_1" layoutX="460.0" layoutY="335.0" text="Etophiana's Lobby" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-field.png" />
+               </image>
+            </ImageView>
+            <Label id="join_2" fx:id="join_2" layoutX="1420.0" layoutY="460.0" onMouseClicked="#join_game" text="Join" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="size_2" layoutX="1110.0" layoutY="460.0" text="5/8" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="settings_2" layoutX="760.0" layoutY="460.0" text="Vanilla - Bankman" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="name_2" layoutX="460.0" layoutY="460.0" text="Etophiana's Lobby" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-field.png" />
+               </image>
+            </ImageView>
+            <Label id="join_3" fx:id="join_3" layoutX="1420.0" layoutY="580.0" onMouseClicked="#join_game" text="Join" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="size_3" layoutX="1110.0" layoutY="580.0" text="5/8" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="settings_3" layoutX="760.0" layoutY="580.0" text="Vanilla - Bankman" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="name_3" layoutX="460.0" layoutY="580.0" text="Etophiana's Lobby" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/server-field.png" />
+               </image>
+            </ImageView>
+            <Label id="join_4" fx:id="join_4" layoutX="1420.0" layoutY="700.0" onMouseClicked="#join_game" text="Join" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="size_4" layoutX="1110.0" layoutY="700.0" text="5/8" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="settings_4" layoutX="760.0" layoutY="700.0" text="Vanilla - Bankman" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <Label fx:id="name_4" layoutX="460.0" layoutY="700.0" text="Etophiana's Lobby" textFill="#d91828">
+               <font>
+                  <Font name="System Bold" size="18.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="840.0" onMouseClicked="#close_game_list" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/server-list/close.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="multip_options" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+         <children>
+            <ImageView fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+               <image>
+                  <Image url="@sources/outer-controller/multip-field.png" />
+               </image>
+            </ImageView>
+            <ImageView id="quit-yes" fitHeight="100.0" fitWidth="250.0" layoutX="690.0" layoutY="510.0" onMouseClicked="#create_game" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+               <image>
+                  <Image url="@sources/outer-controller/multip-create.png" />
+               </image>
+            </ImageView>
+            <ImageView id="quit-no" fitHeight="100.0" fitWidth="250.0" layoutX="980.0" layoutY="510.0" onMouseClicked="#show_game_list" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+               <image>
+                  <Image url="@sources/outer-controller/multip-join.png" />
+               </image>
+            </ImageView>
          </children>
       </AnchorPane>
    </children>

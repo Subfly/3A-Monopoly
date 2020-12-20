@@ -10,7 +10,7 @@ public class EmailClient {
     private static final String senderPassword = "Kissa+12345";
 
     public static void sendMailToPlayer(String playerEmail) throws MessagingException {
-        System.out.println("Sending email to " + playerEmail);
+        // System.out.println("Sending email to " + playerEmail);
 
         Session session = createSession();
 
@@ -26,7 +26,7 @@ public class EmailClient {
     }
 
     public static void sendMailToSelf(String playerEmail, String mailContent) throws MessagingException {
-        System.out.println("Sending email to " + playerEmail);
+        // System.out.println("Sending email to " + playerEmail);
         Session session = createSession();
 
         //create message using session
@@ -52,7 +52,7 @@ public class EmailClient {
         Properties props = new Properties();
         props.put("mail.smtp.auth", "true");//Outgoing server requires authentication
         props.put("mail.smtp.starttls.enable", "true");//TLS must be activated
-        props.put("mail.smtp.host", "smtp.gmail.com"); //Outgoing server (SMTP) - change it to your SMTP server
+        props.put("mail.smtp.host", "smtp.gmail.com"); //Outgoing server (SMTP)
         props.put("mail.smtp.port", "587");//Outgoing port
 
         Session session = Session.getInstance(props, new javax.mail.Authenticator() {

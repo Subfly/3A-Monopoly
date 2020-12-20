@@ -8,11 +8,14 @@ module Yolopoly {
     requires com.google.auth.oauth2;
     requires com.google.gson;
     requires java.mail;
+    requires com.fasterxml.jackson.core;
+    requires com.fasterxml.jackson.databind;
 
     opens com.yolopoly to javafx.fxml;
     opens com.yolopoly.controllers to javafx.fxml;
-    opens com.yolopoly.models.bases to firebase.admin;
-    opens com.yolopoly.managers to firebase.admin;
+    opens com.yolopoly.models.bases to firebase.admin, com.fasterxml.jackson.databind;
+    opens com.yolopoly.models.cards to com.fasterxml.jackson.databind;
+    opens com.yolopoly.managers to firebase.admin, com.fasterxml.jackson.databind;
 
     exports com.yolopoly;
     exports com.yolopoly.controllers;

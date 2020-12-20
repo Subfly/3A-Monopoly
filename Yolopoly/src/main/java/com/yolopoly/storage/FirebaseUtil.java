@@ -8,6 +8,7 @@ import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.managers.InGameManager;
 import com.yolopoly.managers.LobbyManager;
+import com.yolopoly.managers.MainMenuManager;
 import com.yolopoly.models.bases.GameListData;
 import com.yolopoly.models.bases.Player;
 
@@ -21,6 +22,7 @@ public class FirebaseUtil {
     public static ArrayList<GameListData> gameListData = new ArrayList<>();
     private LobbyManager lobbyManager;
     private InGameManager inGameManager;
+    private MainMenuManager mainMenuManager;
 
     public static synchronized FirebaseUtil getInstance(){
         if(util == null){
@@ -38,6 +40,7 @@ public class FirebaseUtil {
                     .setDatabaseUrl("https://yolopoly-120e5.firebaseio.com")
                     .build();
             FirebaseApp.initializeApp(options);
+            mainMenuManager = MainMenuManager.getInstance();
             lobbyManager = LobbyManager.getInstance();
             inGameManager = InGameManager.getInstance();
         } catch (IOException e){
@@ -69,6 +72,9 @@ public class FirebaseUtil {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refGameList = database.getReference("gameList");
         DatabaseReference refMiddle = database.getReference("middle");
+        lobbyManager = LobbyManager.getInstance();
+        lobbyManager.setOnline(true);
+        lobbyManager.setAdmin(new Player(hosterNick, true));
         //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
         //Send data

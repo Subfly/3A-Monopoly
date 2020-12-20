@@ -1,4 +1,6 @@
 package com.yolopoly.storage;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.yolopoly.enumerations.Colors;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
@@ -8,7 +10,10 @@ import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.*;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 public class StorageUtil {
@@ -381,30 +386,43 @@ public class StorageUtil {
         return true;
     }
 
-    public boolean saveGame(InGameManager engine) throws IOException {
-        File file = new File("../" + UUID.randomUUID().toString() + ".json");
-        FileWriter writer = new FileWriter(file);
-        writer.write("");
-        JSONObject jo = new JSONObject();
-
-        jo.put("board", engine.getBoard());
-        jo.put("squares", engine.getBoard().getSquares());
-        jo.put("chances", engine.getBoard().getChanceCards());
-        jo.put("comms", engine.getBoard().getCommCards());
-        jo.put("chat", engine.getChat());
-        jo.put("curPlayerId", engine.getCurrentPlayerId());
-        jo.put("log", engine.getLog());
-        jo.put("players", engine.getPlayers());
-        jo.put("propertyCards", engine.getBank().getPropertyCards());
-        jo.put("state", engine.getState());
-        writer.write(jo.toString());
-        writer.close();
+    public boolean saveGame(InGameManager engine){
+        Thread t = new Thread(() -> {
+            File file = new File("../saves/" + LocalDateTime.now() + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(file);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                writer.write("");
+                writer.write(mapper.writeValueAsString(engine));
+                writer.flush();
+                writer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
         System.out.println("Save successful!");
         return true;
     }
 
-    public boolean loadGame(){
-        //TODO: WAITING FOR SAVE GAME STATUS
-        return false;
+    public HashMap<String, ArrayList<String>> getSavedGames(){
+        HashMap<String,ArrayList<String>> returningHash = new HashMap<>();
+        File folder = new File("../saves/");
+        File[] listOfFiles = folder.listFiles();
+        assert listOfFiles != null;
+        for(File f : listOfFiles){
+            System.out.println(f.getAbsolutePath());
+        }
+        return null;
+    }
+
+    public boolean loadGame(String path, InGameManager innerEngine) throws IOException {
+        File file = new File(path);
+        ObjectMapper mapper = new ObjectMapper();
+        InGameManager manager = mapper.readValue(file, InGameManager.class);
+        innerEngine.setInstance(manager);
+        return true;
     }
 }
