@@ -393,7 +393,6 @@ public class StorageUtil {
     }
 
     public boolean saveGame(InGameManager engine){
-
         Thread t = new Thread(() -> {
             LocalDateTime date = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
@@ -427,9 +426,21 @@ public class StorageUtil {
         File[] listOfFiles = folder.listFiles();
         assert listOfFiles != null;
         for(File f : listOfFiles){
-            System.out.println(f.getPath());
+            String filePath = f.getPath();
+            int dateStartIndex = filePath.indexOf("/", filePath.indexOf("/") + 1) + 1;
+            int firstSeperatorIndex = filePath.indexOf("_");
+            int secondSeperatorIndex = filePath.indexOf("_", firstSeperatorIndex + 1);
+            int dotIndex = filePath.indexOf(".", secondSeperatorIndex);
+            String gameDate = filePath.substring(dateStartIndex, firstSeperatorIndex);
+            String gameMode = filePath.substring(firstSeperatorIndex + 1, secondSeperatorIndex);
+            String gameTheme = filePath.substring(secondSeperatorIndex + 1, dotIndex);
+            ArrayList<String> valueArray = new ArrayList<>();
+            valueArray.add(gameDate);
+            valueArray.add(gameMode);
+            valueArray.add(gameTheme);
+            returningHash.put(filePath, valueArray);
         }
-        return null;
+        return returningHash;
     }
 
     public boolean loadGame(String path) throws IOException {
@@ -456,8 +467,6 @@ public class StorageUtil {
         im.setPlayers(dm.getPlayers());
         im.setState(dm.getState());
         im.setTheme(dm.getTheme());
-
-
         return true;
     }
 }

@@ -48,12 +48,10 @@ public class Main extends Application {
         FirebaseUtil util = FirebaseUtil.getInstance();
         util.initGameList();
         //musicManager = MusicManager.getInstance();
-        //launch(args);
+        // launch(args);
         StorageUtil su = new StorageUtil();
+        //su.getSavedGames();
         su.getSavedGames();
-
-
-
     }
 
 }
