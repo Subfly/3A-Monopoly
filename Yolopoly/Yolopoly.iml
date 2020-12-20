@@ -22,6 +22,8 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-media:15" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-media:win:15" level="project" />
     <orderEntry type="library" name="Maven: org.json:json:20201115" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.mail:javax.mail:1.6.1" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: com.google.firebase:firebase-admin:7.1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.api-client:google-api-client:1.30.10" level="project" />
     <orderEntry type="library" name="Maven: com.google.http-client:google-http-client-jackson2:1.36.0" level="project" />
