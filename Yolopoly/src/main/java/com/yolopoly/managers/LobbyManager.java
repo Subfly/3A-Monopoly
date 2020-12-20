@@ -32,6 +32,10 @@ public class LobbyManager {
 
     public LobbyManager(){}
 
+    public void setInstance(LobbyManager lm){
+        middleEngine = lm;
+    }
+
     private LobbyManager(int playerCount) {
         this.playerArrayList = new ArrayList<>();
         this.admin = new Player(adminDummyName, true);

@@ -67,6 +67,7 @@ public class Player {
     }
 
     public void setLoan(int loan) {
+        this.addMoney(Constants.CURRENCY_NAMES[0], loan);
         this.loan = loan;
     }
 
@@ -230,6 +231,7 @@ public class Player {
         if (doublesCount == 3) {
             this.setThreeTimesDoubled(true);
             this.setInJail(true); // doubles three times, go to jail
+            this.resetDoublesCount();
         }
         return true;
     }

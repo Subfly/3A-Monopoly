@@ -1,5 +1,8 @@
 package com.yolopoly.managers;
 
+import com.yolopoly.service.EmailClient;
+
+import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -10,9 +13,19 @@ public class MainMenuManager {
     //Variables
     private LobbyManager lobbyManager;
     private String hosterNick;
+    private boolean nickSet;
 
     //Constructor
     private MainMenuManager() {
+        nickSet = false;
+    }
+
+    public boolean isNickSet() {
+        return nickSet;
+    }
+
+    public void setNickSet(boolean nickSet) {
+        this.nickSet = nickSet;
     }
 
     public static MainMenuManager getInstance(){
@@ -23,6 +36,7 @@ public class MainMenuManager {
     }
 
     public void setHosterNick(String hosterNick){
+        nickSet = true;
         this.hosterNick = hosterNick;
     }
 
@@ -37,8 +51,29 @@ public class MainMenuManager {
     public void multiPlayGame(){}
 
     public File getHelp(){return null;}
-    public ArrayList<Integer> getSettings(){return null;}
-    public boolean setSettings(){return false;}
+
+    public ArrayList<Integer> getSettings(){
+        ArrayList<Integer> values = new ArrayList<>();
+        int backgroundVolume = MusicManager.getInstance().getVolume();
+        values.add(backgroundVolume);
+        int effectVolume = EffectManager.getInstance().getVolume();
+        values.add(effectVolume);
+        return values;
+    }
+    public boolean setSettings(int backgroundValue, int effectValue){
+        if (backgroundValue != -1)
+            MusicManager.getInstance().setVolume(backgroundValue);
+        if (effectValue != -1)
+            EffectManager.getInstance().setVolume(effectValue);
+        return true;
+    }
+
+    public void handleFeedback(String playerEmail, String playerMessage) throws MessagingException {
+        EmailClient.sendMailToPlayer(playerEmail);
+        EmailClient.sendMailToSelf(playerEmail, playerMessage);
+    }
+
     public File getCredits(){return null;}
+
     public boolean quit(){return false;}
 }

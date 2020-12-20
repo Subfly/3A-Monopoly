@@ -1,14 +1,25 @@
 package com.yolopoly.storage;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yolopoly.enumerations.Colors;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.enumerations.SquareType;
 import com.yolopoly.managers.InGameManager;
+import com.yolopoly.models.bases.GameDataDelegate;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.*;
 import org.json.JSONObject;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class StorageUtil {
@@ -381,30 +392,81 @@ public class StorageUtil {
         return true;
     }
 
-    public boolean saveGame(InGameManager engine) throws IOException {
-        File file = new File("../" + UUID.randomUUID().toString() + ".json");
-        FileWriter writer = new FileWriter(file);
-        writer.write("");
-        JSONObject jo = new JSONObject();
+    public boolean saveGame(InGameManager engine){
+        Thread t = new Thread(() -> {
+            LocalDateTime date = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
+            String formatDateTime = date.format(formatter);
 
-        jo.put("board", engine.getBoard());
-        jo.put("squares", engine.getBoard().getSquares());
-        jo.put("chances", engine.getBoard().getChanceCards());
-        jo.put("comms", engine.getBoard().getCommCards());
-        jo.put("chat", engine.getChat());
-        jo.put("curPlayerId", engine.getCurrentPlayerId());
-        jo.put("log", engine.getLog());
-        jo.put("players", engine.getPlayers());
-        jo.put("propertyCards", engine.getBank().getPropertyCards());
-        jo.put("state", engine.getState());
-        writer.write(jo.toString());
-        writer.close();
-        System.out.println("Save successful!");
+            System.out.println(formatDateTime);
+
+            File file = new File("../saves/" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
+            FileWriter writer = null;
+            try {
+                writer = new FileWriter(file);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                writer.write("");
+                writer.write(mapper.writeValueAsString(engine));
+                writer.flush();
+                writer.close();
+                System.out.println("Save successful!");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        t.start();
+
         return true;
     }
 
-    public boolean loadGame(){
-        //TODO: WAITING FOR SAVE GAME STATUS
-        return false;
+    public HashMap<String, ArrayList<String>> getSavedGames(){
+        HashMap<String,ArrayList<String>> returningHash = new HashMap<>();
+        File folder = new File("../saves/");
+        File[] listOfFiles = folder.listFiles();
+        assert listOfFiles != null;
+        for(File f : listOfFiles){
+            String filePath = f.getPath();
+            int dateStartIndex = filePath.indexOf("/", filePath.indexOf("/") + 1) + 1;
+            int firstSeperatorIndex = filePath.indexOf("_");
+            int secondSeperatorIndex = filePath.indexOf("_", firstSeperatorIndex + 1);
+            int dotIndex = filePath.indexOf(".", secondSeperatorIndex);
+            String gameDate = filePath.substring(dateStartIndex, firstSeperatorIndex);
+            String gameMode = filePath.substring(firstSeperatorIndex + 1, secondSeperatorIndex);
+            String gameTheme = filePath.substring(secondSeperatorIndex + 1, dotIndex);
+            ArrayList<String> valueArray = new ArrayList<>();
+            valueArray.add(gameDate);
+            valueArray.add(gameMode);
+            valueArray.add(gameTheme);
+            returningHash.put(filePath, valueArray);
+        }
+        return returningHash;
+    }
+
+    public boolean loadGame(String path) throws IOException {
+        File file = new File(path);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+
+        GameDataDelegate dm = mapper.readValue(file, GameDataDelegate.class);
+        InGameManager im = InGameManager.getInstance();
+        im.setAuctionPropertyIndex(dm.getAuctionPropertyIndex());
+        im.setBank(dm.getBank());
+        im.setBoard(dm.getBoard());
+        im.setBrokenPlayersMoneyHash(dm.getBrokenPlayersMoneyHash());
+        im.setChat(dm.getChat());
+        im.setCurrentBid(dm.getCurrentBid());
+        im.setCurrentHighestBidName(dm.getCurrentHighestBidName());
+        im.setCurrentPlayerAuctioning(dm.getCurrentPlayerAuctioning());
+        im.setCurrentPlayerId(dm.getCurrentPlayerId());
+        im.setDice(dm.getDice());
+        im.setGameMode(dm.getGameMode());
+        im.setLog(dm.getLog());
+        im.setParticipants(dm.getParticipants());
+        im.setPlayers(dm.getPlayers());
+        im.setState(dm.getState());
+        im.setTheme(dm.getTheme());
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package com.yolopoly.controllers;
 
+import com.google.firebase.messaging.WebpushNotification;
 import com.yolopoly.Main;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
@@ -7,11 +8,16 @@ import com.yolopoly.managers.InGameManager;
 import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.managers.MainMenuManager;
 import com.yolopoly.models.bases.Player;
+import com.yolopoly.storage.FirebaseUtil;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
@@ -44,6 +50,10 @@ public class MiddleController {
     Label test_label;
     @FXML
     GridPane player_list_grid;
+    @FXML
+    AnchorPane in_game_menu, settings;
+    @FXML
+    TextArea set_name;
 
     ImageView[] theme_buttons;
     ImageView[] lobby_size_buttons;
@@ -72,6 +82,13 @@ public class MiddleController {
         oe = MainMenuManager.getInstance();
         ie = InGameManager.getInstance();
 
+        if (me.isOnline()){
+            System.out.println("online yes");
+        }
+        else {
+            System.out.println("not online");
+        }
+
         this.nickname = oe.getHosterNick();
         this.player_count = 1;
         this.bot_count = 0;
@@ -80,6 +97,7 @@ public class MiddleController {
         me.getAdmin().setPawnIndex(1);
 
         player_list_grid = new GridPane();
+
     }
 
     @FXML
@@ -91,6 +109,7 @@ public class MiddleController {
         kick_player_buttons = new ImageView[]{kick_player_1, kick_player_2, kick_player_3, kick_player_4, kick_player_5, kick_player_6, kick_player_7};
         pawn_players = new ImageView[]{pawn_player_0, pawn_player_1, pawn_player_2, pawn_player_3, pawn_player_4, pawn_player_5, pawn_player_6, pawn_player_7};
         availablePawns = new ArrayList<>();
+        //set_name = new TextArea();
 
         me.setGameTheme(GameTheme.vanilla);
         me.setGameMode(GameMode.vanilla);
@@ -132,22 +151,32 @@ public class MiddleController {
     }
 
     @FXML
-    private void add_bot(){
+    private void add_player(MouseEvent e){
         if (me.addBot()){
-            Player tmpBot = me.getPlayerArrayList().get(player_count);
+            String bot_player = ((ImageView)e.getSource()).getId();
+            Player tmpPlayer = me.getPlayerArrayList().get(player_count);
+            if (bot_player.equals("add_player")){
+                String name = set_name.getText();
+                set_name.setText("");
+                tmpPlayer.setName(name);
+                tmpPlayer.setHuman(true);
+                set_log("Player " + name + " has been added");
+            }
+            else {
+                set_log("Bot has been added");
+            }
             int randomIndexForBotPawnFalan = (int)(Math.random()*(8 - player_count));
-            tmpBot.setPawnIndex(availablePawns.get(randomIndexForBotPawnFalan));
+            tmpPlayer.setPawnIndex(availablePawns.get(randomIndexForBotPawnFalan));
             set_image_helper(pawn_players[player_count], LOBBY_PAWNS, "pawn-" + availablePawns.get(randomIndexForBotPawnFalan));
             availablePawns.remove(randomIndexForBotPawnFalan);
             player_count++;
             bot_count++;
             set_lobby_size_min();
             changePlayerList();
-            set_log("Bot has been added");
             setAvailablePawnsGUI();
         }
         else {
-            set_log("Max player! Cannot add bot!");
+            set_log("Max player! Cannot add!");
         }
     }
 
@@ -261,8 +290,36 @@ public class MiddleController {
     }
 
     @FXML
-    public void closeButtonPressed() throws Exception{
-        Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
+    public void exit_pressed(){
+        in_game_menu.setVisible(true);
+        in_game_menu.setDisable(false);
+    }
+
+    @FXML
+    public void exit_yes_no(MouseEvent e) throws Exception{
+        String pressed = e.getPickResult().getIntersectedNode().getId();
+        if (pressed.equals("yes")){
+            Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
+        }
+        else {
+            in_game_menu.setVisible(false);
+            in_game_menu.setDisable(true);
+        }
+    }
+
+    @FXML
+    public void settings_pressed(){
+        settings.setDisable(false);
+        settings.setVisible(true);
+    }
+
+    @FXML
+    public void save_settings(){
+
+        //TODO save settings
+
+        settings.setDisable(true);
+        settings.setVisible(false);
     }
 
     @FXML
