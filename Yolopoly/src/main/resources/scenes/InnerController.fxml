@@ -46,52 +46,82 @@
                 <Image url="@sources/Action.png" />
             </image>
         </ImageView>
+      <Label fx:id="currency_try" layoutX="1720.0" layoutY="280.0" onMouseClicked="#change_currency" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="currency_eur" layoutX="1720.0" layoutY="200.0" onMouseClicked="#change_currency" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="currency_usd" layoutX="1720.0" layoutY="240.0" onMouseClicked="#change_currency" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="multiplier_label" layoutX="1720.0" layoutY="160.0" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <ImageView fx:id="loan_button" fitHeight="42.0" fitWidth="115.0" layoutX="1720.0" layoutY="381.0" onMouseClicked="#loan_action" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/loan_button.png" />
+         </image>
+      </ImageView>
+      <ImageView fx:id="chance_button" fitHeight="42.0" fitWidth="115.0" layoutX="1720.0" layoutY="324.0" onMouseClicked="#get_chance" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@sources/bankman/chance_button.png" />
+         </image>
+      </ImageView>
         <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#closeButtonPressed" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/close-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true" onMouseClicked="#saveGame">
             <image>
                 <Image url="@sources/settings-button.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index1" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index1" fitHeight="60.0" fitWidth="60.0" layoutX="1115.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index2" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1185.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index2" fitHeight="60.0" fitWidth="60.0" layoutX="1185.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index3" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1255.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index3" fitHeight="60.0" fitWidth="60.0" layoutX="1255.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index4" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1325.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index4" fitHeight="60.0" fitWidth="60.0" layoutX="1325.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index5" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1395.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index5" fitHeight="60.0" fitWidth="60.0" layoutX="1395.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index6" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1465.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index6" fitHeight="60.0" fitWidth="60.0" layoutX="1465.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index7" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1535.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index7" fitHeight="60.0" fitWidth="60.0" layoutX="1535.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
         </ImageView>
-        <ImageView fx:id="player_index8" onMouseClicked="#set_deck" fitHeight="60.0" fitWidth="60.0" layoutX="1605.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="player_index8" fitHeight="60.0" fitWidth="60.0" layoutX="1605.0" layoutY="85.0" onMouseClicked="#set_deck" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/circle.png" />
             </image>
@@ -270,25 +300,120 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
+      <AnchorPane fx:id="auction_anchor" layoutX="50.0" layoutY="50.0" prefHeight="980.0" prefWidth="980.0">
+         <children>
+            <ImageView fitHeight="980.0" fitWidth="980.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/auction-board.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_property_card" fitHeight="400.0" fitWidth="240.0" layoutX="370.0" layoutY="125.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fitHeight="100.0" fitWidth="250.0" layoutX="80.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/empty-field.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="current_bid" layoutX="165.0" layoutY="330.0" text="Label" textFill="#56bf84">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+            <ImageView fitHeight="100.0" fitWidth="250.0" layoutX="650.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/empty-field.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="property_price" layoutX="740.0" layoutY="330.0" text="Label" textFill="#56bf84">
+               <font>
+                  <Font name="System Bold" size="30.0" />
+               </font>
+            </Label>
+            <ImageView fx:id="option_100" fitHeight="100.0" fitWidth="250.0" layoutX="80.0" layoutY="565.0" onMouseClicked="#make_action" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/option-100.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="option_250" fitHeight="100.0" fitWidth="250.0" layoutX="365.0" layoutY="565.0" onMouseClicked="#make_action" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/option-250.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="option_500" fitHeight="100.0" fitWidth="250.0" layoutX="650.0" layoutY="565.0" onMouseClicked="#make_action" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/option-500.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="option_pass" fitHeight="100.0" fitWidth="250.0" layoutX="220.0" layoutY="705.0" onMouseClicked="#make_action" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/auction-pass.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="option_quit" fitHeight="100.0" fitWidth="250.0" layoutX="510.0" layoutY="705.0" onMouseClicked="#make_action" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/auction/auction-quit.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index1" fitHeight="60.0" fitWidth="60.0" layoutX="215.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index2" fitHeight="60.0" fitWidth="60.0" layoutX="285.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index3" fitHeight="60.0" fitWidth="60.0" layoutX="355.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index4" fitHeight="60.0" fitWidth="60.0" layoutX="425.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index5" fitHeight="60.0" fitWidth="60.0" layoutX="495.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index6" fitHeight="60.0" fitWidth="60.0" layoutX="565.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index7" fitHeight="60.0" fitWidth="60.0" layoutX="635.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="auction_index8" fitHeight="60.0" fitWidth="60.0" layoutX="705.0" layoutY="875.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/circle.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
       <AnchorPane fx:id="deck_card_field" layoutX="1115.0" layoutY="280.0" prefHeight="200.0" prefWidth="570.0">
          <children>
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c1" fitHeight="200.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c2" fitHeight="200.0" fitWidth="120.0" layoutX="20.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c3" fitHeight="200.0" fitWidth="120.0" layoutX="40.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c4" fitHeight="200.0" fitWidth="120.0" layoutX="60.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c5" fitHeight="200.0" fitWidth="120.0" layoutX="80.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c6" fitHeight="200.0" fitWidth="120.0" layoutX="100.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c7" fitHeight="200.0" fitWidth="120.0" layoutX="120.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c8" fitHeight="200.0" fitWidth="120.0" layoutX="140.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c9" fitHeight="200.0" fitWidth="120.0" layoutX="160.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c10" fitHeight="200.0" fitWidth="120.0" layoutX="180.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c11" fitHeight="200.0" fitWidth="120.0" layoutX="200.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c12" fitHeight="200.0" fitWidth="120.0" layoutX="220.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c13" fitHeight="200.0" fitWidth="120.0" layoutX="240.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c14" fitHeight="200.0" fitWidth="120.0" layoutX="260.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c15" fitHeight="200.0" fitWidth="120.0" layoutX="280.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c16" fitHeight="200.0" fitWidth="120.0" layoutX="300.0" pickOnBounds="true" preserveRatio="true" />
-             <ImageView onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" fx:id="d_c17" fitHeight="200.0" fitWidth="120.0" layoutX="320.0" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c1" fitHeight="200.0" fitWidth="120.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c2" fitHeight="200.0" fitWidth="120.0" layoutX="20.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c3" fitHeight="200.0" fitWidth="120.0" layoutX="40.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c4" fitHeight="200.0" fitWidth="120.0" layoutX="60.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c5" fitHeight="200.0" fitWidth="120.0" layoutX="80.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c6" fitHeight="200.0" fitWidth="120.0" layoutX="100.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c7" fitHeight="200.0" fitWidth="120.0" layoutX="120.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c8" fitHeight="200.0" fitWidth="120.0" layoutX="140.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c9" fitHeight="200.0" fitWidth="120.0" layoutX="160.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c10" fitHeight="200.0" fitWidth="120.0" layoutX="180.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c11" fitHeight="200.0" fitWidth="120.0" layoutX="200.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c12" fitHeight="200.0" fitWidth="120.0" layoutX="220.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c13" fitHeight="200.0" fitWidth="120.0" layoutX="240.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c14" fitHeight="200.0" fitWidth="120.0" layoutX="260.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c15" fitHeight="200.0" fitWidth="120.0" layoutX="280.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c16" fitHeight="200.0" fitWidth="120.0" layoutX="300.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
+             <ImageView fx:id="d_c17" fitHeight="200.0" fitWidth="120.0" layoutX="320.0" onMouseEntered="#show_decks_card" onMouseExited="#clear_decks_card" pickOnBounds="true" preserveRatio="true" />
 <!--             <ImageView fx:id="d_c18" fitHeight="200.0" fitWidth="120.0" layoutX="340.0" pickOnBounds="true" preserveRatio="true" />-->
 <!--             <ImageView fx:id="d_c19" fitHeight="200.0" fitWidth="120.0" layoutX="360.0" pickOnBounds="true" preserveRatio="true" />-->
 <!--             <ImageView fx:id="d_c20" fitHeight="200.0" fitWidth="120.0" layoutX="380.0" pickOnBounds="true" preserveRatio="true" />-->
