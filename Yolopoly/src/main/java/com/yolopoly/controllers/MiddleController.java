@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
 import java.io.File;
@@ -44,6 +45,8 @@ public class MiddleController {
     Label test_label;
     @FXML
     GridPane player_list_grid;
+    @FXML
+    AnchorPane in_game_menu, settings;
 
     ImageView[] theme_buttons;
     ImageView[] lobby_size_buttons;
@@ -261,8 +264,36 @@ public class MiddleController {
     }
 
     @FXML
-    public void closeButtonPressed() throws Exception{
-        Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
+    public void exit_pressed(){
+        in_game_menu.setVisible(true);
+        in_game_menu.setDisable(false);
+    }
+
+    @FXML
+    public void exit_yes_no(MouseEvent e) throws Exception{
+        String pressed = e.getPickResult().getIntersectedNode().getId();
+        if (pressed.equals("yes")){
+            Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
+        }
+        else {
+            in_game_menu.setVisible(false);
+            in_game_menu.setDisable(true);
+        }
+    }
+
+    @FXML
+    public void settings_pressed(){
+        settings.setDisable(false);
+        settings.setVisible(true);
+    }
+
+    @FXML
+    public void save_settings(){
+
+        //TODO save settings
+
+        settings.setDisable(true);
+        settings.setVisible(false);
     }
 
     @FXML

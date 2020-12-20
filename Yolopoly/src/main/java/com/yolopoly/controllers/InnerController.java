@@ -1,5 +1,6 @@
 package com.yolopoly.controllers;
 
+import com.yolopoly.Main;
 import com.yolopoly.enumerations.DrawableCardType;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.SquareType;
@@ -87,6 +88,9 @@ public class InnerController {
 
     @FXML
     ImageView d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18;//,d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30;
+
+    @FXML
+    AnchorPane in_game_menu, settings;
 
     ImageView[] deck_card_list;
     ImageView[] pawns;
@@ -1156,19 +1160,51 @@ public class InnerController {
         iv.setImage(image);
     }
 
+//    @FXML
+//    public void saveGame(){
+//        //TODO: SAİDCAN BURAYI DOĞRU ŞEKİLDE EDİTLE
+//        igm.saveAndExit();
+//        try{
+//            closeButtonPressed();
+//        }catch (Exception e){
+//            System.out.println(e.getMessage());
+//        }
+//    }
+
     @FXML
-    public void closeButtonPressed() throws Exception {
-        changeScreen("src/main/resources/scenes/OuterController.fxml");
+    public void exit_pressed(){
+        in_game_menu.setVisible(true);
+        in_game_menu.setDisable(false);
     }
 
     @FXML
-    public void saveGame(){
-        //TODO: SAİDCAN BURAYI DOĞRU ŞEKİLDE EDİTLE
-        igm.saveAndExit();
-        try{
-            closeButtonPressed();
-        }catch (Exception e){
-            System.out.println(e.getMessage());
+    public void exit_save_back(MouseEvent e) throws Exception{
+        String pressed = e.getPickResult().getIntersectedNode().getId();
+        if (pressed.equals("quit")){
+            Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
         }
+        else if (pressed.equals("back")){
+            in_game_menu.setVisible(false);
+            in_game_menu.setDisable(true);
+        }
+        else {
+            igm.saveAndExit();
+            Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
+        }
+    }
+
+    @FXML
+    public void settings_pressed(){
+        settings.setDisable(false);
+        settings.setVisible(true);
+    }
+
+    @FXML
+    public void save_settings(){
+
+        //TODO save settings
+
+        settings.setDisable(true);
+        settings.setVisible(false);
     }
 }

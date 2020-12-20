@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -54,12 +55,12 @@
             <Image url="@sources/ready-button.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#closeButtonPressed" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#exit_pressed" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/close-button.png" />
          </image>
       </ImageView>
-      <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" onMouseClicked="#settings_pressed" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/settings-button.png" />
          </image>
@@ -275,5 +276,50 @@
             </AnchorPane>
         </content>
       </ScrollPane>
+      <AnchorPane fx:id="in_game_menu" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+         <children>
+            <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/background-masked.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="200.0" fitWidth="600.0" layoutX="660.0" layoutY="440.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/in-game-menu/in-game-settings-field.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="yes" onMouseClicked="#exit_yes_no" fitHeight="100.0" fitWidth="250.0" layoutX="690.0" layoutY="510.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/in-game-menu/yes.png" />
+               </image>
+            </ImageView>
+            <ImageView fx:id="no" onMouseClicked="#exit_yes_no" fitHeight="100.0" fitWidth="250.0" layoutX="980.0" layoutY="510.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/in-game-menu/no.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <AnchorPane id="settings" fx:id="settings" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+         <children>
+            <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/background-masked.png" />
+               </image>
+            </ImageView>
+            <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="660.0" layoutY="340.0" pickOnBounds="true" preserveRatio="true">
+               <image>
+                  <Image url="@sources/settings/settings-field.png" />
+               </image>
+            </ImageView>
+            <Slider fx:id="music_slider" blockIncrement="0.1" layoutX="860.0" layoutY="530.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+            <Slider fx:id="sound_slider" blockIncrement="0.1" layoutX="860.0" layoutY="430.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+            <ImageView id="ok" onMouseClicked="#save_settings" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="600.0" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+               <image>
+                  <Image url="@sources/settings/save-button.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
    </children>
 </AnchorPane>
