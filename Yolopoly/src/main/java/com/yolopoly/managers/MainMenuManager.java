@@ -1,5 +1,8 @@
 package com.yolopoly.managers;
 
+import com.yolopoly.service.EmailClient;
+
+import javax.mail.MessagingException;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -39,6 +42,10 @@ public class MainMenuManager {
     public File getHelp(){return null;}
     public ArrayList<Integer> getSettings(){return null;}
     public boolean setSettings(){return false;}
+    public void handleFeedback(String playerEmail, String playerMessage) throws MessagingException {
+        EmailClient.sendMailToPlayer(playerEmail);
+        EmailClient.sendMailToSelf(playerEmail, playerMessage);
+    }
     public File getCredits(){return null;}
     public boolean quit(){return false;}
 }
