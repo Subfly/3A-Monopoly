@@ -3,7 +3,7 @@ package com.yolopoly.models.bases;
 public class Currency {
     private String name;
     private double rate;
-
+    public Currency(){}
     public Currency(String name, double rate) {
         this.name = name;
         this.rate = rate;

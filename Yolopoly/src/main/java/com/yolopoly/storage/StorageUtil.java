@@ -1,6 +1,8 @@
 package com.yolopoly.storage;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.yolopoly.enumerations.Colors;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
@@ -13,7 +15,10 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class StorageUtil {
@@ -388,7 +393,13 @@ public class StorageUtil {
 
     public boolean saveGame(InGameManager engine){
         Thread t = new Thread(() -> {
-            File file = new File("../saves/" + LocalDateTime.now() + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
+            LocalDateTime date = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
+            String formatDateTime = date.format(formatter);
+
+            System.out.println(formatDateTime);
+
+            File file = new File("../" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
             FileWriter writer = null;
             try {
                 writer = new FileWriter(file);
@@ -398,12 +409,13 @@ public class StorageUtil {
                 writer.write(mapper.writeValueAsString(engine));
                 writer.flush();
                 writer.close();
+                System.out.println("Save successful!");
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
         t.start();
-        System.out.println("Save successful!");
+
         return true;
     }
 
@@ -421,6 +433,8 @@ public class StorageUtil {
     public boolean loadGame(String path, InGameManager innerEngine) throws IOException {
         File file = new File(path);
         ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         InGameManager manager = mapper.readValue(file, InGameManager.class);
         innerEngine.setInstance(manager);
         return true;

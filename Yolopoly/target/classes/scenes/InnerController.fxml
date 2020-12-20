@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -76,12 +77,12 @@
             <Image url="@sources/bankman/chance_button.png" />
          </image>
       </ImageView>
-        <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#closeButtonPressed" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="30.0" layoutX="1805.0" layoutY="85.0" onMouseClicked="#exit_pressed" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/close-button.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fitHeight="30.0" fitWidth="36.0" layoutX="1744.0" layoutY="85.0" onMouseClicked="#settings_pressed" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/settings-button.png" />
             </image>
@@ -458,6 +459,56 @@
                 <ImageView fx:id="roll_option" fitHeight="100.0" fitWidth="250.0" layoutX="975.0" layoutY="540.0" onMouseClicked="#rolldiceoption" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@sources/jail-controller/jail_roll.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+        <AnchorPane fx:id="in_game_menu" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+            <children>
+                <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/background-masked.png" />
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="500.0" fitWidth="600.0" layoutX="660.0" layoutY="290.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/in-game-exit-menu/exit-menu-field.png" />
+                    </image>
+                </ImageView>
+                <ImageView fx:id="back" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="340.0" onMouseClicked="#exit_save_back" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/in-game-exit-menu/back-to-game.png" />
+                    </image>
+                </ImageView>
+                <ImageView fx:id="save" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="491.0" onMouseClicked="#exit_save_back" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/in-game-exit-menu/save-quit.png" />
+                    </image>
+                </ImageView>
+                <ImageView fx:id="quit" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="637.0" onMouseClicked="#exit_save_back" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/in-game-exit-menu/quit.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </AnchorPane>
+        <AnchorPane id="settings" fx:id="settings" disable="true" prefHeight="1080.0" prefWidth="1920.0" visible="false">
+            <children>
+                <ImageView fitHeight="1080.0" fitWidth="1920.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/background-masked.png" />
+                    </image>
+                </ImageView>
+                <ImageView fitHeight="400.0" fitWidth="600.0" layoutX="660.0" layoutY="340.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@sources/settings/settings-field.png" />
+                    </image>
+                </ImageView>
+                <Slider fx:id="music_slider" blockIncrement="0.1" layoutX="860.0" layoutY="530.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+                <Slider fx:id="sound_slider" blockIncrement="0.1" layoutX="860.0" layoutY="430.0" majorTickUnit="0.5" max="1.0" minorTickCount="1" prefHeight="50.0" prefWidth="300.0" />
+                <ImageView id="ok" fitHeight="100.0" fitWidth="250.0" layoutX="835.0" layoutY="600.0" onMouseClicked="#save_settings" pickOnBounds="true" preserveRatio="true" styleClass="shadowed">
+                    <image>
+                        <Image url="@sources/settings/save-button.png" />
                     </image>
                 </ImageView>
             </children>
