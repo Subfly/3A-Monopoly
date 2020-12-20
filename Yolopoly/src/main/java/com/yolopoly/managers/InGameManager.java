@@ -121,7 +121,7 @@ public class InGameManager {
             int countPlayersColor = countPlayersColor(paidToPlayer, square);
             int countBoardColor = board.countColors(square);
             rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
-            if (countBoardColor == countPlayersColor){
+            if (countBoardColor == countPlayersColor && square.getLevel() == 0){
                 rentAmount = rentAmount * 2;
                 System.out.println(square + " iki kat kira");
             }
