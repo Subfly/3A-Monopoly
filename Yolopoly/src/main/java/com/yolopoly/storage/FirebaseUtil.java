@@ -111,17 +111,16 @@ public class FirebaseUtil {
         String hosterNick = gameListData.get(selectedIndex).getAdmin();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference reference = database.getReference("middle").child(hosterNick).child("playerCount");
-        reference.addValueEventListener(new ValueEventListener() {
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 playerCount = dataSnapshot.getValue(Integer.class);
-                playerCount++;
+                ++playerCount;
                 reference.setValue(playerCount, (databaseError, databaseReference) -> {
                             System.out.println("count++");
                         }
                 );
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
