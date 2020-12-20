@@ -239,7 +239,7 @@ public class InGameManager {
         bot.resetDoublesCount();
     }
 
-    public int makeDecision(int diceResult, boolean isDouble){
+    public int auctionMakeDecision(){
         if(state == GameState.Auction){
             int decision = (int)(Math.random() * 100);
             if(decision < 15){
@@ -259,13 +259,18 @@ public class InGameManager {
                 return -104;
             }
         }
+        else
+            return 0;
+    }
+
+    public int makeDecision(int diceResult, boolean isDouble){
 
         double multiplier = 1;
 
         if (this.gameMode ==  GameMode.bankman) {
             int decision = (int)(Math.random() * 2 + 1);
             if(decision == 1){
-                multiplier = this.generateChanceMultiplier(diceResult);
+                multiplier = this.generateChanceMultiplier();
             }
         }
 
@@ -437,7 +442,7 @@ public class InGameManager {
     //**
     // Private Functions
     //**
-    private String parser(int amount){
+    public String parser(int amount){
         int million = 0;
         int remainder = 0;
         int thousand = 0;
@@ -747,11 +752,11 @@ public class InGameManager {
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
         PropertyCard lastSquareMadeSomethingPropertyCard = getSpecificProperty(lastSquareMadeSomething.getId());
-//        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-//        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1)){
-//            createAuction();
-//            return 4;
-//        }
+        boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
+        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1)){
+            createAuction();
+            return 4;
+        }
 
         this.currentPlayerId += 1;
 
@@ -848,12 +853,19 @@ public class InGameManager {
                     participants.remove(p);
                 }
             }
+            this.currentPlayerAuctioning += 1;
+            if(this.currentPlayerAuctioning >= participants.size()){
+                this.currentPlayerAuctioning = 0;
+            }
         }else{
-            addToLog("passed this turn", participants.get(currentPlayerAuctioning).getName());
-        }
-        this.currentPlayerAuctioning += 1;
-        if(this.currentPlayerAuctioning > participants.size()){
-            this.currentPlayerAuctioning = 0;
+            this.currentPlayerAuctioning += 1;
+            if(this.currentPlayerAuctioning >= participants.size()){
+                this.currentPlayerAuctioning = 0;
+            }
+            if (auctionPropertyIndex != 0){
+                System.out.println(currentPlayerAuctioning + " ingameflaan");
+                addToLog("passed this turn", participants.get(currentPlayerAuctioning).getName());
+            }
         }
     }
 
@@ -873,23 +885,21 @@ public class InGameManager {
     }
 
     public boolean endAuction(){
+        System.out.println("buraya giro");
         if(checkAuctionStatus()){
+            System.out.println("buraya da giro");
             Player currentPlayer = participants.get(currentPlayerAuctioning);
             Square square = board.getSpecificSquare(auctionPropertyIndex);
-            PropertyCard card = bank.getPropertyCards().get(square.getId());
+            PropertyCard card = getSpecificProperty(square.getId());
 
             //Make changes on data
-            card.setOwnedBy(currentPlayerAuctioning);
+            card.setOwnedBy(players.indexOf(currentPlayer));
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
             bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
             addToLog("bought property for: " + parser(this.currentBid), participants.get(currentPlayerAuctioning).getName());
 
             //Continue game in linear from the next player
-            this.currentPlayerId += 1;
-            if(this.currentPlayerId > players.size() - 1){
-                this.currentPlayerId = 0;
-            }
             this.state = GameState.Linear;
             return true;
         }
@@ -1277,7 +1287,7 @@ public class InGameManager {
         return this.bank.exchangeMoney(player, fromCurrency, toCurrency, amount);
     }
 
-    public double generateChanceMultiplier(int diceResult) {
+    public double generateChanceMultiplier() {
         double result;
         int randomResult = (int) ((Math.random() * (12 - 1)) + 1);
         if (randomResult >= 1 && randomResult <= 3) {

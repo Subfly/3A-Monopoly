@@ -1,6 +1,7 @@
 package com.yolopoly.controllers;
 
 import com.yolopoly.enumerations.DrawableCardType;
+import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.SquareType;
 import com.yolopoly.managers.InGameManager;
 import com.yolopoly.managers.LobbyManager;
@@ -67,6 +68,24 @@ public class InnerController {
     ImageView players_pawn;
 
     @FXML
+    AnchorPane auction_anchor;
+
+    @FXML
+    ImageView option_100, option_250, option_500, option_pass, option_quit;
+
+    @FXML
+    ImageView auction_index1, auction_index2, auction_index3, auction_index4, auction_index5, auction_index6, auction_index7, auction_index8, auction_property_card;
+
+    @FXML
+    Label current_bid, property_price;
+
+    @FXML
+    ImageView chance_button, loan_button;
+
+    @FXML
+    Label currency_eur, currency_usd, currency_try, multiplier_label;
+
+    @FXML
     ImageView d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18;//,d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30;
 
     ImageView[] deck_card_list;
@@ -75,6 +94,7 @@ public class InnerController {
     ImageView[] square_bars;
     ArrayList<ImageView> pawnTeam1;
     ArrayList<ImageView> pawnTeam2;
+    ImageView[] auction_indexes;
 
 
     final String LOBBY_SETTINGS = "scenes/sources/lobby-settings/";
@@ -119,6 +139,32 @@ public class InnerController {
         players_name = new Label();
 
         players_pawn = new ImageView();
+
+        option_100 = new ImageView();
+        option_250 = new ImageView();
+        option_500 = new ImageView();
+        option_quit = new ImageView();
+        option_pass = new ImageView();
+
+        auction_index1 = new ImageView();
+        auction_index2 = new ImageView();
+        auction_index3 = new ImageView();
+        auction_index4 = new ImageView();
+        auction_index5 = new ImageView();
+        auction_index6 = new ImageView();
+        auction_index7 = new ImageView();
+        auction_index8 = new ImageView();
+        auction_property_card = new ImageView();
+
+        current_bid = new Label();
+        property_price = new Label();
+
+        loan_button = new ImageView();
+        chance_button = new ImageView();
+
+        currency_eur = new Label();
+        currency_usd = new Label();
+        currency_try = new Label();
     }
 
     ArrayList<ImageView> pawns_of_players;
@@ -141,6 +187,7 @@ public class InnerController {
         pawnTeam2 = new ArrayList<>();
 
         deck_card_list = new ImageView[]{d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18}; //d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30
+        auction_indexes = new ImageView[]{auction_index1,auction_index2,auction_index3,auction_index4,auction_index5,auction_index6,auction_index7,auction_index8};
 
         int tmpIndex = 0;
 
@@ -169,6 +216,8 @@ public class InnerController {
         roll_option.setVisible(false);
         jail_ask.setVisible(false);
 
+        auction_anchor.setVisible(false);
+
         set_turn_GUI();
         initializeSettings();
         update_deck();
@@ -176,6 +225,31 @@ public class InnerController {
         for (ImageView iv :deck_card_list){
             iv.setVisible(false);
         }
+
+        if (igm.getGameMode() != GameMode.bankman){
+            loan_button.setVisible(false);
+            chance_button.setVisible(false);
+
+            currency_eur.setVisible(false);
+            currency_usd.setVisible(false);
+            currency_try.setVisible(false);
+
+            multiplier_label.setVisible(false);
+        }
+        else {
+            loan_button.setVisible(true);
+            chance_button.setVisible(true);
+
+            currency_eur.setVisible(true);
+            currency_usd.setVisible(true);
+            currency_try.setVisible(true);
+
+            multiplier_label.setVisible(true);
+        }
+
+        currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2));
+        currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1));
+        currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(1));
     }
 
     InGameManager igm;
@@ -209,16 +283,177 @@ public class InnerController {
         update_square_info();
     }
 
-    private void end_turn(){
-        turn++;
-        turn = turn % pawns_of_players.size();
-        set_turn_GUI();
-        state_of_bot = 0;
-        igm.endTurn();
+    String last_currency = "try";
 
-        if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
-            can_roll_dice = true;
+    @FXML
+    public void change_currency(MouseEvent e){
+        String currency = e.getPickResult().getIntersectedNode().getId().replace("currency_","");
+
+        switch (currency){
+            case "eur" -> currency = "Euro";
+            case "try" -> currency = "Turkish Lira";
+            case "usd" -> currency = "Monopoly Dollar";
         }
+
+        igm.exchangeCurrency(last_currency, currency, 100000);
+    }
+
+    boolean get_chanced = false;
+    double multiplier = 1;
+
+    @FXML
+    public void get_chance(){
+        if (!get_chanced){
+            multiplier = igm.generateChanceMultiplier();
+            System.out.println(multiplier);
+            get_chanced = true;
+            multiplier_label.setText("X" + multiplier);
+        }
+
+        //show on label
+    }
+
+    boolean loan_taken = false;
+
+    @FXML
+    public void loan_action(){
+        if (!loan_taken){
+            igm.giveLoan(5000000); //TODO decide
+            loan_taken = true;
+            players_money_edit.setText(igm.parser(5000000));
+            update_deck();
+        }
+        else {
+            igm.receiveLoanBackFromPlayer(multiplier);
+            loan_taken = false;
+            players_money_edit.setText("");
+        }
+    }
+
+    boolean did_auction = false;
+
+    private void end_turn(){
+        get_chanced = false;
+        multiplier = 1;
+        multiplier_label.setText("X" + multiplier);
+        int result = igm.endTurn();
+        System.out.println(result + " end turn res");
+
+        if (result == 4){
+            start_auction();
+            did_auction = true;
+        }
+        else {
+            turn++;
+            turn = turn % pawns_of_players.size();
+            set_turn_GUI();
+            state_of_bot = 0;
+            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
+                can_roll_dice = true;
+            }
+            if (did_auction){
+                did_auction = false;
+                play_bot();
+            }
+        }
+        update_deck();
+    }
+
+    public void start_auction(){
+        auction_anchor.setVisible(true);
+        int counter = 0;
+        for (Player p : igm.getParticipants()){
+            int tmp_pawn_index = p.getPawnIndex();
+            System.out.println(LOBBY_PAWNS + tmp_pawn_index + "");
+            set_image_helper(auction_indexes[counter], LOBBY_PAWNS, "pawn-" + tmp_pawn_index + "");
+            counter++;
+        }
+        current_bid.setText(igm.parser(igm.getCurrentBid()));
+        property_price.setText(igm.getSpecificProperty(igm.getAuctionPropertyIndex()).getCost()+"");
+        set_image_helper(auction_property_card, "/scenes/sources/property-cards/", "index" + igm.getAuctionPropertyIndex());
+        auction_turn_player = true;
+    }
+
+    int auction_turn_index = 0;
+
+    public void update_auction(){
+        current_bid.setText(igm.parser(igm.getCurrentBid()));
+    }
+
+    public void reduce_participant(){
+        int counter = 0;
+        for (ImageView iv : auction_indexes){
+            if (counter >= igm.getParticipants().size()){
+                iv.setVisible(false);
+            }
+            counter++;
+        }
+        counter = 0;
+        for (Player p : igm.getParticipants()){
+            int tmp_pawn_index = p.getPawnIndex();
+            set_image_helper(auction_indexes[counter], LOBBY_PAWNS, "pawn-" + tmp_pawn_index + "");
+            counter++;
+        }
+    }
+
+    boolean auction_turn_player = false;
+
+    public void end_auction_turn(){
+        auction_turn_index = igm.getCurrentPlayerAuctioning();
+
+        if(igm.checkAuctionStatus()){
+            System.out.println("buraya giriyo mu ki bu ya");
+            igm.endAuction();
+            auction_anchor.setVisible(false);
+            end_turn();
+        }
+        else if (igm.getParticipants().get(auction_turn_index).isHuman()){
+            auction_turn_player = true;
+        }
+        else if (!igm.getParticipants().get(auction_turn_index).isHuman()){
+            int result_of_bot = igm.auctionMakeDecision();
+
+            switch (result_of_bot){
+                case -104 -> update_auction();
+                case -103 -> reduce_participant();
+                case -102 -> update_auction();
+            }
+            set_log();
+            System.out.println(result_of_bot);
+            end_auction_turn();
+        }
+    }
+
+    @FXML
+    public void make_action(MouseEvent e){
+        if (auction_turn_player){
+            String tmp_bid = e.getPickResult().getIntersectedNode().getId().replace("option_","");
+            if (tmp_bid.equals("quit")){
+                igm.pullOffAuction(false);
+            }
+            else if(tmp_bid.equals("pass")){
+                igm.continueAuction(0);
+            }
+            else {
+                int bid = Integer.parseInt(tmp_bid);
+                igm.continueAuction(bid * 1000);
+            }
+            auction_turn_player = false;
+            update_auction();
+            end_auction_turn();
+        }
+    }
+
+    public void clear_auction(){
+        int counter = 0;
+        for (ImageView iv : auction_indexes){
+            iv.setImage(null);
+            iv.setVisible(true);
+            counter++;
+        }
+
+
+
     }
 
     int state_of_bot = 0;
@@ -431,7 +666,7 @@ public class InnerController {
         ArrayList<PropertyCard> cards = player.getOwnedPlaces();
 
         players_name.setText(player.getName());
-        players_money.setText(player.getMonopolyMoneyAmount() + "");
+        players_money.setText(igm.parser(player.getMonopolyMoneyAmount()));
         String pawn_index = pawns_of_players.get(current_deck).getId().replace("pawn_","");
         set_image_helper(players_pawn,"/scenes/sources/lobby-settings/pawns/", "pawn-" + pawn_index);
 
@@ -444,6 +679,12 @@ public class InnerController {
                 deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 2, 0, 0, 0);");
                 counter++;
             }
+        }
+
+        if (igm.getGameMode() == GameMode.bankman){
+            currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(0).getRate());
+            currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1).getRate());
+            currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2).getRate());
         }
     }
 
@@ -618,7 +859,6 @@ public class InnerController {
 
                 movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
 
-                int multiplier = 1; //TODO bankman
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
 
@@ -658,6 +898,7 @@ public class InnerController {
             }
         }
         set_log();
+        update_deck();
     }
 
     private void check_drawable_cards(){
@@ -665,7 +906,7 @@ public class InnerController {
             int move_count_of_player;
             old_position_of_player = old_position_of_player + igm.getDice().getTotal();
             move_count_of_player = 37;
-            int result = igm.startTurn(move_count_of_player, false, 1);
+            int result = igm.startTurn(move_count_of_player, false, multiplier);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
             if (result == 2){
                 check_drawable_cards();
@@ -680,7 +921,7 @@ public class InnerController {
             else {
                 move_count_of_player = 40 - (old_position_of_player - card_result_of_player);
             }
-            igm.startTurn(move_count_of_player, false, 1);
+            igm.startTurn(move_count_of_player, false, multiplier);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
         }
         else if (card_result_of_player == 5200) {
