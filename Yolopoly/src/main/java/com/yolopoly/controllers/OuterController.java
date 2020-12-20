@@ -4,6 +4,7 @@ import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.managers.MainMenuManager;
 import com.yolopoly.models.bases.GameListData;
 import com.yolopoly.storage.FirebaseUtil;
+import com.yolopoly.storage.StorageUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -14,6 +15,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import static com.yolopoly.Main.*;
 
@@ -36,6 +40,9 @@ public class OuterController {
 
     @FXML
     AnchorPane multip_options;
+
+    @FXML
+    AnchorPane feedback_screen;
 
     @FXML
     Label name_0, name_1, name_2, name_3, name_4, size_0, size_1, size_2, size_3, size_4, settings_0, settings_1, settings_2, settings_3, settings_4;
@@ -188,7 +195,15 @@ public class OuterController {
         set_menu_enable_disable();
     }
 
+    @FXML
+    public void show_saved_game_options(){
+        multip_options.setVisible(true);
+        multip_options.setDisable(false);
+        set_menu_enable_disable();
+    }
+
     public void create_game_list(){
+        StorageUtil util = new StorageUtil();
         int counter = 0;
         for (int i = 0;i<5;i++){
             server_names[i].setText("");
@@ -197,11 +212,13 @@ public class OuterController {
             server_joins[i].setText("");
             server_fields[i].setVisible(false);
         }
-        for (GameListData g: FirebaseUtil.gameListData){
-            server_names[counter].setText(g.getAdmin() +"'s Lobby");
-            server_settings[counter].setText(g.getMode() + " - " + g.getTheme());
-            server_sizes[counter].setText(g.getPlayerCount() + "/8");
-            server_joins[counter].setText("Join");
+        HashMap<String, ArrayList<String>> k = util.getSavedGames();
+
+        for (String s : k.keySet()){
+            server_names[counter].setText(k.get(s).get(0));
+            server_settings[counter].setText(k.get(s).get(1).toUpperCase());
+            server_sizes[counter].setText(k.get(s).get(2).toUpperCase());
+            server_joins[counter].setText("Load");
             server_fields[counter].setVisible(true);
             counter++;
         }
@@ -209,24 +226,37 @@ public class OuterController {
 
     @FXML
     public void join_game(MouseEvent e) throws Exception {
-        Label host_id_label = (Label)e.getSource();
-        String host_id = host_id_label.getId().replace("join_","");
-        int id = Integer.parseInt(host_id);
-
-        FirebaseUtil firebaseUtil = FirebaseUtil.getInstance();
-        firebaseUtil.joinLobby(id);
-
         me.setOnline(true);
         changeScreen("src/main/resources/scenes/MiddleController.fxml");
     }
 
     @FXML
     public void create_game() throws Exception{
-        FirebaseUtil firebaseUtil = FirebaseUtil.getInstance();
-        firebaseUtil.createRoom(oe.getHosterNick());
-
-        me.setOnline(true);
+        me.setOnline(false);
         changeScreen("src/main/resources/scenes/MiddleController.fxml");
+    }
+
+    @FXML
+    public void open_feedback(){
+        feedback_screen.setVisible(true);
+        feedback_screen.setDisable(false);
+        set_menu_enable_disable();
+    }
+
+    @FXML
+    public void send_feedback(){
+
+        feedback_screen.setVisible(false);
+        feedback_screen.setDisable(true);
+        set_menu_enable_disable();
+
+    }
+
+    @FXML
+    public void close_feedback(){
+        feedback_screen.setVisible(false);
+        feedback_screen.setDisable(true);
+        set_menu_enable_disable();
     }
 
 

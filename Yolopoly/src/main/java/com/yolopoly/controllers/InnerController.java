@@ -589,13 +589,21 @@ public class InnerController {
     @FXML
     public void add_money_to_exchange(MouseEvent e){
         String s = ((ImageView)e.getSource()).getId();
-        switch (s){
-            case "to_0" : amount = 0;
-            case "add_10k" : amount+= 10000;
-            case "add_100k" : amount+= 100000;
-            case "add_1m" : amount+= 1000000;
+        switch (s) {
+            case "to_0" -> {
+                amount = 0;
+            }
+            case "add_10k" -> {
+                amount += 10;
+            }
+            case "add_100k" -> {
+                amount += 100;
+            }
+            case "add_1m" -> {
+                amount += 1000;
+            }
         }
-        add_field.setText(igm.parser(amount));
+        add_field.setText(amount + "K");
     }
 
     public String ex_direction = "to";
