@@ -43,11 +43,9 @@ public class Main extends Application {
 
     public static void main(String[] args) throws InterruptedException {
         FirebaseUtil util = FirebaseUtil.getInstance();
-        StorageUtil util2 = new StorageUtil();
         util.initGameList();
-        util2.getSavedGames();
         //musicManager = MusicManager.getInstance();
-        //launch(args);
+        launch(args);
     }
 
 }
