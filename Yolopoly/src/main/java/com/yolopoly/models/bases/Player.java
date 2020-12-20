@@ -67,6 +67,7 @@ public class Player {
     }
 
     public void setLoan(int loan) {
+        this.addMoney(Constants.CURRENCY_NAMES[0], loan);
         this.loan = loan;
     }
 

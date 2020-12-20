@@ -46,17 +46,22 @@
                 <Image url="@sources/Action.png" />
             </image>
         </ImageView>
-      <Label fx:id="currency_try" onMouseClicked="#change_currency" layoutX="1720.0" layoutY="280.0" text="Label">
+      <Label fx:id="currency_try" layoutX="1720.0" layoutY="280.0" onMouseClicked="#change_currency" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="currency_eur" onMouseClicked="#change_currency" layoutX="1720.0" layoutY="200.0" text="Label">
+      <Label fx:id="currency_eur" layoutX="1720.0" layoutY="200.0" onMouseClicked="#change_currency" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="currency_usd" onMouseClicked="#change_currency" layoutX="1720.0" layoutY="240.0" text="Label">
+      <Label fx:id="currency_usd" layoutX="1720.0" layoutY="240.0" onMouseClicked="#change_currency" text="Label">
+         <font>
+            <Font name="System Bold" size="18.0" />
+         </font>
+      </Label>
+      <Label fx:id="multiplier_label" layoutX="1720.0" layoutY="160.0" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>

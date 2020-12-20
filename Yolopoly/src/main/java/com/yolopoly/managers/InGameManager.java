@@ -270,7 +270,7 @@ public class InGameManager {
         if (this.gameMode ==  GameMode.bankman) {
             int decision = (int)(Math.random() * 2 + 1);
             if(decision == 1){
-                multiplier = this.generateChanceMultiplier(diceResult);
+                multiplier = this.generateChanceMultiplier();
             }
         }
 
@@ -1287,7 +1287,7 @@ public class InGameManager {
         return this.bank.exchangeMoney(player, fromCurrency, toCurrency, amount);
     }
 
-    public double generateChanceMultiplier(int diceResult) {
+    public double generateChanceMultiplier() {
         double result;
         int randomResult = (int) ((Math.random() * (12 - 1)) + 1);
         if (randomResult >= 1 && randomResult <= 3) {

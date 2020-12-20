@@ -83,7 +83,7 @@ public class InnerController {
     ImageView chance_button, loan_button;
 
     @FXML
-    Label currency_eur, currency_usd, currency_try;
+    Label currency_eur, currency_usd, currency_try, multiplier_label;
 
     @FXML
     ImageView d_c1,d_c2,d_c3,d_c4,d_c5,d_c6,d_c7,d_c8,d_c9,d_c10,d_c11,d_c12,d_c13,d_c14,d_c15,d_c16,d_c17,d_c18;//,d_c19,d_c20,d_c21,d_c22,d_c23,d_c24,d_c25,d_c26,d_c27,d_c28,d_c29,d_c30;
@@ -233,6 +233,8 @@ public class InnerController {
             currency_eur.setVisible(false);
             currency_usd.setVisible(false);
             currency_try.setVisible(false);
+
+            multiplier_label.setVisible(false);
         }
         else {
             loan_button.setVisible(true);
@@ -241,11 +243,13 @@ public class InnerController {
             currency_eur.setVisible(true);
             currency_usd.setVisible(true);
             currency_try.setVisible(true);
+
+            multiplier_label.setVisible(true);
         }
 
-//        currency_eur.setText("€ " + igm.getCurrencies().get(2).toString());
-//        currency_usd.setText("$ " + igm.getCurrencies().get(0).toString());
-//        currency_try.setText("₺ " + igm.getCurrencies().get(1).toString());
+        currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2));
+        currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1));
+        currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(1));
     }
 
     InGameManager igm;
@@ -294,20 +298,44 @@ public class InnerController {
         igm.exchangeCurrency(last_currency, currency, 100000);
     }
 
+    boolean get_chanced = false;
+    double multiplier = 1;
 
     @FXML
     public void get_chance(){
-        igm.generateChanceMultiplier(31);
+        if (!get_chanced){
+            multiplier = igm.generateChanceMultiplier();
+            System.out.println(multiplier);
+            get_chanced = true;
+            multiplier_label.setText("X" + multiplier);
+        }
+
+        //show on label
     }
+
+    boolean loan_taken = false;
 
     @FXML
     public void loan_action(){
-        igm.giveLoan(31);
+        if (!loan_taken){
+            igm.giveLoan(5000000); //TODO decide
+            loan_taken = true;
+            players_money_edit.setText(igm.parser(5000000));
+            update_deck();
+        }
+        else {
+            igm.receiveLoanBackFromPlayer(multiplier);
+            loan_taken = false;
+            players_money_edit.setText("");
+        }
     }
 
     boolean did_auction = false;
 
     private void end_turn(){
+        get_chanced = false;
+        multiplier = 1;
+        multiplier_label.setText("X" + multiplier);
         int result = igm.endTurn();
         System.out.println(result + " end turn res");
 
@@ -638,7 +666,7 @@ public class InnerController {
         ArrayList<PropertyCard> cards = player.getOwnedPlaces();
 
         players_name.setText(player.getName());
-        players_money.setText(player.getMonopolyMoneyAmount() + "");
+        players_money.setText(igm.parser(player.getMonopolyMoneyAmount()));
         String pawn_index = pawns_of_players.get(current_deck).getId().replace("pawn_","");
         set_image_helper(players_pawn,"/scenes/sources/lobby-settings/pawns/", "pawn-" + pawn_index);
 
@@ -651,6 +679,12 @@ public class InnerController {
                 deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 2, 0, 0, 0);");
                 counter++;
             }
+        }
+
+        if (igm.getGameMode() == GameMode.bankman){
+            currency_usd.setText("$ " + igm.getBank().getCurrencyRates().get(0).getRate());
+            currency_try.setText("₺ " + igm.getBank().getCurrencyRates().get(1).getRate());
+            currency_eur.setText("€ " + igm.getBank().getCurrencyRates().get(2).getRate());
         }
     }
 
@@ -825,7 +859,6 @@ public class InnerController {
 
                 movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
 
-                int multiplier = 1; //TODO bankman
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
 
@@ -865,6 +898,7 @@ public class InnerController {
             }
         }
         set_log();
+        update_deck();
     }
 
     private void check_drawable_cards(){
@@ -872,7 +906,7 @@ public class InnerController {
             int move_count_of_player;
             old_position_of_player = old_position_of_player + igm.getDice().getTotal();
             move_count_of_player = 37;
-            int result = igm.startTurn(move_count_of_player, false, 1);
+            int result = igm.startTurn(move_count_of_player, false, multiplier);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
             if (result == 2){
                 check_drawable_cards();
@@ -887,7 +921,7 @@ public class InnerController {
             else {
                 move_count_of_player = 40 - (old_position_of_player - card_result_of_player);
             }
-            igm.startTurn(move_count_of_player, false, 1);
+            igm.startTurn(move_count_of_player, false, multiplier);
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
         }
         else if (card_result_of_player == 5200) {
