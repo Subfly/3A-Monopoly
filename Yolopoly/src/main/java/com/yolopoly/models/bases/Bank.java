@@ -20,8 +20,6 @@ public class Bank {
     private int houseCount;
     private int hotelCount;
 
-
-
     //Variables for bankman
     // private ArrayList<Integer> playerLoans;
     private ArrayList<PropertyCard> propertyCards;
@@ -31,6 +29,12 @@ public class Bank {
     public Bank(GameTheme gameTheme, GameMode gameMode) {
         StorageUtil util = new StorageUtil();
         propertyCards = new ArrayList<>();
+
+        currencyRates = new ArrayList<>();
+        for (int i = 0; i < Constants.CURRENCY_NAMES.length; i++) {
+            currencyRates.add(new Currency(Constants.CURRENCY_NAMES[i], 1));
+        }
+
         try{
             propertyCards = util.getPropertyCards(gameMode, gameTheme);
         }catch (FileNotFoundException e){
@@ -49,7 +53,7 @@ public class Bank {
         for (int i = 1; i < currencyCount; i++) {
             double currentRate = currencyRates.get(i).getRate();
             double change = ((Math.random() * (1 - (-1))) + (-1));
-            currencyRates.get(i).setRate(change + (change * currentRate));
+            currencyRates.get(i).setRate(currentRate + (change * currentRate));
         }
     }
 
