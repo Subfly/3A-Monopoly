@@ -7,6 +7,7 @@ import com.yolopoly.managers.InGameManager;
 import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.managers.MainMenuManager;
 import com.yolopoly.models.bases.Player;
+import com.yolopoly.storage.FirebaseUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -76,7 +77,8 @@ public class MiddleController {
         ie = InGameManager.getInstance();
 
         if (me.isOnline()){
-
+            FirebaseUtil firebaseUtil = FirebaseUtil.getInstance();
+            this.nickname = me.getAdmin().getName();
         }
         else {
             this.nickname = oe.getHosterNick();
