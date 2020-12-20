@@ -231,6 +231,7 @@ public class Player {
         if (doublesCount == 3) {
             this.setThreeTimesDoubled(true);
             this.setInJail(true); // doubles three times, go to jail
+            this.resetDoublesCount();
         }
         return true;
     }
