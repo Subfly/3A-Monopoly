@@ -69,6 +69,7 @@ public class FirebaseUtil {
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference refGameList = database.getReference("gameList");
         DatabaseReference refMiddle = database.getReference("middle");
+        lobbyManager = LobbyManager.getInstance();
         //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
         //Send data
