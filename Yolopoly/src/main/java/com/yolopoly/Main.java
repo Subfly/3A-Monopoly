@@ -1,7 +1,9 @@
 package com.yolopoly;
 
+import com.yolopoly.managers.InGameManager;
 import com.yolopoly.managers.MusicManager;
 import com.yolopoly.models.bases.GameListData;
+import com.yolopoly.models.cards.PropertyCard;
 import com.yolopoly.storage.FirebaseUtil;
 import com.yolopoly.storage.StorageUtil;
 import javafx.application.Application;
@@ -12,6 +14,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 
 public class Main extends Application {
@@ -41,11 +44,22 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         FirebaseUtil util = FirebaseUtil.getInstance();
         util.initGameList();
         //musicManager = MusicManager.getInstance();
         launch(args);
+        /*StorageUtil su = new StorageUtil();
+        InGameManager i = InGameManager.getInstance();
+
+        su.loadGame("../2020-12-20 19-08_vanilla_vanilla.json", i);
+        for (PropertyCard p: i.getPlayers().get(0).getOwnedPlaces()){
+            System.out.println(p.getName());
+        }
+
+
+         */
+
     }
 
 }

@@ -1,0 +1,44 @@
+Index: Yolopoly/src/models/engines/InnerEngine.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package models.engines;\r\n\r\nimport enumerations.Building;\r\nimport models.*;\r\n\r\nimport java.io.File;\r\nimport java.util.ArrayList;\r\n\r\npublic class InnerEngine {\r\n    //Oyun işleri\r\n    //Variables\r\n    private ArrayList<String> chat;\r\n    private ArrayList<String> log;\r\n    private ArrayList<Player> players;\r\n    private Dice dice;\r\n    private Board board;\r\n    private Bank bank;\r\n    private int currentPlayer;\r\n    private int squareIndex;\r\n\r\n    //Constructor\r\n    public InnerEngine(boolean isSavedGamePlaying) {\r\n        startGame(isSavedGamePlaying);\r\n    }\r\n\r\n    //Functions\r\n    public void startGame(boolean isSavedGamePlaying){\r\n    }\r\n\r\n    public void playTurn(){\r\n\r\n    }\r\n    public boolean isGameOver(){return false;}\r\n    public void drawCard(){}\r\n    public void buyProperty(){}\r\n    public void sellProperty(){}\r\n    public void createAuction(){}\r\n    public void buildBuilding(Building buildingType, int buildingCount){}\r\n    public void destructBuilding(Building buildingType, int buildingCount){}\r\n\r\n    public void addToChat(String data, String userName){\r\n        chat.add(userName + \":\\n\" + data);\r\n    }\r\n\r\n    public void addToLog(String logAction, String userName){\r\n        log.add(\"Player \" + userName + \" has \" + logAction);\r\n    }\r\n\r\n    public void buildBuilding(Building buildingType, int buildingCount){\r\n        //ArrayList<Square> toBuild = board.getSquares();\r\n    }\r\n    public void destructBuilding(Building buildingType, int buildingCount){\r\n\r\n    }\r\n    public void addToChat(String data, String userName){}\r\n    public void addToLog(String logAction, String userName){}\r\n    public File getSettings(){return null;}\r\n    public void setSettings(){}\r\n    public boolean changePlayerToBot(int index){\r\n        players.get(index).setHuman(false);\r\n        return true;\r\n    }\r\n\r\n    //Getters and Setters\r\n\r\n    public ArrayList<String> getChat() {\r\n        return chat;\r\n    }\r\n\r\n    public void setChat(ArrayList<String> chat) {\r\n        this.chat = chat;\r\n    }\r\n\r\n    public ArrayList<String> getLog() {\r\n        return log;\r\n    }\r\n\r\n    public void setLog(ArrayList<String> log) {\r\n        this.log = log;\r\n    }\r\n\r\n    public ArrayList<Player> getPlayers() {\r\n        return players;\r\n    }\r\n\r\n    public void setPlayers(ArrayList<Player> players) {\r\n        this.players = players;\r\n    }\r\n\r\n    public Dice getDice() {\r\n        return dice;\r\n    }\r\n\r\n    public void setDice(Dice dice) {\r\n        this.dice = dice;\r\n    }\r\n\r\n    public Board getBoard() {\r\n        return board;\r\n    }\r\n\r\n    public void setBoard(Board board) {\r\n        this.board = board;\r\n    }\r\n\r\n    public Bank getBank() {\r\n        return bank;\r\n    }\r\n\r\n    public void setBank(Bank bank) {\r\n        this.bank = bank;\r\n    }\r\n\r\n    public int getCurrentPlayer() {\r\n        return currentPlayer;\r\n    }\r\n\r\n    public void setCurrentPlayer(int currentPlayer) {\r\n        this.currentPlayer = currentPlayer;\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Yolopoly/src/models/engines/InnerEngine.java	(revision e6bbe70f0e75ef880f3d0aff0b4e12f4eca71ddb)
++++ Yolopoly/src/models/engines/InnerEngine.java	(date 1606501782404)
+@@ -35,8 +35,6 @@
+     public void buyProperty(){}
+     public void sellProperty(){}
+     public void createAuction(){}
+-    public void buildBuilding(Building buildingType, int buildingCount){}
+-    public void destructBuilding(Building buildingType, int buildingCount){}
+ 
+     public void addToChat(String data, String userName){
+         chat.add(userName + ":\n" + data);
+@@ -52,8 +50,6 @@
+     public void destructBuilding(Building buildingType, int buildingCount){
+ 
+     }
+-    public void addToChat(String data, String userName){}
+-    public void addToLog(String logAction, String userName){}
+     public File getSettings(){return null;}
+     public void setSettings(){}
+     public boolean changePlayerToBot(int index){
+Index: Yolopoly/src/models/Bank.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package models;\r\n\r\nimport models.cards.PropertyCard;\r\n\r\nimport java.util.ArrayList;\r\n\r\npublic class Bank {\r\n    //Variables\r\n    private ArrayList<PropertyCard> propertyCards;\r\n\r\n    //Variables for bankman\r\n    private ArrayList<Integer> playerLoans;\r\n    private ArrayList<Double> currencyRates;\r\n\r\n    //Constructor\r\n    public Bank(GameTheme gameTheme, GameMode gameMode) {\r\n    }\r\n\r\n    //Functions\r\n    public void changeCurrencies(){\r\n        int currencyCount = currencyRates.size();\r\n        // for each currency, generate a random number between -1 and 1\r\n        // and change the currency rate accordingly\r\n        for (int i = 0; i < currencyCount; i++) {\r\n            double currentRate = currencyRates.get(i);\r\n            double change = ((Math.random() * (1 - (-1))) + (-1));\r\n            currencyRates.set(i, (change * currentRate));\r\n        }\r\n    }\r\n\r\n    public boolean sellProperty(PropertyCard card){\r\n        if (propertyCards.contains(card)) {\r\n            propertyCards.remove(card);\r\n            return true;\r\n        }\r\n        return false;\r\n    }\r\n\r\n    public boolean returnProperty(PropertyCard card){\r\n        if (!propertyCards.contains(card)) {\r\n            propertyCards.add(card);\r\n        }\r\n        return false;\r\n    }\r\n\r\n    public boolean giveLoan(int amount, Player player){\r\n        player.setLoan(amount);\r\n        player.setLoanTurn(5);\r\n        return true;\r\n    }\r\n\r\n    public boolean getLoan(Player player){\r\n        player.getLoan();\r\n        return true;\r\n    }\r\n\r\n    //Getters and Setters\r\n    public ArrayList<PropertyCard> getPropertyCards() {\r\n        return propertyCards;\r\n    }\r\n\r\n    public void setPropertyCards(ArrayList<PropertyCard> propertyCards) {\r\n        this.propertyCards = propertyCards;\r\n    }\r\n\r\n    public ArrayList<Double> getCurrencyRates() {\r\n        return currencyRates;\r\n    }\r\n\r\n    public void setCurrencyRates(ArrayList<Double> currencyRates) {\r\n        this.currencyRates = currencyRates;\r\n    }\r\n\r\n    public ArrayList<ArrayList<Integer>> getPlayerLoans() {\r\n        return null;\r\n    }\r\n\r\n    public void setPlayerLoans(ArrayList<ArrayList<Integer>> playerLoans) {\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- Yolopoly/src/models/Bank.java	(revision e6bbe70f0e75ef880f3d0aff0b4e12f4eca71ddb)
++++ Yolopoly/src/models/Bank.java	(date 1606502873203)
+@@ -1,5 +1,7 @@
+ package models;
+ 
++import enumerations.GameMode;
++import enumerations.GameTheme;
+ import models.cards.PropertyCard;
+ 
+ import java.util.ArrayList;

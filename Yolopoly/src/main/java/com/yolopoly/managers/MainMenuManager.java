@@ -13,9 +13,19 @@ public class MainMenuManager {
     //Variables
     private LobbyManager lobbyManager;
     private String hosterNick;
+    private boolean nickSet;
 
     //Constructor
     private MainMenuManager() {
+        nickSet = false;
+    }
+
+    public boolean isNickSet() {
+        return nickSet;
+    }
+
+    public void setNickSet(boolean nickSet) {
+        this.nickSet = nickSet;
     }
 
     public static MainMenuManager getInstance(){
@@ -26,6 +36,7 @@ public class MainMenuManager {
     }
 
     public void setHosterNick(String hosterNick){
+        nickSet = true;
         this.hosterNick = hosterNick;
     }
 

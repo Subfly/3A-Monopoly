@@ -21,7 +21,7 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="Yolopoly" target="15" />
+      <module name="Yolopoly" target="14" />
     </bytecodeTargetLevel>
   </component>
 </project>
