@@ -793,7 +793,6 @@ public class InGameManager {
 
         //Save changes on data
         //TODO ponçik ali taha olur böyle şeyler
-        bank.getPropertyCards().set(bank.getPropertyCards().indexOf(card), card);
         board.buySquare(square.getId());
 
         addToLog("bought property named : " + card.getName(), currentPlayer.getName());
