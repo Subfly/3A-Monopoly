@@ -76,13 +76,28 @@ public class FirebaseUtil {
         lobbyManager.setOnline(true);
         lobbyManager.addBot();
         lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1).setHuman(true);
+        lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1).setName(hosterNick);
         lobbyManager.setAdmin(lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1));
+        playerCount++;
         //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
         //Send data
         refGameList.child(hosterNick).setValue(data, (databaseError, databaseReference) -> {
             System.out.println("Game created successfully for player:" + hosterNick + "!");
+            refGameList.child(hosterNick).child("playerCount").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    refGameList.child(hosterNick).child("playerCount").setValue(playerCount,(databaseError, databaseReference) ->{
+                        System.out.println("playerCount ++");
+                    });
+                }
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
         });
+
         refMiddle.child(hosterNick).setValue(lobbyManager, (err, ref)->{
             System.out.println("Engine initialized on server successfully!");
         });
@@ -100,6 +115,11 @@ public class FirebaseUtil {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 playerCount = dataSnapshot.getValue(Integer.class);
+                playerCount++;
+                reference.setValue(playerCount, (databaseError, databaseReference) -> {
+                            System.out.println("count++");
+                        }
+                );
             }
 
             @Override
@@ -108,6 +128,7 @@ public class FirebaseUtil {
             }
         });
         playersIndex = playerCount;
+
         System.out.println(playersIndex);
         DatabaseReference refMiddle = database.getReference("middle");
         refMiddle.child(hosterNick).addValueEventListener(new ValueEventListener() {
