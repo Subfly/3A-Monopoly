@@ -130,7 +130,7 @@
                   <Image url="@sources/server-list/server-list-field.png" />
                </image>
             </ImageView>
-            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="field_0" fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@sources/server-list/server-field.png" />
                </image>
@@ -155,7 +155,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="field_1" fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="300.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@sources/server-list/server-field.png" />
                </image>
@@ -180,7 +180,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="field_2" fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@sources/server-list/server-field.png" />
                </image>
@@ -205,7 +205,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="field_3" fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="540.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@sources/server-list/server-field.png" />
                </image>
@@ -230,7 +230,7 @@
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <ImageView fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="field_4" fitHeight="100.0" fitWidth="1100.0" layoutX="410.0" layoutY="660.0" pickOnBounds="true" preserveRatio="true">
                <image>
                   <Image url="@sources/server-list/server-field.png" />
                </image>

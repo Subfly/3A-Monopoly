@@ -74,7 +74,9 @@ public class FirebaseUtil {
         DatabaseReference refMiddle = database.getReference("middle");
         lobbyManager = LobbyManager.getInstance();
         lobbyManager.setOnline(true);
-        lobbyManager.setAdmin(new Player(hosterNick, true));
+        lobbyManager.addBot();
+        lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1).setHuman(true);
+        lobbyManager.setAdmin(lobbyManager.getPlayerArrayList().get(lobbyManager.getPlayerCount()-1));
         //Create game
         GameListData data = new GameListData(hosterNick, GameMode.vanilla, GameTheme.vanilla, 0, "");
         //Send data
@@ -86,10 +88,27 @@ public class FirebaseUtil {
         });
     }
 
+    static int playerCount = 0;
+    private int playersIndex = 0;
+
     //TODO: SECOND STEP FOR CREATE A GAME
-    public void setMiddleEngine(int selectedIndex){
+    public void joinLobby(int selectedIndex){
         String hosterNick = gameListData.get(selectedIndex).getAdmin();
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference reference = database.getReference("middle").child(hosterNick).child("playerCount");
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                playerCount = dataSnapshot.getValue(Integer.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        playersIndex = playerCount;
+        System.out.println(playersIndex);
         DatabaseReference refMiddle = database.getReference("middle");
         refMiddle.child(hosterNick).addValueEventListener(new ValueEventListener() {
             @Override

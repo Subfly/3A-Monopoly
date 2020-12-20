@@ -45,6 +45,8 @@ public class Main extends Application {
         util.initGameList();
         //musicManager = MusicManager.getInstance();
         launch(args);
+        //Thread.sleep(3000);
+        //util.joinLobby(0);
     }
 
 }

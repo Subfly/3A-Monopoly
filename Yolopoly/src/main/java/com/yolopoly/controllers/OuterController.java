@@ -2,12 +2,14 @@ package com.yolopoly.controllers;
 
 import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.managers.MainMenuManager;
+import com.yolopoly.models.bases.GameListData;
 import com.yolopoly.storage.FirebaseUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -41,9 +43,14 @@ public class OuterController {
     @FXML
     Label join_0, join_1, join_2, join_3, join_4;
 
+    @FXML
+    ImageView field_0, field_1, field_2, field_3, field_4;
+
     Label[] server_names;
     Label[] server_sizes;
     Label[] server_settings;
+    Label[] server_joins;
+    ImageView[] server_fields;
 
     boolean menu_is_enable = false;
 
@@ -61,6 +68,8 @@ public class OuterController {
         server_names = new Label[]{name_0, name_1, name_2, name_3, name_4};
         server_sizes = new Label[]{size_0, size_1, size_2, size_3, size_4};
         server_settings = new Label[]{settings_0, settings_1, settings_2, settings_3, settings_4};
+        server_joins = new Label[]{join_0, join_1, join_2, join_3, join_4};
+        server_fields = new ImageView[]{field_0, field_1, field_2, field_3, field_4};
 
         music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println(newValue.doubleValue());
@@ -165,6 +174,7 @@ public class OuterController {
 
     @FXML
     public void show_game_list(){
+        create_game_list();
         game_list.setVisible(true);
         game_list.setDisable(false);
 
@@ -179,6 +189,25 @@ public class OuterController {
         set_menu_enable_disable();
     }
 
+    public void create_game_list(){
+        int counter = 0;
+        for (int i = 0;i<5;i++){
+            server_names[i].setText("");
+            server_settings[i].setText("");
+            server_sizes[i].setText("");
+            server_joins[i].setText("");
+            server_fields[i].setVisible(false);
+        }
+        for (GameListData g: FirebaseUtil.gameListData){
+            server_names[counter].setText(g.getAdmin() +"'s Lobby");
+            server_settings[counter].setText(g.getMode() + " - " + g.getTheme());
+            server_sizes[counter].setText(g.getPlayerCount() + "/8");
+            server_joins[counter].setText("Join");
+            server_fields[counter].setVisible(true);
+            counter++;
+        }
+    }
+
     @FXML
     public void join_game(MouseEvent e) throws Exception {
         Label host_id_label = (Label)e.getSource();
@@ -186,7 +215,7 @@ public class OuterController {
         int id = Integer.parseInt(host_id);
 
         FirebaseUtil firebaseUtil = FirebaseUtil.getInstance();
-        firebaseUtil.setMiddleEngine(id);
+        firebaseUtil.joinLobby(id);
 
         me.setOnline(true);
         changeScreen("src/main/resources/scenes/MiddleController.fxml");
