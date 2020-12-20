@@ -8,6 +8,7 @@ import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.enumerations.SquareType;
 import com.yolopoly.managers.InGameManager;
+import com.yolopoly.models.bases.GameDataDelegate;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.*;
 import org.json.JSONObject;
@@ -399,7 +400,7 @@ public class StorageUtil {
 
             System.out.println(formatDateTime);
 
-            File file = new File("../" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
+            File file = new File("../saves/" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
             FileWriter writer = null;
             try {
                 writer = new FileWriter(file);
@@ -425,18 +426,47 @@ public class StorageUtil {
         File[] listOfFiles = folder.listFiles();
         assert listOfFiles != null;
         for(File f : listOfFiles){
-            System.out.println(f.getAbsolutePath());
+            String filePath = f.getPath();
+            int dateStartIndex = filePath.indexOf("/", filePath.indexOf("/") + 1) + 1;
+            int firstSeperatorIndex = filePath.indexOf("_");
+            int secondSeperatorIndex = filePath.indexOf("_", firstSeperatorIndex + 1);
+            int dotIndex = filePath.indexOf(".", secondSeperatorIndex);
+            String gameDate = filePath.substring(dateStartIndex, firstSeperatorIndex);
+            String gameMode = filePath.substring(firstSeperatorIndex + 1, secondSeperatorIndex);
+            String gameTheme = filePath.substring(secondSeperatorIndex + 1, dotIndex);
+            ArrayList<String> valueArray = new ArrayList<>();
+            valueArray.add(gameDate);
+            valueArray.add(gameMode);
+            valueArray.add(gameTheme);
+            returningHash.put(filePath, valueArray);
         }
-        return null;
+        return returningHash;
     }
 
-    public boolean loadGame(String path, InGameManager innerEngine) throws IOException {
+    public boolean loadGame(String path) throws IOException {
         File file = new File(path);
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-        InGameManager manager = mapper.readValue(file, InGameManager.class);
-        innerEngine.setInstance(manager);
+
+        GameDataDelegate dm = mapper.readValue(file, GameDataDelegate.class);
+        InGameManager im = InGameManager.getInstance();
+        im.setAuctionPropertyIndex(dm.getAuctionPropertyIndex());
+        im.setBank(dm.getBank());
+        im.setBoard(dm.getBoard());
+        im.setBrokenPlayersMoneyHash(dm.getBrokenPlayersMoneyHash());
+        im.setChat(dm.getChat());
+        im.setCurrentBid(dm.getCurrentBid());
+        im.setCurrentHighestBidName(dm.getCurrentHighestBidName());
+        im.setCurrentPlayerAuctioning(dm.getCurrentPlayerAuctioning());
+        im.setCurrentPlayerId(dm.getCurrentPlayerId());
+        im.setDice(dm.getDice());
+        im.setGameMode(dm.getGameMode());
+        im.setLog(dm.getLog());
+        im.setParticipants(dm.getParticipants());
+        im.setPlayers(dm.getPlayers());
+        im.setState(dm.getState());
+        im.setTheme(dm.getTheme());
         return true;
     }
 }

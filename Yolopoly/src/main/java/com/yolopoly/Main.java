@@ -44,22 +44,8 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) throws InterruptedException, IOException {
-        FirebaseUtil util = FirebaseUtil.getInstance();
-        util.initGameList();
-        //musicManager = MusicManager.getInstance();
+    public static void main(String[] args){
         launch(args);
-        /*StorageUtil su = new StorageUtil();
-        InGameManager i = InGameManager.getInstance();
-
-        su.loadGame("../2020-12-20 19-08_vanilla_vanilla.json", i);
-        for (PropertyCard p: i.getPlayers().get(0).getOwnedPlaces()){
-            System.out.println(p.getName());
-        }
-
-
-         */
-
     }
 
 }
