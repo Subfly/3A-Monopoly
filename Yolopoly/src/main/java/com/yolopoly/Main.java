@@ -3,6 +3,7 @@ package com.yolopoly;
 import com.yolopoly.managers.MusicManager;
 import com.yolopoly.models.bases.GameListData;
 import com.yolopoly.storage.FirebaseUtil;
+import com.yolopoly.storage.StorageUtil;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -42,9 +43,11 @@ public class Main extends Application {
 
     public static void main(String[] args) throws InterruptedException {
         FirebaseUtil util = FirebaseUtil.getInstance();
+        StorageUtil util2 = new StorageUtil();
         util.initGameList();
+        util2.getSavedGames();
         //musicManager = MusicManager.getInstance();
-        launch(args);
+        //launch(args);
     }
 
 }
