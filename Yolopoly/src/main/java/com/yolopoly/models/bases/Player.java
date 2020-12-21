@@ -243,12 +243,14 @@ public class Player {
      * @return the boolean
      */
     public boolean resetDoublesCount() {
-        doublesCount = 0;
+        this.doublesCount = 0;
+        this.isThreeTimesDoubled = false;
         return true;
     }
 
     public boolean resetInJailTurnCount() {
         this.setInJailTurnCount(0);
+        this.isThreeTimesDoubled = false;
         return true;
     }
 
