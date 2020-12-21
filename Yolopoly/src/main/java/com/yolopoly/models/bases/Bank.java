@@ -26,6 +26,7 @@ public class Bank {
     private ArrayList<Currency> currencyRates;
 
     //Constructor
+    public Bank(){}
     public Bank(GameTheme gameTheme, GameMode gameMode) {
         StorageUtil util = new StorageUtil();
         propertyCards = new ArrayList<>();

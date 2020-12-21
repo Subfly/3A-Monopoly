@@ -1,10 +1,19 @@
 package com.yolopoly.models.cards;
 
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.yolopoly.enumerations.Colors;
 
 import java.util.ArrayList;
-
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = PlaceCard.class),
+        @JsonSubTypes.Type(value = RailroadCard.class),
+        @JsonSubTypes.Type(value = UtilityCard.class),
+})
 public abstract class PropertyCard {
 
 

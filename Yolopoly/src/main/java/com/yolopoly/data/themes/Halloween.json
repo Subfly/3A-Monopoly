@@ -392,7 +392,7 @@
         "moveToIndex": 31,
         "moveInCounts": -1,
         "isGettingMoney": true,
-        "moneyGet": 3000000,
+        "moneyGet": 2000000,
         "moneyOwe": -1,
         "isRelatedToBuildings": false,
         "moneyForHouses": -1,
@@ -403,14 +403,14 @@
         "isDrawingChanceCard": false
       },
       "ch8":{
-        "message": "Go Back Three Spaces",
-        "isComposed": true,
-        "isMoving": true,
+        "message": "Pay pumpkin price of 1000000",
+        "isComposed": false,
+        "isMoving": false,
         "moveToIndex": -1,
-        "moveInCounts": 3,
+        "moveInCounts": -1,
         "isGettingMoney": false,
         "moneyGet": -1,
-        "moneyOwe": -1,
+        "moneyOwe": 1000000,
         "isRelatedToBuildings": false,
         "moneyForHouses": -1,
         "moneyForHotels": -1,
@@ -575,8 +575,8 @@
         "isDrawingChanceCard": false
       },
       "co2":{
-        "message": "Pay 100000 or Draw a Chance Card",
-        "isComposed": true,
+        "message": "Pay 100000 to azrael",
+        "isComposed": false,
         "isMoving": false,
         "moveToIndex": -1,
         "moveInCounts": -1,
@@ -589,11 +589,11 @@
         "isGOOJC": false,
         "isGTJC": false,
         "isEachPlayerIncluded": false,
-        "isDrawingChanceCard": true
+        "isDrawingChanceCard": false
       },
       "co3":{
-        "message": "Pay 100000 or Draw a Chance Card",
-        "isComposed": true,
+        "message": "Pay 100000 to escape death",
+        "isComposed": false,
         "isMoving": false,
         "moveToIndex": -1,
         "moveInCounts": -1,
@@ -606,7 +606,7 @@
         "isGOOJC": false,
         "isGTJC": false,
         "isEachPlayerIncluded": false,
-        "isDrawingChanceCard": true
+        "isDrawingChanceCard": false
       },
       "co4":{
         "message": "Your friend gave you 200000 ",
@@ -809,7 +809,7 @@
         "moneyForHotels": -1,
         "isGOOJC": false,
         "isGTJC": false,
-        "isEachPlayerIncluded": true,
+        "isEachPlayerIncluded": false,
         "isDrawingChanceCard": false
       },
       "co16":{
