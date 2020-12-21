@@ -928,6 +928,10 @@ public class InnerController {
             int dice2 = igm.getDice().getDice2();
             int total = igm.getDice().getTotal();
 
+            dice1 = 4;
+            dice2 = 4;
+            total = 8;
+
             boolean is_double = dice1 == dice2;
 
             can_roll_dice = is_double;
@@ -940,7 +944,6 @@ public class InnerController {
                 old_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
                 movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
-
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
 

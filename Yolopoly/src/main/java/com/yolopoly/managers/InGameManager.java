@@ -560,6 +560,8 @@ public class InGameManager {
             return -100;
         }
 
+        //System.out.println("doubles" + hasRolledDouble);
+
         if(hasRolledDouble){
             player.incrementDoublesCount();
         }
@@ -567,7 +569,10 @@ public class InGameManager {
             player.resetDoublesCount();
         }
 
+        //System.out.println(player.getDoublesCount());
+
         if(player.isThreeTimesDoubled()){
+            System.out.println("lele");
             effectManager.playJailEffect();
             player.setInJail(true);
             player.setCurrentPosition(10);
