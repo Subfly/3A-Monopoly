@@ -103,7 +103,7 @@
       <ImageView fx:id="mode_vanilla" fitHeight="30.0" fitWidth="120.0" layoutX="1242.0" layoutY="224.0" onMouseClicked="#change_mode" pickOnBounds="true" preserveRatio="true" />
       <ImageView fx:id="mode_bankman" fitHeight="30.0" fitWidth="120.0" layoutX="1372.0" layoutY="224.0" onMouseClicked="#change_mode" pickOnBounds="true" preserveRatio="true" />
 
-      <ImageView fitHeight="30.0" fitWidth="250.0" layoutX="1242.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="set_name_field" fitHeight="30.0" fitWidth="250.0" layoutX="1242.0" layoutY="164.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/multiplayer/name-field.png" />
          </image>

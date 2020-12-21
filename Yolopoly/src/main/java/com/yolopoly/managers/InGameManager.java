@@ -740,16 +740,46 @@ public class InGameManager {
             brokenPlayersMoneyHash.clear();
         }
 
-        /*
+
         if (gameMode.equals(GameMode.bankman)) {
             // check loan for bankman mod
             player.decrementLoanTurn();
             if (checkHasToPayLoanBack()) {
-                player.setDiscardedFromGame(true);
+                //Remove player
+                players.remove(currentPlayerId);
+                //Return properties
+                for(PropertyCard p : player.getOwnedPlaces()){
+                    p.setOwnedBy(-1);
+                    Square s = board.getSpecificSquare(p.getId());
+                    //Return houses and hotels
+                    if(s.getHotelCount() > 0 || s.getHouseCount() > 0){
+                        int hotelCount = s.getHotelCount();
+                        int houseCount = s.getHouseCount();
+                        while(hotelCount != 0){
+                            bank.incrementHotelCount();
+                            hotelCount--;
+                        }
+                        while(houseCount != 0){
+                            bank.incrementHouseCount();
+                            houseCount--;
+                        }
+                        s.setHotelCount(0);
+                        s.setHouseCount(0);
+                        s.setLevel(0);
+                    }
+                }
+                //Return GOOJC
+                if(player.getSavedCards().size() != 0){
+                    var c = player.removeFromSavedCards();
+                    board.returnSavedCard(c);
+                }
+                currentPlayerId--;
+                //Clear debts :D
+                brokenPlayersMoneyHash.clear();
                 return 2;
             }
         }
-        */
+
 
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
         PropertyCard lastSquareMadeSomethingPropertyCard = getSpecificProperty(lastSquareMadeSomething.getId());
@@ -1496,36 +1526,36 @@ public class InGameManager {
                             }
                             if (count > 0) { // checks if count is positive, count houses can be bought
                                 checkAndCountHouses.put(true, count);
-                                //System.out.println("Player can buy " + count + " houses on this square");
+//                                System.out.println("Player can buy " + count + " houses on this square");
                             }
                             else {  // player cannot buy a house
                                 checkAndCountHouses.put(false, 0);
-                                //System.out.println("Max number of houses or not enough money");
+//                                System.out.println("Max number of houses or not enough money");
                             }
                         }
                         else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare > 0 ){ // if there is one house and other squares don't have a house
                             checkAndCountHouses.put(false, 0);
-                            //System.out.println("Player has already a house in this square");
+//                            System.out.println("Player has already a house in this square");
                         }
                         else if ( !board.hasHouseAllSquares(squareToBuild) && houseCountOnSquare == 0 ){
-                            if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
+                            if ( currentMoney > priceOfAHouse ){    // checks player's money is enough for a house
                                 checkAndCountHouses.put(true, 1);
-                                //System.out.println("Player can buy a house");
+//                                System.out.println("Player can buy a house");
                             }
                             else {
                                 checkAndCountHouses.put(false, 0);
-                                //System.out.println("Not sufficient money or player is not on that square");
+//                                System.out.println("Not sufficient money or player is not on that square");
                             }
                         }
                     }
                     else {  // if the square has no house
-                        if ( currentMoney > priceOfAHouse && currentPlayer.getCurrentPosition() == squareToBuildIndex ){    // checks player's money is enough for a house
+                        if ( currentMoney > priceOfAHouse ){    // checks player's money is enough for a house
                             checkAndCountHouses.put(true, 1);
-                            //System.out.println("Player can buy a house");
+//                            System.out.println("Player can buy a house");
                         }
                         else {
                             checkAndCountHouses.put(false, 0);
-                            //System.out.println("Not sufficient money or player is not on that square");
+//                            System.out.println("Not sufficient money or player is not on that square"); //TODO kutsal -4
                         }
                     }
                     return checkAndCountHouses;

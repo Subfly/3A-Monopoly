@@ -49,7 +49,7 @@ public class Player {
     }
 
     public void resetLoan() {
-        setLoanTurn(0);
+        setLoanTurn(5);
         setGetLoanCurrently(false);
         setLoan(0);
     }
@@ -99,6 +99,7 @@ public class Player {
         this.isBankrupt = false;
         this.isHuman = isHuman;
         this.loan = 0;
+        this.loanTurn = 5;
         this.doublesCount = 0;
         this.getLoanCurrently = false;
         this.money = new HashMap<>();
@@ -232,7 +233,7 @@ public class Player {
         if (doublesCount == 3) {
             this.setThreeTimesDoubled(true);
             this.setInJail(true); // doubles three times, go to jail
-            this.resetDoublesCount();
+            //this.resetDoublesCount();
         }
         return true;
     }

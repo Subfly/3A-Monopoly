@@ -65,6 +65,7 @@ public class Bank {
     public boolean giveLoan(int amount, Player player){
         player.setLoan(amount);
         player.setLoanTurn(5);
+        player.setGetLoanCurrently(true);
         return true;
     }
 

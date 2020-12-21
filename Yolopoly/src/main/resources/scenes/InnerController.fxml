@@ -300,48 +300,48 @@
             <Image url="@sources/bankman/add_1M.png" />
          </image>
       </ImageView>
-      <ImageView onMouseClicked="#make_exchange" fitHeight="25.0" fitWidth="80.0" layoutX="1755.0" layoutY="234.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="add_field_image" fitHeight="25.0" fitWidth="80.0" layoutX="1755.0" layoutY="234.0" onMouseClicked="#make_exchange" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/bankman/empty_field.png" />
          </image>
       </ImageView>
-      <Label onMouseClicked="#make_exchange" fx:id="add_field" alignment="CENTER" layoutX="1760.0" layoutY="234.0" prefHeight="27.0" prefWidth="70.0" text="Label" textFill="WHITE">
+      <Label fx:id="add_field" alignment="CENTER" layoutX="1760.0" layoutY="234.0" onMouseClicked="#make_exchange" prefHeight="27.0" prefWidth="70.0" text="Label" textFill="WHITE">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="try_parity" layoutX="1415.0" layoutY="165.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+      <Label fx:id="try_parity" layoutX="1415.0" layoutY="165.0" prefHeight="27.0" prefWidth="130.0" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="eur_parity" layoutX="1415.0" layoutY="200.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+      <Label fx:id="eur_parity" layoutX="1415.0" layoutY="200.0" prefHeight="27.0" prefWidth="130.0" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="try_balance" layoutX="1570.0" layoutY="165.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+      <Label fx:id="try_balance" layoutX="1570.0" layoutY="165.0" prefHeight="27.0" prefWidth="95.0" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="eur_balance" layoutX="1570.0" layoutY="200.0" prefHeight="27.0" prefWidth="70.0" text="Label">
+      <Label fx:id="eur_balance" layoutX="1570.0" layoutY="200.0" prefHeight="27.0" prefWidth="95.0" text="Label">
          <font>
             <Font name="System Bold" size="18.0" />
          </font>
       </Label>
-      <Label fx:id="to_from" layoutX="1773.0" layoutY="184.0" text="To" />
-      <ImageView onMouseClicked="#exchange" fx:id="exchange" fitHeight="25.0" fitWidth="36.0" layoutX="1725.0" layoutY="180.0" pickOnBounds="true" preserveRatio="true">
+      <Label fx:id="to_from" layoutX="1773.0" layoutY="184.0" text="TO" />
+      <ImageView fx:id="exchange" fitHeight="25.0" fitWidth="36.0" layoutX="1725.0" layoutY="180.0" onMouseClicked="#exchange" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/bankman/exchange.png" />
          </image>
       </ImageView>
-      <ImageView onMouseClicked="#change_parity" fx:id="change_eur" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="200.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="change_eur" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="200.0" onMouseClicked="#change_parity" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/bankman/eur_off.png" />
          </image>
       </ImageView>
-      <ImageView fx:id="change_try" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="166.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fx:id="change_try" fitHeight="25.0" fitWidth="36.0" layoutX="1670.0" layoutY="166.0" onMouseClicked="#change_parity" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@sources/bankman/try_on.png" />
          </image>

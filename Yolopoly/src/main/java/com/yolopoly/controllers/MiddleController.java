@@ -54,6 +54,8 @@ public class MiddleController {
     AnchorPane in_game_menu, settings;
     @FXML
     TextArea set_name;
+    @FXML
+    ImageView add_player, set_name_field;
 
     ImageView[] theme_buttons;
     ImageView[] lobby_size_buttons;
@@ -82,11 +84,10 @@ public class MiddleController {
         oe = MainMenuManager.getInstance();
         ie = InGameManager.getInstance();
 
-        if (me.isOnline()){
-            System.out.println("online yes");
-        }
-        else {
-            System.out.println("not online");
+        if (!me.isOnline()){
+            set_name = new TextArea();
+            add_player = new ImageView();
+            set_name_field = new ImageView();
         }
 
         this.nickname = oe.getHosterNick();
@@ -116,6 +117,12 @@ public class MiddleController {
 
         for (int i = 2;i<=8;i++){
             availablePawns.add(i);
+        }
+
+        if (!me.isOnline()){
+            set_name.setVisible(false);
+            add_player.setVisible(false);
+            set_name_field.setVisible(false);
         }
 
         set_all_images();
@@ -299,6 +306,7 @@ public class MiddleController {
     public void exit_yes_no(MouseEvent e) throws Exception{
         String pressed = e.getPickResult().getIntersectedNode().getId();
         if (pressed.equals("yes")){
+            LobbyManager.clear();
             Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
         }
         else {

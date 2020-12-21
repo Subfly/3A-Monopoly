@@ -94,7 +94,7 @@ public class InnerController {
     AnchorPane in_game_menu, settings;
 
     @FXML
-    ImageView to_0, add_10k, add_100k, add_1m, change_eur, change_try, exchange;
+    ImageView to_0, add_10k, add_100k, add_1m, change_eur, change_try, exchange, add_field_image;
 
     @FXML
     Label add_field, try_parity, eur_parity, try_balance, eur_balance, to_from;
@@ -172,6 +172,7 @@ public class InnerController {
 
         loan_button = new ImageView();
         chance_button = new ImageView();
+        add_field_image = new ImageView();
 
         currency_eur = new Label();
         currency_usd = new Label();
@@ -248,6 +249,30 @@ public class InnerController {
             currency_try.setVisible(false);
 
             multiplier_label.setVisible(false);
+
+            eur_balance.setVisible(false);
+            eur_parity.setVisible(false);
+
+            try_balance.setVisible(false);
+            try_parity.setVisible(false);
+
+            currency_try.setVisible(false);
+            currency_eur.setVisible(false);
+
+            change_eur.setVisible(false);
+            change_try.setVisible(false);
+
+            to_0.setVisible(false);
+            add_1m.setVisible(false);
+            add_10k.setVisible(false);
+            add_100k.setVisible(false);
+            add_field.setVisible(false);
+
+            add_field_image.setVisible(false);
+
+            exchange.setVisible(false);
+
+            to_from.setVisible(false);
         }
         else {
             loan_button.setVisible(true);
@@ -258,11 +283,18 @@ public class InnerController {
             currency_try.setVisible(true);
 
             multiplier_label.setVisible(true);
+
+            try_parity.setText("₺ / $ = " + String.format("%.2f",igm.getBank().getCurrencyRates().get(1).getRate()));
+            eur_parity.setText("€ / $ = " + String.format("%.2f",igm.getBank().getCurrencyRates().get(2).getRate()));
+
+            try_balance.setText(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[1]).toString());
+            eur_balance.setText(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[2]).toString());
+
+            add_field.setText("0K");
+
         }
 
-        currency_usd.setText("$ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(0).getRate()));
-        currency_try.setText("₺ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(1).getRate()));
-        currency_eur.setText("€ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(2).getRate()));
+
     }
 
     InGameManager igm;
@@ -280,20 +312,22 @@ public class InnerController {
 
     @FXML
     private void level_up() {
-        igm.levelUp(last_index_of_info_card, 1);
+        igm.levelUp(last_index_of_info_card, multiplier);
         update_square_info();
         update_deck();
         set_log();
         update_square_info();
+        square_update_GUI();
     }
 
     @FXML
     private void level_down() {
-        igm.levelDown(last_index_of_info_card, 1);
+        igm.levelDown(last_index_of_info_card, multiplier);
         update_square_info();
         set_log();
         update_deck();
         update_square_info();
+        square_update_GUI();
     }
 
     String last_currency = "try";
@@ -303,10 +337,11 @@ public class InnerController {
         String currency = e.getPickResult().getIntersectedNode().getId().replace("currency_","");
 
         switch (currency){
-            case "eur" -> currency = "Euro";
-            case "try" -> currency = "Turkish Lira";
-            case "usd" -> currency = "Monopoly Dollar";
+            case "eur" -> last_currency = "Euro";
+            case "usd" -> last_currency = "Monopoly Dollar";
         }
+
+        System.out.println();
 
         igm.exchangeCurrency(last_currency, currency, 100000);
     }
@@ -341,22 +376,32 @@ public class InnerController {
             loan_taken = false;
             players_money_edit.setText("");
         }
+        update_deck();
     }
 
     boolean did_auction = false;
 
+    /*
+     * RETURN VALUES
+     * 1 => NORMAL END
+     * 2 => DID NOT PAID LOANS
+     * 3 => GAME DONE, REMAINING PLAYER WINS!
+     * 4 => AUCTION
+     */
     private void end_turn(){
         get_chanced = false;
         multiplier = 1;
         multiplier_label.setText("X" + multiplier);
+        int pawnIndex = igm.getCurrentPlayerId();
         int result = igm.endTurn();
-        System.out.println(result + " end turn res");
+
+        System.out.println(igm.isCurrentPlayerHuman() + " insan mısınız lan " + result);
 
         if (result == 4){
             start_auction();
             did_auction = true;
         }
-        else {
+        else if (result == 1){
             turn++;
             turn = turn % pawns_of_players.size();
             set_turn_GUI();
@@ -368,6 +413,10 @@ public class InnerController {
                 did_auction = false;
                 play_bot();
             }
+        }
+        else if(result == 2){
+            pawns_of_players.get(pawnIndex).setVisible(true);
+            pawns_of_players.remove(pawnIndex);
         }
         update_deck();
     }
@@ -499,6 +548,7 @@ public class InnerController {
 
                     movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
+                    update_deck();
                     old_position_of_bot += total;
                     boolean bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
 
@@ -532,6 +582,7 @@ public class InnerController {
                     // FIXME Bot GO square'e gittiğinde indexi yanlış kalıyo
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
+                    update_deck();
 
                     if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
                         state_of_bot = 1;
@@ -576,11 +627,12 @@ public class InnerController {
         }
 
         if (ex_direction.equals("to")){
-            igm.exchangeCurrency(Constants.CURRENCY_NAMES[0], Constants.CURRENCY_NAMES[index],amount);
+            igm.exchangeCurrency(Constants.CURRENCY_NAMES[0], Constants.CURRENCY_NAMES[index],amount * 1000);
         }
         else {
-            igm.exchangeCurrency(Constants.CURRENCY_NAMES[index], Constants.CURRENCY_NAMES[0],amount);
+            igm.exchangeCurrency(Constants.CURRENCY_NAMES[index], Constants.CURRENCY_NAMES[0],amount * 1000);
         }
+        update_deck();
     }
 
     int amount = 0;
@@ -612,9 +664,11 @@ public class InnerController {
     public void exchange(){
         if(ex_direction.equals("to")){
             ex_direction = "from";
+            to_from.setText("FROM");
         }
         else {
             ex_direction = "to";
+            to_from.setText("TO");
         }
     }
 
@@ -622,12 +676,12 @@ public class InnerController {
     public void change_parity(MouseEvent e){
         String s = ((ImageView)e.getSource()).getId().replace("change_","");
         if (s.equals("eur")){
-            last_currency = "eur";
+            chosen_cur = "eur";
             set_image_helper(change_eur, "/scenes/sources/bankman/", "eur_on");
             set_image_helper(change_try, "/scenes/sources/bankman/", "try_off");
         }
         else {
-            last_currency = "try";
+            chosen_cur = "try";
             set_image_helper(change_eur, "/scenes/sources/bankman/", "eur_off");
             set_image_helper(change_try, "/scenes/sources/bankman/", "try_on");
         }
@@ -642,7 +696,7 @@ public class InnerController {
                 play_bot();
             }
         } else
-            testTextField.setText("Tur sende değil göt");
+            testTextField.setText("Tur sende değil");
     }
 
     private void set_log() {
@@ -694,7 +748,6 @@ public class InnerController {
                 }
             }
 
-            //hamle hamle gidiyo
 
             oldposition++;
             oldposition = oldposition % 40;
@@ -764,9 +817,11 @@ public class InnerController {
         }
 
         if (igm.getGameMode() == GameMode.bankman){
-            currency_usd.setText("$ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(0).getRate()));
-            currency_try.setText("₺ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(1).getRate()));
-            currency_eur.setText("€ " + String.format("%.2f", igm.getBank().getCurrencyRates().get(2).getRate()));
+            try_parity.setText("₺ / $ = " + igm.getBank().getCurrencyRates().get(1).getRate());
+            eur_parity.setText("€ / $ = " + igm.getBank().getCurrencyRates().get(2).getRate());
+
+            try_balance.setText(igm.parser(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[1])));
+            eur_balance.setText(igm.parser(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[2])));
         }
     }
 
@@ -803,7 +858,7 @@ public class InnerController {
             assert tmpcard != null;
             if (igm.getOwner(squareId) != null) {
                 if (tmpSquareLevel != -1){
-                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel)); //TODO bugfix
                 }
                 else {
                     setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), 0);
@@ -870,6 +925,7 @@ public class InnerController {
                 pay_option.setVisible(true);
                 cards_background.setVisible(true);
             }
+            update_deck();
         }
         else {
             play_bot();
@@ -890,6 +946,7 @@ public class InnerController {
         else {
             move_count_of_player = 50 - current_place;
         }
+        System.out.println(current_place + " sanane böyle almak istedi canım " + move_count_of_player + " move count falan bakalım iki ----------------");
         movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
         is_player_get_jailed = false;
         end_turn();
@@ -924,6 +981,8 @@ public class InnerController {
         if (can_roll_dice){
             can_roll_dice = false;
             igm.rollDice();
+//            igm.getDice().setDice1(4);
+//            igm.getDice().setDice2(4);
             int dice1 = igm.getDice().getDice1();
             int dice2 = igm.getDice().getDice2();
             int total = igm.getDice().getTotal();
@@ -939,14 +998,16 @@ public class InnerController {
 
                 old_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
-                movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
-
+                if (!(igm.getPlayers().get(igm.getCurrentPlayerId()).getDoublesCount() == 2 && is_double)){
+                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
+                }
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
 
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
-
+                //old
                 if (result_of_start_turn == -2){
+                    System.out.println(old_position_of_player + " old pos falan jail öncesi");
                     get_player_jail(old_position_of_player);
                     can_roll_dice = false;
                 }
@@ -1216,7 +1277,7 @@ public class InnerController {
         }
     }
 
-    final String PROPERTY_CARDS = "sources/property-cards/";
+    final String PROPERTY_CARDS = "/scenes/sources/property-cards/";
 
     //Image Set Helper
     public void set_image_helper(ImageView iv, String path, String name){
@@ -1246,6 +1307,8 @@ public class InnerController {
     public void exit_save_back(MouseEvent e) throws Exception{
         String pressed = e.getPickResult().getIntersectedNode().getId();
         if (pressed.equals("quit")){
+            InGameManager.clear();
+            LobbyManager.clear();
             Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
         }
         else if (pressed.equals("back")){
@@ -1254,6 +1317,8 @@ public class InnerController {
         }
         else {
             igm.saveAndExit();
+            InGameManager.clear();
+            LobbyManager.clear();
             Main.changeScreen("src/main/resources/scenes/OuterController.fxml");
         }
     }
