@@ -20,6 +20,7 @@ public class Board {
     private int moneyOnBoard;
 
     //Constructor
+    public Board(){}
     public Board(GameMode mode, GameTheme gameTheme) {
         StorageUtil util = new StorageUtil();
         try{

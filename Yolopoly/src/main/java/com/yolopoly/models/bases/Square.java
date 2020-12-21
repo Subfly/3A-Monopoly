@@ -20,7 +20,7 @@ public class Square {
     private int level;
 
     //Constructor
-
+    public Square(){}
     public Square(int id, SquareType type, String name, int cost, Colors color) {
         this.id = id;
         this.type = type;
@@ -115,7 +115,7 @@ public class Square {
         return color;
     }
 
-    public void setType(Colors color) {
+    public void setColor(Colors color) {
         this.color = color;
     }
 

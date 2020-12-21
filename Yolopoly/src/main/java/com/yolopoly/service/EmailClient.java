@@ -10,7 +10,6 @@ public class EmailClient {
     private static final String senderPassword = "Kissa+12345";
 
     public static void sendMailToPlayer(String playerEmail) throws MessagingException {
-        // System.out.println("Sending email to " + playerEmail);
 
         Session session = createSession();
 
@@ -26,7 +25,6 @@ public class EmailClient {
     }
 
     public static void sendMailToSelf(String playerEmail, String mailContent) throws MessagingException {
-        // System.out.println("Sending email to " + playerEmail);
         Session session = createSession();
 
         //create message using session
@@ -62,9 +60,4 @@ public class EmailClient {
         });
         return session;
     }
-
-    /*public static void main(String[] args) throws MessagingException {
-        EmailClient.sendMailToPlayer("benningkayleigh@gmail.com");
-        EmailClient.sendMailToSelf("benningkayleigh@gmail.com", "i love you game so much");
-    }*/
 }

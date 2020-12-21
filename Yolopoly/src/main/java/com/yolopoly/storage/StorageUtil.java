@@ -16,8 +16,6 @@ import org.json.JSONObject;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -317,34 +315,6 @@ public class StorageUtil {
         propertyCards.sort(Comparator.comparingInt(PropertyCard::getId));
 
         return propertyCards;
-    }
-
-    public ArrayList<String> getPawnData(GameMode mode, GameTheme theme) throws FileNotFoundException {
-        ArrayList<String> pawns = new ArrayList<>();
-
-        File file = null;
-        switch (theme){
-            case vanilla -> file = new File("src/main/java/com/yolopoly/data/themes/Vanilla.json");
-            case ankara -> file = new File("src/main/java/com/yolopoly/data/themes/Ankara.json");
-            case bilkent -> file = new File("src/main/java/com/yolopoly/data/themes/Bilkent.json");
-            case halloween -> file = new File("src/main/java/com/yolopoly/data/themes/Halloween.json");
-        }
-        String content = new Scanner(file).useDelimiter("\\Z").next();
-
-        //Read JSON
-        JSONObject jo = new JSONObject(content);
-        var pawnJSON = jo.getJSONObject("pawns");
-        var pawnKeys = pawnJSON.keys();
-        ArrayList<String> dummyPawns = new ArrayList<>();
-        while(pawnKeys.hasNext()){
-            dummyPawns.add(pawnKeys.next());
-        }
-        Collections.sort(dummyPawns);
-        for (String s : dummyPawns) {
-            var pawnPath = pawnJSON.getString(s);
-            pawns.add(pawnPath);
-        }
-        return pawns;
     }
 
     public ArrayList<Integer> getSettings() throws IOException {

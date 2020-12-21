@@ -15,11 +15,7 @@ import java.net.URL;
 
 public class Main extends Application {
 
-    private static int width = 1920;
-    private static int height = 1080;
-
     static Stage primaryStage;
-    private static MusicManager musicManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -30,7 +26,9 @@ public class Main extends Application {
     public static void changeScreen(String source) throws Exception{
         URL url = new File(source).toURI().toURL();
         Parent root = FXMLLoader.load(url);
-        primaryStage.setScene(new Scene(root, width , height));
+        int width = 1920;
+        int height = 1080;
+        primaryStage.setScene(new Scene(root, width, height));
         primaryStage.setTitle("Yolopoly");
         primaryStage.setMaximized(true);
         primaryStage.setFullScreen(true);
@@ -40,10 +38,8 @@ public class Main extends Application {
         primaryStage.show();
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        FirebaseUtil util = FirebaseUtil.getInstance();
-        util.initGameList();
-        musicManager = MusicManager.getInstance();
+    public static void main(String[] args) {
+        MusicManager.getInstance();
         launch(args);
     }
 

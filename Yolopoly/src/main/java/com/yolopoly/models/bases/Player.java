@@ -79,7 +79,7 @@ public class Player {
         this.pawnIndex = pawnIndex;
     }
 
-
+    public Player(){}
     /**
      * Instantiates a new Player.
      *
@@ -87,6 +87,7 @@ public class Player {
      * @param isHuman the is human
      */
     //Constructor
+
     public Player(String name, boolean isHuman) {
         this.name = name;
         this.isInJail = false;
@@ -243,12 +244,14 @@ public class Player {
      * @return the boolean
      */
     public boolean resetDoublesCount() {
-        doublesCount = 0;
+        this.doublesCount = 0;
+        this.isThreeTimesDoubled = false;
         return true;
     }
 
     public boolean resetInJailTurnCount() {
         this.setInJailTurnCount(0);
+        this.isThreeTimesDoubled = false;
         return true;
     }
 
