@@ -729,7 +729,7 @@
       },
       "co11":{
         "message": "Go To Giresun",
-        "isComposed": false,
+        "isComposed": true,
         "isMoving": true,
         "moveToIndex": 39,
         "moveInCounts": -1,

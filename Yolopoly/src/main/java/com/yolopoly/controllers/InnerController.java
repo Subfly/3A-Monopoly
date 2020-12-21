@@ -492,6 +492,7 @@ public class InnerController {
                     int dice2 = igm.getDice().getDice2();
                     int total = igm.getDice().getTotal();
 
+
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
                     set_image_helper(dice_1, "/scenes/sources/dice/" , "dice_" + dice1);
@@ -499,6 +500,7 @@ public class InnerController {
 
                     movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
+
                     old_position_of_bot += total;
                     boolean bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
 
@@ -509,6 +511,7 @@ public class InnerController {
                         state_of_bot = 0;
                     }
                     else if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
+
                         state_of_bot = 1;
                     }
                     else {
@@ -532,6 +535,7 @@ public class InnerController {
                     // FIXME Bot GO square'e gittiğinde indexi yanlış kalıyo
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
+
 
                     if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
                         state_of_bot = 1;
@@ -982,6 +986,7 @@ public class InnerController {
     }
 
     private void check_drawable_cards(){
+        System.out.println("card result: " + card_result_of_player);
         if (card_result_of_player == -3){
             int move_count_of_player;
             old_position_of_player = old_position_of_player + igm.getDice().getTotal();
@@ -995,14 +1000,16 @@ public class InnerController {
         else if (card_result_of_player >= 0 && card_result_of_player <= 39){
             int move_count_of_player;
             old_position_of_player = igm.getCurrentPlayerCurrentPosition();
+            System.out.println("Card result: " + card_result_of_player + " old position: " + old_position_of_player);
             if (card_result_of_player > old_position_of_player){
                 move_count_of_player = card_result_of_player - old_position_of_player;
             }
             else {
                 move_count_of_player = 40 - (old_position_of_player - card_result_of_player);
             }
-            igm.startTurn(move_count_of_player, false, multiplier);
+
             movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
+            igm.startTurn(move_count_of_player, false, multiplier);
         }
         else if (card_result_of_player == 5200) {
             get_player_jail((old_position_of_player + igm.getDice().getTotal()) % 40);
