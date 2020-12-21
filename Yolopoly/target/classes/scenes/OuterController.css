@@ -1,0 +1,68 @@
+#single-player {
+    -fx-image: url("sources/outer-controller/singleplayer.png");
+}
+
+#single-player:hover {
+    -fx-image: url("sources/outer-controller/singleplayer-hover.png");
+}
+
+#multiplayer {
+    -fx-image: url("sources/outer-controller/multiplayer.png");
+}
+
+#multiplayer:hover {
+    -fx-image: url("sources/outer-controller/multiplayer-hover.png");
+}
+
+#help {
+    -fx-image: url("sources/outer-controller/help.png");
+}
+
+#help:hover {
+    -fx-image: url("sources/outer-controller/help-hover.png");
+}
+
+#settings {
+    -fx-image: url("sources/outer-controller/settings.png");
+}
+
+#settings:hover {
+    -fx-image: url("sources/outer-controller/settings-hover.png");
+}
+
+#feedback {
+    -fx-image: url("sources/outer-controller/feedback.png");
+}
+
+#feedback:hover {
+    -fx-image: url("sources/outer-controller/feedback-hover.png");
+}
+
+#credits {
+    -fx-image: url("sources/outer-controller/credits.png");
+}
+
+#credits:hover {
+    -fx-image: url("sources/outer-controller/creadits-hover.png");
+}
+
+#quit {
+    -fx-image: url("sources/outer-controller/quit-button.png");
+}
+
+#quit:hover {
+    -fx-image: url("sources/outer-controller/quit-game-hover.png");
+}
+
+#quit-game-ask{
+    -fx-opacity: 0;
+}
+
+#nick-handler-field:focused{
+    -fx-faint-focus-color: transparent;
+    -fx-focus-color:rgba(86,191,132,0.6);
+}
+
+.shadowed{
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 15, 0, 0, 0);
+}

@@ -245,11 +245,9 @@ public class OuterController {
 
     @FXML
     public void send_feedback(){
-
         feedback_screen.setVisible(false);
         feedback_screen.setDisable(true);
         set_menu_enable_disable();
-
     }
 
     @FXML

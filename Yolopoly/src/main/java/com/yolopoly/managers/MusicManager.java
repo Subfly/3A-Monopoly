@@ -15,7 +15,7 @@ public class MusicManager {
         String path = new File("src/main/resources/sounds/background-music.wav").getAbsolutePath();
         media = new Media (new File(path).toURI().toString());
         mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.setVolume(0.5);
+        mediaPlayer.setVolume(0.2);
         mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
         mediaPlayer.play();
     }
