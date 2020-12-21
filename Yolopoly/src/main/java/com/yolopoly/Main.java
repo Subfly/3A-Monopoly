@@ -39,7 +39,7 @@ public class Main extends Application {
     }
 
     public static void main(String[] args) {
-        MusicManager.getInstance();
+       // MusicManager.getInstance();
         launch(args);
     }
 

@@ -534,12 +534,10 @@ public class InGameManager {
 
         if(gameMode == GameMode.bankman){
             if(player.isGetLoanCurrently()){
-                if(player.decrementLoanTurn()){
-                    if(player.getLoanTurn() == 0){
-                        addToLog("to pay loans to bank in this turn!", player.getName());
-                    }else{
-                        addToLog("only " + player.getLoanTurn() + " turns to pay loan", player.getName());
-                    }
+                if((player.getLoanTurn() - 1) == 0){
+                    addToLog("to pay loans to bank in this turn!", player.getName());
+                }else{
+                    addToLog("only " + player.getLoanTurn() + " turns to pay loan", player.getName());
                 }
             }
         }
