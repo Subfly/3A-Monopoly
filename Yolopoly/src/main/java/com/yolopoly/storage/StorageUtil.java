@@ -370,6 +370,15 @@ public class StorageUtil {
 
             System.out.println(formatDateTime);
 
+            boolean directory = new File("../saves/").mkdir();
+            if (directory) {
+                System.out.println("directory created");
+            }
+            else {
+                System.out.println("error patladın ağla");
+                // return;
+            }
+
             File file = new File("../saves/" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
             FileWriter writer = null;
             try {

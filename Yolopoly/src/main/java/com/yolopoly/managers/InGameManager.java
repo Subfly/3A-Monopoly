@@ -94,7 +94,7 @@ public class InGameManager {
             auctionPropertyIndex = -1;
             currentPlayerAuctioning = -1;
             brokenPlayersMoneyHash = new HashMap<>();
-            gameMode = mode;
+            this.gameMode = mode;
             this.participants = new ArrayList<>();
             effectManager = EffectManager.getInstance();
             this.theme = theme;
