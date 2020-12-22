@@ -2,6 +2,8 @@ package com.yolopoly.managers;
 
 import com.yolopoly.enumerations.*;
 import com.yolopoly.models.bases.*;
+import com.yolopoly.models.cards.ChanceCard;
+import com.yolopoly.models.cards.DrawableCard;
 import com.yolopoly.models.cards.PlaceCard;
 import com.yolopoly.models.cards.PropertyCard;
 import com.yolopoly.storage.Constants;
@@ -103,6 +105,27 @@ public class InGameManager {
                 p.setStartMoney(Constants.START_MONEY);
             }
         }
+    }
+
+    public boolean checkHasEnoughMoneyForGetOutOfJail(){
+        return players.get(currentPlayerId).getMonopolyMoneyAmount() >= Bank.getJailPenalty();
+    }
+
+    public boolean checkHasGOOJC(){
+        return players.get(currentPlayerId).getSavedCards().size() != 0;
+    }
+
+    public boolean useGOOJC(){
+        if(checkHasGOOJC()){
+            Player player = players.get(currentPlayerAuctioning);
+            DrawableCard card = player.removeFromSavedCards();
+            if(card != null){
+                board.returnSavedCard(card);
+                return true;
+            }
+            return false;
+        }
+        return false;
     }
 
     //**
@@ -236,11 +259,15 @@ public class InGameManager {
      */
     public void jailMakeDecision(double multiplier){
         Player bot = players.get(currentPlayerId);
-        //Pay money and get out
-        bot.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier));
-        bot.setInJail(false);
-        bot.resetInJailTurnCount();
-        bot.resetDoublesCount();
+        if(checkHasGOOJC()){
+            useGOOJC();
+        }else{
+            //Pay money and get out
+            bot.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier));
+            bot.setInJail(false);
+            bot.resetInJailTurnCount();
+            bot.resetDoublesCount();
+        }
     }
 
     public int auctionMakeDecision(){
