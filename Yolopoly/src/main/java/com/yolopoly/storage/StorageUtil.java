@@ -7,6 +7,7 @@ import com.yolopoly.enumerations.Colors;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.enumerations.SquareType;
+import com.yolopoly.managers.EffectManager;
 import com.yolopoly.managers.InGameManager;
 import com.yolopoly.models.bases.GameDataDelegate;
 import com.yolopoly.models.bases.Square;
@@ -448,6 +449,8 @@ public class StorageUtil {
         im.setPlayers(dm.getPlayers());
         im.setState(dm.getState());
         im.setTheme(dm.getTheme());
+        im.setSavedGamePlaying(true);
+        im.setBotChatData(dm.getBotChatData());
         return true;
     }
 }

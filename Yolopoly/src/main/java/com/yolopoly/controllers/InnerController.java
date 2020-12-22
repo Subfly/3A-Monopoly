@@ -17,6 +17,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -59,7 +60,7 @@ public class InnerController {
     ImageView buy_button, sell_button;
 
     @FXML
-    ImageView cards, cards_background, jail_ask, pay_option, roll_option;
+    ImageView cards, cards_background, jail_ask, pay_option, roll_option, card_option;
 
     @FXML
     AnchorPane cards_anchor;
@@ -106,6 +107,15 @@ public class InnerController {
     @FXML
     ImageView board;
 
+    @FXML
+    ImageView gooj1, gooj2;
+
+    @FXML
+    TextArea chat_label;
+
+    @FXML
+    Label chat;
+
     ImageView[] deck_card_list;
     ImageView[] pawns;
     ImageView[] player_indexes;
@@ -148,6 +158,7 @@ public class InnerController {
         pay_option = new ImageView();
         roll_option = new ImageView();
         jail_ask = new ImageView();
+        card_option = new ImageView();
 
         //For Debug Issues
         testTextField = new Label();
@@ -185,6 +196,9 @@ public class InnerController {
         currency_eur = new Label();
         currency_usd = new Label();
         currency_try = new Label();
+
+        gooj1 = new ImageView();
+        gooj2 = new ImageView();
     }
 
     ArrayList<ImageView> pawns_of_players;
@@ -236,6 +250,7 @@ public class InnerController {
         pay_option.setVisible(false);
         roll_option.setVisible(false);
         jail_ask.setVisible(false);
+        card_option.setVisible(false);
 
         auction_anchor.setVisible(false);
 
@@ -247,7 +262,7 @@ public class InnerController {
             iv.setVisible(false);
         }
 
-        multiplier_label = new Label();
+        //multiplier_label = new Label();
 
         if (igm.getGameMode() != GameMode.bankman){
             loan_button.setVisible(false);
@@ -316,6 +331,7 @@ public class InnerController {
         sound_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
             EffectManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
         });
+
     }
 
     InGameManager igm;
@@ -328,6 +344,24 @@ public class InnerController {
     private void initializeSettings() {
         playerCount = lm.getPlayerCount();
         playerArrayList = lm.getPlayerArrayList();
+
+        if (igm.isSavedGamePlaying()){
+            int count = 0;
+            for (ImageView iv : pawns_of_players){
+                movePawn(iv, igm.getPlayers().get(count).getCurrentPosition(),pawnTeam2.contains(pawns_of_players.get(count)), 0, true);
+                count++;
+            }
+
+            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
+                can_roll_dice = true;
+            }
+            else {
+                play_bot();
+            }
+        }
+
+        update_deck();
+        update_chat();
     }
 
     int turn = 0;
@@ -374,11 +408,10 @@ public class InnerController {
     public void get_chance(){
         if (!get_chanced){
             multiplier = igm.generateChanceMultiplier();
+            multiplier_label.setVisible(true);
             get_chanced = true;
             multiplier_label.setText("X" + multiplier);
         }
-
-        //show on label
     }
 
     boolean loan_taken = false;
@@ -415,6 +448,8 @@ public class InnerController {
         multiplier_label.setText("X" + multiplier);
         int pawnIndex = igm.getCurrentPlayerId();
         int result = igm.endTurn();
+
+        update_chat();
 
         if (result == 4){
             start_auction();
@@ -587,7 +622,6 @@ public class InnerController {
                     int dice2 = igm.getDice().getDice2();
                     int total = igm.getDice().getTotal();
 
-                    igm.getPlayers().get(igm.getCurrentPlayerId()).removeMoney(Constants.CURRENCY_NAMES[0],14999990 );
 
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
@@ -597,11 +631,16 @@ public class InnerController {
                     boolean bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
 
                     if (!bot_jailed){
-                        movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                        movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot, false);
                         result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
                         update_deck();
                         old_position_of_bot += total;
+
                     }
+
+                    bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
+
+                    update_chat();
 
                     if (!bot_jailed && dice1 == dice2){
                         state_of_bot = 0;
@@ -613,7 +652,7 @@ public class InnerController {
                         state_of_bot = 1;
                     }
                     else if(result_of_bots_cards == -2){
-                        state_of_bot = -1;
+                        state_of_bot = 0;
                     }
                     else {
                         end_turn();
@@ -632,7 +671,7 @@ public class InnerController {
                             move_count_of_bot = 40 - (old_position_of_bot - result_of_bots_cards);
                         }
                     }
-                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot, false);
                     result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
                     update_deck();
 
@@ -653,7 +692,7 @@ public class InnerController {
                     else {
                         move_count_of_bot = 50 - old_position_of_bot;
                     }
-                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                    movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot, false);
                     end_turn();
                 }
                 else if(igm.getPlayers().get(igm.getCurrentPlayerId()).getInJailTurnCount() == 3){
@@ -751,7 +790,7 @@ public class InnerController {
                 play_bot();
             }
         } else
-            testTextField.setText("Tur sende değil");
+            testTextField.setText("It's not your turn");
     }
 
     private void set_log() {
@@ -764,7 +803,7 @@ public class InnerController {
         test_label.setText(tmpLog);
     }
 
-    public void movePawn(ImageView tmpPawn, int moveCount, boolean pawnIsLonged, int oldposition) {
+    public void movePawn(ImageView tmpPawn, int moveCount, boolean pawnIsLonged, int oldposition, boolean saved) {
         double pawnXtmp = tmpPawn.getLayoutX();
         double pawnYtmp = tmpPawn.getLayoutY();
 
@@ -808,18 +847,40 @@ public class InnerController {
             oldposition = oldposition % 40;
             moveCount--;
 
+
+
 //            tmpPawn.setLayoutX(pawnXtmp);
 //            tmpPawn.setLayoutY(pawnYtmp);
 
         }
-        TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
-        tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
-        tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
-        tt.setOnFinished(e -> {
-            start_turn();
-        });
-        tt.setAutoReverse(false);
-        tt.play();
+        if (saved){
+            tmpPawn.setLayoutX(pawnXtmp);
+            tmpPawn.setLayoutY(pawnYtmp);
+        }
+        else {
+            TranslateTransition tt = new TranslateTransition(Duration.millis(1000), tmpPawn);
+            tt.setByX(pawnXtmp - tmpPawn.getLayoutX());
+            tt.setByY(pawnYtmp - tmpPawn.getLayoutY());
+            tt.setOnFinished(e -> {
+                start_turn();
+            });
+            tt.setAutoReverse(false);
+            tt.play();
+        }
+    }
+
+    @FXML
+    public void usecardoption(){
+        igm.useGOOJC();
+
+        jail_ask.setVisible(false);
+        card_option.setVisible(false);
+        cards_anchor.setVisible(false);
+        roll_option.setVisible(false);
+        pay_option.setVisible(false);
+        cards_background.setVisible(false);
+
+        update_deck();
     }
 
     @FXML
@@ -827,6 +888,7 @@ public class InnerController {
         igm.payForGetOutOfJail(1);
 
         jail_ask.setVisible(false);
+        card_option.setVisible(false);
         cards_anchor.setVisible(false);
         roll_option.setVisible(false);
         pay_option.setVisible(false);
@@ -840,6 +902,7 @@ public class InnerController {
         diceforjail = true;
 
         jail_ask.setVisible(false);
+        card_option.setVisible(false);
         cards_anchor.setVisible(false);
         roll_option.setVisible(false);
         pay_option.setVisible(false);
@@ -862,6 +925,20 @@ public class InnerController {
 
         for (ImageView iv : deck_card_list){
             iv.setVisible(false);
+        }
+
+        gooj1.setVisible(false);
+        gooj2.setVisible(false);
+
+        if (player.getSavedCards().size() == 1){
+            set_image_helper(gooj1,"/scenes/sources/drawable-cards/", "gooj");
+            gooj1.setVisible(true);
+        }
+        else if(player.getSavedCards().size() == 2){
+            set_image_helper(gooj1,"/scenes/sources/drawable-cards/", "gooj");
+            set_image_helper(gooj2,"/scenes/sources/drawable-cards/", "gooj");
+            gooj1.setVisible(true);
+            gooj2.setVisible(true);
         }
 
         String path;
@@ -998,9 +1075,27 @@ public class InnerController {
                 player_goes_jail = false;
             }
             else if(p.isInJail()){
+                card_option.setVisible(true);
+                if(!igm.checkHasGOOJC()){
+                    card_option.setStyle("-fx-opacity: 0.5");
+                    card_option.setDisable(true);
+                }
+                else {
+                    card_option.setStyle("-fx-opacity: 1");
+                    card_option.setDisable(false);
+                }
                 jail_ask.setVisible(true);
                 cards_anchor.setVisible(true);
                 roll_option.setVisible(true);
+                pay_option.setVisible(true);
+                if(!igm.checkHasEnoughMoneyForGetOutOfJail()){
+                    pay_option.setStyle("-fx-opacity: 0.5");
+                    pay_option.setDisable(true);
+                }
+                else {
+                    pay_option.setStyle("-fx-opacity: 1");
+                    pay_option.setDisable(false);
+                }
                 pay_option.setVisible(true);
                 cards_background.setVisible(true);
             }
@@ -1025,7 +1120,7 @@ public class InnerController {
         else {
             move_count_of_player = 50 - current_place;
         }
-        movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
+        movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place, false);
         is_player_get_jailed = false;
         end_turn();
     }
@@ -1059,8 +1154,6 @@ public class InnerController {
         if (can_roll_dice){
             can_roll_dice = false;
             igm.rollDice();
-            igm.getDice().setDice1(3);
-            igm.getDice().setDice2(4);
             int dice1 = igm.getDice().getDice1();
             int dice2 = igm.getDice().getDice2();
             int total = igm.getDice().getTotal();
@@ -1077,27 +1170,10 @@ public class InnerController {
                 old_position_of_player = igm.getCurrentPlayerCurrentPosition();
 
                 if (!(igm.getPlayers().get(igm.getCurrentPlayerId()).getDoublesCount() == 2 && is_double)){
-                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
+                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player, false);
                 }
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
-
-                /*
-                 * RETURN VALUES EXPLAINED
-                 * -100 => PLAYER IN JAIL
-                 * -99 => PLAYER BROKE, PAY DEBTS
-
-                 * -1 => ERROR APPEARED SUCCESSFULLY
-
-                 * 5 => GET TAXES FROM PARK
-                 * 6 => PAID RENT
-                 * 7 => EVERYTHING IS DONE, GOODBYE!
-                 *
-                 * JAIL ALGORITHM
-                 * -99 => LET PLAYER PAY DEBTS, THEN startTurn() AGAIN
-                 * -100 => LET PLAYER TO CHOOSE FROM DICE OR PAY FINE
-                 * NO SPECIAL HANDLE IN GETTING OUT
-                 */
 
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
                 //old
@@ -1129,10 +1205,10 @@ public class InnerController {
             else if (diceforjail && !is_double){
                 diceforjail = false;
                 end_turn();
-                movePawn(pawns_of_players.get(turn), 40 , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), 10);
+                movePawn(pawns_of_players.get(turn), 40 , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), 10, false);
             }
             else if (!can_roll_dice){
-                testTextField.setText("la tur sende değil dur bi");
+                //
             }
         }
         set_log();
@@ -1145,7 +1221,7 @@ public class InnerController {
             old_position_of_player = old_position_of_player + igm.getDice().getTotal();
             move_count_of_player = 37;
             int result = igm.startTurn(move_count_of_player, false, multiplier);
-            movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
+            movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player, false);
             if (result == 2){
                 check_drawable_cards();
             }
@@ -1160,7 +1236,7 @@ public class InnerController {
                 move_count_of_player = 40 - (old_position_of_player - card_result_of_player);
             }
             igm.startTurn(move_count_of_player, false, multiplier);
-            movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player);
+            movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_player, false);
         }
         else if (card_result_of_player == 5200) {
             get_player_jail((old_position_of_player + igm.getDice().getTotal()) % 40);
@@ -1394,17 +1470,6 @@ public class InnerController {
         iv.setImage(image);
     }
 
-//    @FXML
-//    public void saveGame(){
-//        //TODO: SAİDCAN BURAYI DOĞRU ŞEKİLDE EDİTLE
-//        igm.saveAndExit();
-//        try{
-//            closeButtonPressed();
-//        }catch (Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//    }
-
     @FXML
     public void exit_pressed(){
         in_game_menu.setVisible(true);
@@ -1447,5 +1512,22 @@ public class InnerController {
     public void save_settings(){
         settings.setDisable(true);
         settings.setVisible(false);
+    }
+
+    @FXML
+    public void send_chat(){
+        igm.addToChat(chat_label.getText(), lm.getAdmin().getName());
+        chat_label.setText("");
+        update_chat();
+    }
+
+    public void update_chat(){
+        String tmpLog = "";
+        for (String i : igm.getChat()) {
+            String tmp = tmpLog;
+            tmpLog = i + "\n";
+            tmpLog += tmp;
+        }
+        chat.setText(tmpLog);
     }
 }

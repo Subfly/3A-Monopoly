@@ -18,6 +18,7 @@ public class GameDataDelegate {
     private int currentPlayerId;
     private GameState state;
     private GameMode gameMode;
+    private boolean isSavedGamePlaying;
 
     //Auction Related
     private String currentHighestBidName;
@@ -26,7 +27,15 @@ public class GameDataDelegate {
     private int currentPlayerAuctioning;
     private ArrayList<Player> participants;
     private GameTheme theme;
+    private ArrayList<String> botChatData;
 
+    public ArrayList<String> getBotChatData() {
+        return botChatData;
+    }
+
+    public void setBotChatData(ArrayList<String> botChatData) {
+        this.botChatData = botChatData;
+    }
 
     private HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash;
 
@@ -158,5 +167,13 @@ public class GameDataDelegate {
 
     public void setBrokenPlayersMoneyHash(HashMap<Integer, HashMap<Integer, Integer>> brokenPlayersMoneyHash) {
         this.brokenPlayersMoneyHash = brokenPlayersMoneyHash;
+    }
+
+    public boolean isSavedGamePlaying() {
+        return isSavedGamePlaying;
+    }
+
+    public void setSavedGamePlaying(boolean savedGamePlaying) {
+        isSavedGamePlaying = savedGamePlaying;
     }
 }

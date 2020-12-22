@@ -36,6 +36,7 @@ public class InGameManager {
     private int currentPlayerId;
     private GameState state;
     private GameMode gameMode;
+    private boolean isSavedGamePlaying;
 
     //Auction Related
     private String currentHighestBidName;
@@ -85,10 +86,13 @@ public class InGameManager {
         if(isSavedGamePlaying){
             try{
                 util.loadGame(path);
+                this.isSavedGamePlaying = true;
+                this.effectManager = EffectManager.getInstance();
             }catch (IOException ioe){
                 System.out.println("ERROR (1003): " + ioe.getMessage());
             }
         }else{
+            this.isSavedGamePlaying = false;
             chat = new ArrayList<>();
             try{
                 botChatData = util.getBotSentences();
@@ -118,6 +122,14 @@ public class InGameManager {
         }
     }
 
+    public boolean isSavedGamePlaying() {
+        return isSavedGamePlaying;
+    }
+
+    public void setSavedGamePlaying(boolean savedGamePlaying) {
+        isSavedGamePlaying = savedGamePlaying;
+    }
+
     public boolean checkHasEnoughMoneyForGetOutOfJail(){
         return players.get(currentPlayerId).getMonopolyMoneyAmount() >= Bank.getJailPenalty();
     }
@@ -128,8 +140,11 @@ public class InGameManager {
 
     public boolean useGOOJC(){
         if(checkHasGOOJC()){
-            Player player = players.get(currentPlayerAuctioning);
+            Player player = players.get(currentPlayerId);
             DrawableCard card = player.removeFromSavedCards();
+            player.setInJail(false);
+            player.resetDoublesCount();
+            player.resetInJailTurnCount();
             if(card != null){
                 board.returnSavedCard(card);
                 return true;
@@ -391,7 +406,7 @@ public class InGameManager {
             boolean isBuyable = (squareToBuy.getType() == SquareType.NormalSquare) || (squareToBuy.getType() == SquareType.RailroadSquare) || (squareToBuy.getType() == SquareType.UtilitySquare);
             if(checkBuyProperty(bot.getCurrentPosition()) && isBuyable){
                 //Just buy the area
-                buyProperty();
+                buyProperty(multiplier);
             }
             int totalBoughtProperties = bot.getOwnedPlaces().size();
             int randomArea = (int)(Math.random() * totalBoughtProperties + 1);
@@ -526,6 +541,7 @@ public class InGameManager {
     // Turn Related Functions
     //**
     public void rollDice(){
+        effectManager = EffectManager.getInstance();
         effectManager.playRollEffect();
         dice.roll();
     }
@@ -730,6 +746,14 @@ public class InGameManager {
         }
     }
 
+    public ArrayList<String> getBotChatData() {
+        return botChatData;
+    }
+
+    public void setBotChatData(ArrayList<String> botChatData) {
+        this.botChatData = botChatData;
+    }
+
     /*
      * RETURN VALUES
      * 1 => NORMAL END
@@ -854,7 +878,7 @@ public class InGameManager {
     //**
     // Action Related Functions
     //**
-    public void buyProperty(){
+    public void buyProperty(double multiplier){
         //Get changing data
         Player currentPlayer = players.get(currentPlayerId);
         Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
@@ -865,7 +889,7 @@ public class InGameManager {
         currentPlayer.ownProperty(getSpecificProperty(square.getId()));
 
         //Bura sürekli siniliniyor kafayı yiyeceğim - Ali
-        currentPlayer.removeMoney(Constants.CURRENCY_NAMES[0], card.getCost());
+        currentPlayer.removeMoney(Constants.CURRENCY_NAMES[0], (int)(card.getCost() * multiplier));
 
         //Save changes on data
         //TODO ponçik ali taha olur böyle şeyler
@@ -1229,7 +1253,7 @@ public class InGameManager {
             removeMortgageFromPlace(squareIndex, multiplier);
         }
         else if (level == 0 && !square.isBought()){
-            buyProperty();
+            buyProperty(multiplier);
         }
         else if(level == 0 && square.isBought()){
             buildBuilding(Building.House, squareIndex, multiplier);

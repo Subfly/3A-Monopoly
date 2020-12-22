@@ -119,10 +119,9 @@ public class Player {
     public DrawableCard removeFromSavedCards(){
         //As only the GOFJ Cards can be present here
         try{
-            this.savedCards.remove(0);
-            return removeFromSavedCards();
+            return savedCards.remove(0);
         }catch (IndexOutOfBoundsException e){
-//            System.out.println("No saved cards found.");
+            System.out.println("No saved cards found.");
             return null;
         }
     }

@@ -241,8 +241,13 @@ public class OuterController {
 
     @FXML
     public void join_game(MouseEvent e) throws Exception {
-        me.setOnline(true);
-        changeScreen("src/main/resources/scenes/MiddleController.fxml");
+        String index_st = ((Label)e.getSource()).getId().replace("join_", "");
+        int index = Integer.parseInt(index_st);
+
+        StorageUtil su = new StorageUtil();
+        System.out.println(server_names[index].getText() + "_" + server_settings[index].getText().toLowerCase() + "_" + server_sizes[index].getText().toLowerCase()  + ".json");
+        su.loadGame(server_names[index].getText() + "_" + server_settings[index].getText().toLowerCase()  + "_" + server_sizes[index].getText().toLowerCase()  + ".json");
+        changeScreen("src/main/resources/scenes/InnerController.fxml");
     }
 
     @FXML
