@@ -11,6 +11,7 @@ import com.yolopoly.managers.InGameManager;
 import com.yolopoly.models.bases.GameDataDelegate;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,6 +23,18 @@ import java.util.*;
 
 public class StorageUtil {
     public StorageUtil() {
+    }
+
+    public ArrayList<String> getBotSentences() throws FileNotFoundException {
+        ArrayList<String> returningArray = new ArrayList<>();
+        File file = new File("src/main/java/com/yolopoly/data/sentences/sentences.json");
+        String content = new Scanner(file).useDelimiter("\\Z").next();
+        JSONArray ja = new JSONArray(content);
+        var data =  ja.toList();
+        for(Object o : data){
+            returningArray.add(o.toString());
+        }
+        return returningArray;
     }
 
     public ArrayList<Square> getSquaresData(GameMode mode, GameTheme theme) throws FileNotFoundException {

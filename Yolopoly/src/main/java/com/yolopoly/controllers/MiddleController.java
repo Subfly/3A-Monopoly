@@ -345,7 +345,7 @@ public class MiddleController {
 
     @FXML
     public void readyButtonPressed() throws Exception{
-        ie.initializeGame(false, me.getGameMode(), me.getGameTheme(), me.getPlayerArrayList());
+        ie.initializeGame(false, me.getGameMode(), me.getGameTheme(), me.getPlayerArrayList(), null);
         Main.changeScreen("src/main/resources/scenes/InnerController.fxml");
     }
 
