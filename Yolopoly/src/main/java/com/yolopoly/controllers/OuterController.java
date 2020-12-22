@@ -1,21 +1,21 @@
 package com.yolopoly.controllers;
 
+import com.yolopoly.managers.EffectManager;
 import com.yolopoly.managers.LobbyManager;
 import com.yolopoly.managers.MainMenuManager;
-import com.yolopoly.models.bases.GameListData;
-import com.yolopoly.storage.FirebaseUtil;
+import com.yolopoly.managers.MusicManager;
 import com.yolopoly.storage.StorageUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -27,13 +27,7 @@ public class OuterController {
     AnchorPane quit_game_ask, menu, coming_soon, nick_handler, settings;
 
     @FXML
-    Slider music_slider = new Slider();
-
-    @FXML
     TextArea nick_handler_field;
-
-    @FXML
-    TextField music_field;
 
     @FXML
     AnchorPane game_list;
@@ -52,6 +46,16 @@ public class OuterController {
 
     @FXML
     ImageView field_0, field_1, field_2, field_3, field_4;
+
+    @FXML
+    Slider music_slider, sound_slider;
+
+    @FXML
+    TextArea mail_handler, message_handler;
+
+    @FXML
+    AnchorPane credits_screen;
+
 
     Label[] server_names;
     Label[] server_sizes;
@@ -79,9 +83,13 @@ public class OuterController {
         server_fields = new ImageView[]{field_0, field_1, field_2, field_3, field_4};
 
         music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue.doubleValue());
-            music_field.setText(String.valueOf(newValue.doubleValue()));
+            MusicManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
         });
+
+        sound_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            EffectManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
+        });
+
 
         if (oe.isNickSet()){
             nick_handler.setVisible(false);
@@ -130,6 +138,13 @@ public class OuterController {
     private void settings(){
         settings.setVisible(true);
         settings.setDisable(false);
+
+        int music = oe.getSettings().get(0);
+        int sound = oe.getSettings().get(1);
+
+        music_slider.setValue((double)music / 100);
+        sound_slider.setValue((double)sound / 100);
+
         set_menu_enable_disable();
     }
 
@@ -248,8 +263,24 @@ public class OuterController {
 
         feedback_screen.setVisible(false);
         feedback_screen.setDisable(true);
-        set_menu_enable_disable();
 
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String mail_address = mail_handler.getText().trim();
+                String message = message_handler.getText();
+                try {
+                    oe.handleFeedback(mail_address, message);
+                }
+                catch (MessagingException me){
+                    System.out.println(me.getMessage());
+                }
+                mail_handler.setText("");
+                message_handler.setText("");
+            }
+        });
+        thread.start();
+        set_menu_enable_disable();
     }
 
     @FXML
@@ -259,5 +290,19 @@ public class OuterController {
         set_menu_enable_disable();
     }
 
+
+    @FXML
+    private void credits(){
+        credits_screen.setVisible(true);
+        credits_screen.setDisable(false);
+        set_menu_enable_disable();
+    }
+
+    @FXML
+    private void close_credits(){
+        credits_screen.setVisible(false);
+        credits_screen.setDisable(true);
+        set_menu_enable_disable();
+    }
 
 }

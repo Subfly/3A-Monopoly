@@ -52,5 +52,6 @@ public class PlaceCard extends PropertyCard{
         super(id, color, name, cost, rentPrices, mortgagePrice);
         this.housePrice = housePrice;
         this.hotelPrice = hotelPrice;
+        this.mortgagePrice = mortgagePrice;
     }
 }

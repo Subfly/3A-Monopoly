@@ -2,6 +2,8 @@ package com.yolopoly.managers;
 
 import com.yolopoly.enumerations.*;
 import com.yolopoly.models.bases.*;
+import com.yolopoly.models.cards.ChanceCard;
+import com.yolopoly.models.cards.DrawableCard;
 import com.yolopoly.models.cards.PlaceCard;
 import com.yolopoly.models.cards.PropertyCard;
 import com.yolopoly.storage.Constants;
@@ -21,7 +23,6 @@ public class InGameManager {
 
     private static InGameManager innerEngine = null;
     private EffectManager effectManager;
-
     //**
     // Variables
     //**
@@ -106,6 +107,27 @@ public class InGameManager {
         }
     }
 
+    public boolean checkHasEnoughMoneyForGetOutOfJail(){
+        return players.get(currentPlayerId).getMonopolyMoneyAmount() >= Bank.getJailPenalty();
+    }
+
+    public boolean checkHasGOOJC(){
+        return players.get(currentPlayerId).getSavedCards().size() != 0;
+    }
+
+    public boolean useGOOJC(){
+        if(checkHasGOOJC()){
+            Player player = players.get(currentPlayerAuctioning);
+            DrawableCard card = player.removeFromSavedCards();
+            if(card != null){
+                board.returnSavedCard(card);
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
+
     //**
     // Functions
     //**
@@ -120,10 +142,9 @@ public class InGameManager {
 
             int countPlayersColor = countPlayersColor(paidToPlayer, square);
             int countBoardColor = board.countColors(square);
-            rentAmount = prop.getRentPrices().get(square.getRentMultiplier());
+            rentAmount = prop.getRentPrices().get(square.getLevel());
             if (countBoardColor == countPlayersColor && square.getLevel() == 0){
                 rentAmount = rentAmount * 2;
-                System.out.println(square + " iki kat kira");
             }
 
         }else if(square.getType() == SquareType.RailroadSquare){
@@ -142,7 +163,12 @@ public class InGameManager {
                 }
             }
             int baseRent = prop.getRentPrices().get(counter);
-            rentAmount = baseRent * diceResult;
+            if (diceResult == -1){
+                rentAmount = baseRent;
+            }
+            else {
+                rentAmount = baseRent * diceResult;
+            }
         }
         return rentAmount;
     }
@@ -233,11 +259,15 @@ public class InGameManager {
      */
     public void jailMakeDecision(double multiplier){
         Player bot = players.get(currentPlayerId);
-        //Pay money and get out
-        bot.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier));
-        bot.setInJail(false);
-        bot.resetInJailTurnCount();
-        bot.resetDoublesCount();
+        if(checkHasGOOJC()){
+            useGOOJC();
+        }else{
+            //Pay money and get out
+            bot.removeMoney(Constants.CURRENCY_NAMES[0], (int)(Bank.getJailPenalty() * multiplier));
+            bot.setInJail(false);
+            bot.resetInJailTurnCount();
+            bot.resetDoublesCount();
+        }
     }
 
     public int auctionMakeDecision(){
@@ -360,6 +390,9 @@ public class InGameManager {
                 levelUp(randomArea, multiplier);
             }
             return -97;
+        }
+        else if (result == -2){
+            return -2;
         }
         else {
             return -99;
@@ -520,6 +553,9 @@ public class InGameManager {
                 Return true as turn completed
          */
 
+        //Start with getting player
+
+
         //If currently in auction
         if(this.state == GameState.Auction){
             return -1;
@@ -529,12 +565,11 @@ public class InGameManager {
             multiplier = 1;
         }
 
-        //Start with getting player
         Player player = players.get(currentPlayerId);
 
         if(gameMode == GameMode.bankman){
             if(player.isGetLoanCurrently()){
-                if((player.getLoanTurn() - 1) == 0){
+                if(player.getLoanTurn() == 0){
                     addToLog("to pay loans to bank in this turn!", player.getName());
                 }else{
                     addToLog("only " + player.getLoanTurn() + " turns to pay loan", player.getName());
@@ -565,7 +600,7 @@ public class InGameManager {
             player.resetDoublesCount();
         }
 
-        if(player.isThreeTimesDoubled()){
+        if(player.isThreeTimesDoubled() || (!player.isHuman() && player.getDoublesCount() == 2)){
             effectManager.playJailEffect();
             player.setInJail(true);
             player.setCurrentPosition(10);
@@ -701,7 +736,6 @@ public class InGameManager {
 
         if (player.isInJail()){
             player.incrementInJailTurnCount();
-            System.out.println(player.getInJailTurnCount() + " inner enginde");
         }
 
         if(player.isBankrupt()){
@@ -782,7 +816,7 @@ public class InGameManager {
         Square lastSquareMadeSomething = board.getSpecificSquare(players.get(currentPlayerId).getCurrentPosition());
         PropertyCard lastSquareMadeSomethingPropertyCard = getSpecificProperty(lastSquareMadeSomething.getId());
         boolean isBuyable = (lastSquareMadeSomething.getType() == SquareType.NormalSquare) || (lastSquareMadeSomething.getType() == SquareType.UtilitySquare) || (lastSquareMadeSomething.getType() == SquareType.RailroadSquare);
-        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1)){
+        if(isBuyable && (lastSquareMadeSomethingPropertyCard.getOwnedBy() == -1) && !getDice().isDouble() && player.isHuman()){
             createAuction();
             return 4;
         }
@@ -799,7 +833,6 @@ public class InGameManager {
 
         return 1;
     }
-
     //**
     // Action Related Functions
     //**
@@ -808,9 +841,6 @@ public class InGameManager {
         Player currentPlayer = players.get(currentPlayerId);
         Square square = board.getSpecificSquare(currentPlayer.getCurrentPosition());
         PropertyCard card = getSpecificProperty(square.getId());
-        System.out.println("Name of area is: " + card.getName());
-        System.out.println("Id of the square is: " + square.getId());
-        System.out.println("Id of the prop is: " + card.getId());
 
         //Make changes on data
         card.setOwnedBy(currentPlayerId);
@@ -830,7 +860,7 @@ public class InGameManager {
         Player player = players.get(getCurrentPlayerId());
         player.getSpecificCard(squareIndex).setMortgaged(true);
         board.getSquares().get(squareIndex).setLevel(-1);
-        PropertyCard currentPlace = player.getSpecificCard(squareIndex);
+        PropertyCard currentPlace = getSpecificProperty(squareIndex);
         int moneyToAdd = currentPlace.getMortgagePrice();
         if (player.isHuman()) {
             effectManager.playMoneyEffect();
@@ -891,7 +921,6 @@ public class InGameManager {
                 this.currentPlayerAuctioning = 0;
             }
             if (auctionPropertyIndex != 0){
-                System.out.println(currentPlayerAuctioning + " ingameflaan");
                 addToLog("passed this turn", participants.get(currentPlayerAuctioning).getName());
             }
         }
@@ -913,9 +942,7 @@ public class InGameManager {
     }
 
     public boolean endAuction(){
-        System.out.println("buraya giro");
         if(checkAuctionStatus()){
-            System.out.println("buraya da giro");
             Player currentPlayer = participants.get(currentPlayerAuctioning);
             Square square = board.getSpecificSquare(auctionPropertyIndex);
             PropertyCard card = getSpecificProperty(square.getId());
@@ -923,10 +950,9 @@ public class InGameManager {
             //Make changes on data
             card.setOwnedBy(players.indexOf(currentPlayer));
             currentPlayer.ownProperty(getSpecificProperty(square.getId()));
-            bank.getPropertyCards().set(square.getId(), card);
             board.buySquare(square.getId());
             addToLog("bought property for: " + parser(this.currentBid), participants.get(currentPlayerAuctioning).getName());
-
+            participants.clear();
             //Continue game in linear from the next player
             this.state = GameState.Linear;
             return true;
@@ -1008,7 +1034,6 @@ public class InGameManager {
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                System.out.println("helal lan alitahasubuçak");
                 return 5200;
             }else{
                 if(cardDrawn.isComposed()){
@@ -1086,7 +1111,6 @@ public class InGameManager {
                 //If card is a GTJC, move player to jail
                 player.setCurrentPosition(10);
                 player.setInJail(true);
-                System.out.println("helal lan alitahasubuçak");
                 return 5200;
             }else if(cardDrawn.isDrawingChanceCard()){
                 //Needed to be handled in front-end.
@@ -1110,6 +1134,7 @@ public class InGameManager {
                                 if(currentPosition > moveToIndex){
                                     player.addMoney(Constants.CURRENCY_NAMES[0], (int)(Constants.GO_SQUARE_MONEY * multiplier));
                                 }
+                                player.addMoney(Constants.CURRENCY_NAMES[0],(int)(multiplier * cardDrawn.getMoneyGet()));
                             }
                             //player.setCurrentPosition(moveToIndex);
                             return moveToIndex;
@@ -1264,10 +1289,9 @@ public class InGameManager {
     public boolean giveLoan(int amount) {
         Player player = players.get(currentPlayerId);
         if (player.isGetLoanCurrently()) {
-            System.out.println("You need to pay your loan first");
             return false;
         }
-        System.out.println("Gave loan to the player " + player.getName());
+//        System.out.println("Gave loan to the player " + player.getName());
         addToLog("got loan in amount " + parser(amount), player.getName());
         bank.giveLoan(amount, player);
         return true;
@@ -1276,7 +1300,7 @@ public class InGameManager {
     public boolean receiveLoanBackFromPlayer(double multiplier) {
         Player player = players.get(currentPlayerId);
         if (!player.isGetLoanCurrently()) {
-            System.out.println("The player is not on the loan currently");
+//            System.out.println("The player is not on the loan currently");
             return false;
         }
         int amount = player.getLoan();
@@ -1284,7 +1308,7 @@ public class InGameManager {
             if (player.isHuman()) {
                 effectManager.playMoneyEffect();
             }
-            System.out.println("Player paid his/her loan " + player.getName());
+//            System.out.println("Player paid his/her loan " + player.getName());
             addToLog("paid loan back with amount of: " + parser(amount), player.getName());
             player.resetLoan();
             return true;

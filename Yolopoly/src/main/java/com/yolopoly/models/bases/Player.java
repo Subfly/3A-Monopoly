@@ -122,7 +122,7 @@ public class Player {
             this.savedCards.remove(0);
             return removeFromSavedCards();
         }catch (IndexOutOfBoundsException e){
-            System.out.println("No saved cards found.");
+//            System.out.println("No saved cards found.");
             return null;
         }
     }
@@ -172,7 +172,7 @@ public class Player {
         int oldMoney = money.get(currencyName);
         int newMoney = oldMoney - amount;
         if (newMoney < 0) {
-            System.out.println("Money is not sufficient");
+//            System.out.println("Money is not sufficient");
             return false;
         }
         money.replace(currencyName, newMoney);
@@ -217,7 +217,7 @@ public class Player {
     public boolean sellProperty(PropertyCard card){
         if (isOwned(card)) {
             ownedPlaces.remove(card);
-            System.out.println("Player " + name + " sold the property " + card.getName());
+//            System.out.println("Player " + name + " sold the property " + card.getName());
             return true;
         }
         return false;
@@ -231,8 +231,8 @@ public class Player {
     public boolean incrementDoublesCount() {
         doublesCount = doublesCount + 1;
         if (doublesCount == 3) {
-            this.setThreeTimesDoubled(true);
-            this.setInJail(true); // doubles three times, go to jail
+            this.isThreeTimesDoubled = true;
+            this.isInJail = true; // doubles three times, go to jail
             //this.resetDoublesCount();
         }
         return true;
@@ -428,6 +428,7 @@ public class Player {
      * @param inJail the in jail
      */
     public void setInJail(boolean inJail) {
+        resetInJailTurnCount();
         isInJail = inJail;
     }
 

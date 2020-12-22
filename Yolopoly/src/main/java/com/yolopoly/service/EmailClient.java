@@ -21,7 +21,7 @@ public class EmailClient {
 
         //sending message
         Transport.send(message);
-        System.out.println("Done");
+//        System.out.println("Done");
     }
 
     public static void sendMailToSelf(String playerEmail, String mailContent) throws MessagingException {
@@ -35,7 +35,7 @@ public class EmailClient {
 
         //sending message
         Transport.send(message);
-        System.out.println("Done");
+//        System.out.println("Done");
     }
 
     private static void prepareEmailMessage(MimeMessage message, String to, String title, String html)

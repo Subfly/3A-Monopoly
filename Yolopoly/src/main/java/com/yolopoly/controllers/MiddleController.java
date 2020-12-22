@@ -4,14 +4,13 @@ import com.google.firebase.messaging.WebpushNotification;
 import com.yolopoly.Main;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.GameTheme;
-import com.yolopoly.managers.InGameManager;
-import com.yolopoly.managers.LobbyManager;
-import com.yolopoly.managers.MainMenuManager;
+import com.yolopoly.managers.*;
 import com.yolopoly.models.bases.Player;
 import com.yolopoly.storage.FirebaseUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -56,6 +55,8 @@ public class MiddleController {
     TextArea set_name;
     @FXML
     ImageView add_player, set_name_field;
+    @FXML
+    Slider music_slider, sound_slider;
 
     ImageView[] theme_buttons;
     ImageView[] lobby_size_buttons;
@@ -126,6 +127,15 @@ public class MiddleController {
         }
 
         set_all_images();
+
+
+        music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MusicManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
+        });
+
+        sound_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            EffectManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
+        });
     }
 
     private void changePlayerList(){
@@ -319,13 +329,16 @@ public class MiddleController {
     public void settings_pressed(){
         settings.setDisable(false);
         settings.setVisible(true);
+
+        int music = oe.getSettings().get(0);
+        int sound = oe.getSettings().get(1);
+
+        music_slider.setValue((double)music / 100);
+        sound_slider.setValue((double)sound / 100);
     }
 
     @FXML
     public void save_settings(){
-
-        //TODO save settings
-
         settings.setDisable(true);
         settings.setVisible(false);
     }

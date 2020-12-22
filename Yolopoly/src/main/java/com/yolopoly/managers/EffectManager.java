@@ -10,7 +10,7 @@ public class EffectManager {
     private int volume;
 
     private EffectManager() {
-        volume = 50;
+        volume = 35;
     }
 
     public static synchronized EffectManager getInstance() {

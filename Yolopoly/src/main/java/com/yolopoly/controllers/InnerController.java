@@ -4,8 +4,7 @@ import com.yolopoly.Main;
 import com.yolopoly.enumerations.DrawableCardType;
 import com.yolopoly.enumerations.GameMode;
 import com.yolopoly.enumerations.SquareType;
-import com.yolopoly.managers.InGameManager;
-import com.yolopoly.managers.LobbyManager;
+import com.yolopoly.managers.*;
 import com.yolopoly.models.bases.Player;
 import com.yolopoly.models.bases.Square;
 import com.yolopoly.models.cards.PropertyCard;
@@ -16,6 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -99,6 +99,9 @@ public class InnerController {
     @FXML
     Label add_field, try_parity, eur_parity, try_balance, eur_balance, to_from;
 
+    @FXML
+    Slider music_slider, sound_slider;
+
     ImageView[] deck_card_list;
     ImageView[] pawns;
     ImageView[] player_indexes;
@@ -111,7 +114,6 @@ public class InnerController {
     final String LOBBY_SETTINGS = "scenes/sources/lobby-settings/";
     final String LOBBY_PAWNS = "/scenes/sources/lobby-settings/pawns/";
     final String PNG = ".png";
-
 
     public InnerController() {
         //Card Image and Info Card Variables Declaration
@@ -188,6 +190,7 @@ public class InnerController {
 
         igm = InGameManager.getInstance();
         lm = LobbyManager.getInstance();
+        oe = MainMenuManager.getInstance();
 
         pawns_of_players = new ArrayList<>();
         indexes_of_players = new ArrayList<>();
@@ -291,14 +294,20 @@ public class InnerController {
             eur_balance.setText(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[2]).toString());
 
             add_field.setText("0K");
-
         }
 
+        music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            MusicManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
+        });
 
+        sound_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            EffectManager.getInstance().setVolume((int)(newValue.doubleValue() * 100));
+        });
     }
 
     InGameManager igm;
     LobbyManager lm;
+    MainMenuManager oe;
 
     ArrayList<Player> playerArrayList;
     int playerCount;
@@ -341,7 +350,6 @@ public class InnerController {
             case "usd" -> last_currency = "Monopoly Dollar";
         }
 
-        System.out.println();
 
         igm.exchangeCurrency(last_currency, currency, 100000);
     }
@@ -353,7 +361,6 @@ public class InnerController {
     public void get_chance(){
         if (!get_chanced){
             multiplier = igm.generateChanceMultiplier();
-            System.out.println(multiplier);
             get_chanced = true;
             multiplier_label.setText("X" + multiplier);
         }
@@ -380,7 +387,7 @@ public class InnerController {
     }
 
     boolean did_auction = false;
-
+    boolean it_was_double = false;
     /*
      * RETURN VALUES
      * 1 => NORMAL END
@@ -389,35 +396,70 @@ public class InnerController {
      * 4 => AUCTION
      */
     private void end_turn(){
+        int index_of_player_that_later_will_be_bankrupted_falan = igm.getCurrentPlayerId();
         get_chanced = false;
         multiplier = 1;
         multiplier_label.setText("X" + multiplier);
         int pawnIndex = igm.getCurrentPlayerId();
         int result = igm.endTurn();
 
-        System.out.println(igm.isCurrentPlayerHuman() + " insan mısınız lan " + result);
-
         if (result == 4){
             start_auction();
             did_auction = true;
-        }
-        else if (result == 1){
+//            it_was_double = can_roll_dice;
+//            can_roll_dice = false;
+        } else if (result == 1) {
             turn++;
             turn = turn % pawns_of_players.size();
             set_turn_GUI();
             state_of_bot = 0;
-            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()){
+            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()) {
                 can_roll_dice = true;
             }
-            if (did_auction){
+            if (did_auction) {
                 did_auction = false;
+                can_roll_dice = it_was_double;
+                it_was_double = false;
+                play_bot();
+            }
+        } else if (result == 2) {
+            pawns_of_players.get(pawnIndex).setVisible(true);
+            pawns_of_players.remove(pawnIndex);
+            turn++;
+            turn = turn % pawns_of_players.size();
+            set_turn_GUI();
+            state_of_bot = 0;
+            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()) {
+                can_roll_dice = true;
+            }
+            if (did_auction) {
+                did_auction = false;
+                can_roll_dice = it_was_double;
+                it_was_double = false;
+                play_bot();
+            }
+        } else if (result == 3) {
+            //game done
+            turn++;
+            turn = turn % pawns_of_players.size();
+            set_turn_GUI();
+            state_of_bot = 0;
+            if (igm.getPlayers().get(igm.getCurrentPlayerId()).isHuman()) {
+                can_roll_dice = true;
+            }
+            if (did_auction) {
+                did_auction = false;
+                can_roll_dice = it_was_double;
+                it_was_double = false;
                 play_bot();
             }
         }
-        else if(result == 2){
-            pawns_of_players.get(pawnIndex).setVisible(true);
-            pawns_of_players.remove(pawnIndex);
-        }
+//        else if (result == -99){
+//            pawns_of_players.get(index_of_player_that_later_will_be_bankrupted_falan).setVisible(false);
+//            pawns_of_players.remove(index_of_player_that_later_will_be_bankrupted_falan);
+//
+//            indexes_of_players.remove(index_of_player_that_later_will_be_bankrupted_falan);
+//        }
         update_deck();
     }
 
@@ -426,7 +468,6 @@ public class InnerController {
         int counter = 0;
         for (Player p : igm.getParticipants()){
             int tmp_pawn_index = p.getPawnIndex();
-            System.out.println(LOBBY_PAWNS + tmp_pawn_index + "");
             set_image_helper(auction_indexes[counter], LOBBY_PAWNS, "pawn-" + tmp_pawn_index + "");
             counter++;
         }
@@ -464,7 +505,6 @@ public class InnerController {
         auction_turn_index = igm.getCurrentPlayerAuctioning();
 
         if(igm.checkAuctionStatus()){
-            System.out.println("buraya giriyo mu ki bu ya");
             igm.endAuction();
             auction_anchor.setVisible(false);
             end_turn();
@@ -481,7 +521,6 @@ public class InnerController {
                 case -102 -> update_auction();
             }
             set_log();
-            System.out.println(result_of_bot);
             end_auction_turn();
         }
     }
@@ -513,9 +552,6 @@ public class InnerController {
             iv.setVisible(true);
             counter++;
         }
-
-
-
     }
 
     int state_of_bot = 0;
@@ -529,28 +565,30 @@ public class InnerController {
             // 0 - move w dice
             // 1 - move wout dice
             // 2 - finito
-
-
             if (!igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail()){
                 //TODO haahha
 
                 if (state_of_bot == 0){
                     igm.rollDice();
-
                     int dice1 = igm.getDice().getDice1();
                     int dice2 = igm.getDice().getDice2();
                     int total = igm.getDice().getTotal();
+
+                    igm.getPlayers().get(igm.getCurrentPlayerId()).removeMoney(Constants.CURRENCY_NAMES[0],14999990 );
 
                     old_position_of_bot = igm.getPlayers().get(igm.getCurrentPlayerId()).getCurrentPosition();
 
                     set_image_helper(dice_1, "/scenes/sources/dice/" , "dice_" + dice1);
                     set_image_helper(dice_2, "/scenes/sources/dice/" , "dice_" + dice2);
 
-                    movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
-                    result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
-                    update_deck();
-                    old_position_of_bot += total;
                     boolean bot_jailed = igm.getPlayers().get(igm.getCurrentPlayerId()).isInJail();
+
+                    if (!bot_jailed){
+                        movePawn(pawns_of_players.get(turn), total, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
+                        result_of_bots_cards = igm.makeDecision(total, dice1 == dice2);
+                        update_deck();
+                        old_position_of_bot += total;
+                    }
 
                     if (!bot_jailed && dice1 == dice2){
                         state_of_bot = 0;
@@ -560,6 +598,9 @@ public class InnerController {
                     }
                     else if (result_of_bots_cards == -3 || (result_of_bots_cards >= 0 && result_of_bots_cards <= 39)){
                         state_of_bot = 1;
+                    }
+                    else if(result_of_bots_cards == -2){
+                        state_of_bot = -1;
                     }
                     else {
                         end_turn();
@@ -578,8 +619,6 @@ public class InnerController {
                             move_count_of_bot = 40 - (old_position_of_bot - result_of_bots_cards);
                         }
                     }
-                    // TODO bişiler var burda go'dan sonra dert oğlu dert
-                    // FIXME Bot GO square'e gittiğinde indexi yanlış kalıyo
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     result_of_bots_cards = igm.makeDecision(move_count_of_bot, false);
                     update_deck();
@@ -603,6 +642,9 @@ public class InnerController {
                     }
                     movePawn(pawns_of_players.get(turn), move_count_of_bot , pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), old_position_of_bot);
                     end_turn();
+                }
+                else if(igm.getPlayers().get(igm.getCurrentPlayerId()).getInJailTurnCount() == 3){
+
                 }
                 else {
                     igm.jailMakeDecision(1);
@@ -844,13 +886,13 @@ public class InnerController {
         int index = Integer.parseInt(tmp_index) - 1;
 
         int squareId = igm.getBoard().getSquares().get(cards.get(index).getId()).getId();
-        System.out.println(player.getName() + " " + index + " " + squareId);
+//        System.out.println(player.getName() + " " + index + " " + squareId);
         PropertyCard tmpcard = igm.getSpecificProperty(squareId);
         Square tmpSquare = igm.getBoard().getSpecificSquare(squareId);
         if (is_square(tmpSquare, "buy")) {
             int tmpSquareLevel = tmpSquare.getLevel();
             card_image.setVisible(true);
-            System.out.println("/scenes/sources/property-cards/index" + cards.get(index).getId() + "");
+//            System.out.println("/scenes/sources/property-cards/index" + cards.get(index).getId() + "");
             set_image_helper(card_image, "/scenes/sources/property-cards/index", cards.get(index).getId() + "");
             set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
             buy_button.setVisible(true);
@@ -858,16 +900,15 @@ public class InnerController {
             assert tmpcard != null;
             if (igm.getOwner(squareId) != null) {
                 if (tmpSquareLevel != -1){
-                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel)); //TODO bugfix
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), igm.parser(igm.getRent(-1, squareId)));
                 }
                 else {
-                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), 0);
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), igm.parser(0));
                 }
             } else {
-                setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
+                setInfoCard(tmpSquareLevel, "-", igm.parser(tmpcard.getCost()));
             }
         } else {
-            System.out.println("ehelelele");
         }
 
         try {
@@ -946,7 +987,6 @@ public class InnerController {
         else {
             move_count_of_player = 50 - current_place;
         }
-        System.out.println(current_place + " sanane böyle almak istedi canım " + move_count_of_player + " move count falan bakalım iki ----------------");
         movePawn(pawns_of_players.get(turn), move_count_of_player, pawnTeam2.contains(pawns_of_players.get(igm.getCurrentPlayerId())), current_place);
         is_player_get_jailed = false;
         end_turn();
@@ -981,8 +1021,8 @@ public class InnerController {
         if (can_roll_dice){
             can_roll_dice = false;
             igm.rollDice();
-//            igm.getDice().setDice1(4);
-//            igm.getDice().setDice2(4);
+            igm.getDice().setDice1(3);
+            igm.getDice().setDice2(4);
             int dice1 = igm.getDice().getDice1();
             int dice2 = igm.getDice().getDice2();
             int total = igm.getDice().getTotal();
@@ -1004,20 +1044,39 @@ public class InnerController {
 
                 int result_of_start_turn = igm.startTurn(total, is_double, multiplier);
 
+                /*
+                 * RETURN VALUES EXPLAINED
+                 * -100 => PLAYER IN JAIL
+                 * -99 => PLAYER BROKE, PAY DEBTS
+
+                 * -1 => ERROR APPEARED SUCCESSFULLY
+
+                 * 5 => GET TAXES FROM PARK
+                 * 6 => PAID RENT
+                 * 7 => EVERYTHING IS DONE, GOODBYE!
+                 *
+                 * JAIL ALGORITHM
+                 * -99 => LET PLAYER PAY DEBTS, THEN startTurn() AGAIN
+                 * -100 => LET PLAYER TO CHOOSE FROM DICE OR PAY FINE
+                 * NO SPECIAL HANDLE IN GETTING OUT
+                 */
+
                 new_position_of_player = igm.getCurrentPlayerCurrentPosition();
                 //old
                 if (result_of_start_turn == -2){
-                    System.out.println(old_position_of_player + " old pos falan jail öncesi");
+//                    System.out.println(old_position_of_player + " old pos falan jail öncesi");
                     get_player_jail(old_position_of_player);
                     can_roll_dice = false;
                 }
                 else if (result_of_start_turn == 1){
                     drawable_card_info = 1;
                     card_result_of_player = igm.drawCard(DrawableCardType.Chance, 1);
+                    update_deck();
                 }
                 else if (result_of_start_turn == 2){
                     drawable_card_info = 2;
                     card_result_of_player = igm.drawCard(DrawableCardType.Community, 1);
+                    update_deck();
                 }
                 else if (result_of_start_turn == 3){
                 }
@@ -1109,16 +1168,15 @@ public class InnerController {
             assert tmpcard != null;
             if (igm.getOwner(squareId) != null) {
                 if (tmpSquareLevel != -1){
-                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), tmpcard.getRentPrices().get(tmpSquareLevel));
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), igm.parser(igm.getRent(-1, tmpcard.getId())));
                 }
                 else {
-                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), 0);
+                    setInfoCard(tmpSquareLevel, igm.getOwner(squareId).getName(), igm.parser(0));
                 }
             } else {
-                setInfoCard(tmpSquareLevel, "-", tmpcard.getCost());
+                setInfoCard(tmpSquareLevel, "-", igm.parser(tmpcard.getCost()));
             }
         } else {
-            System.out.println("ehelelele");
         }
 
         try {
@@ -1189,11 +1247,13 @@ public class InnerController {
             } else
                 position = "h";
             if (is_square(s, "build")) {
-                if (s.getLevel() == 0) {
+                if (s.getLevel() == 0 || s.getLevel() == -1) {
                     square_bars[i].setVisible(false);
                 } else if (s.getLevel() == 5) {
+                    square_bars[i].setVisible(true);
                     set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-hotel-" + position );
                 } else {
+                    square_bars[i].setVisible(true);
                     set_image_helper(square_bars[i],"/scenes/sources/squares/", "sq-house-" + s.getLevel() + "-" + position);
                 }
                 i++;
@@ -1220,7 +1280,7 @@ public class InnerController {
         price_rent_value.setVisible(false);
     }
 
-    public void setInfoCard(int houseCount, String owner, int pr_value) {
+    public void setInfoCard(int houseCount, String owner, String pr_value) {
 
         String pr;
         if (owner.equals("-")) {
@@ -1327,13 +1387,16 @@ public class InnerController {
     public void settings_pressed(){
         settings.setDisable(false);
         settings.setVisible(true);
+
+        int music = oe.getSettings().get(0);
+        int sound = oe.getSettings().get(1);
+
+        music_slider.setValue((double)music / 100);
+        sound_slider.setValue((double)sound / 100);
     }
 
     @FXML
     public void save_settings(){
-
-        //TODO save settings
-
         settings.setDisable(true);
         settings.setVisible(false);
     }
