@@ -55,8 +55,8 @@ public class Square {
             houseCount++;
             houseCheck = true;
             increaseLevel();
-            System.out.println("House increased");
-            System.out.println("Player has got home");
+//            System.out.println("House increased");
+//            System.out.println("Player has got home");
 
         }
         if( buildingType == Building.Hotel ){
@@ -64,8 +64,8 @@ public class Square {
             hotelCount++;
             increaseLevel();
             houseCount = 0;
-            System.out.println("Hotel increased");
-            System.out.println("Player has got hotel");
+//            System.out.println("Hotel increased");
+//            System.out.println("Player has got hotel");
 
 
         }
@@ -75,18 +75,18 @@ public class Square {
         if( buildingType == Building.House ) {
             houseCount--;
             decreaseLevel();
-            System.out.println("House decreased");
+//            System.out.println("House decreased");
 
             if( houseCount == 0 ){
-                System.out.println("Player hasn't got home");
+//                System.out.println("Player hasn't got home");
             }
         }
         if( buildingType == Building.Hotel ){
             hotelCount--;
             decreaseLevel();
             houseCount = 4;
-            System.out.println("Hotel decreased");
-            System.out.println("Player hasn't got hotel");
+//            System.out.println("Hotel decreased");
+//            System.out.println("Player hasn't got hotel");
         }
 
     }

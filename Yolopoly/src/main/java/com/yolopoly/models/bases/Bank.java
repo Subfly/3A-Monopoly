@@ -77,13 +77,13 @@ public class Bank {
     public int exchangeMoney(Player p, String fromCurrency, String toCurrency, int exchangeAmount) {
 
         if (fromCurrency.equals(Constants.CURRENCY_NAMES[0]) && toCurrency.equals(Constants.CURRENCY_NAMES[0])) {
-            System.out.println("Invalid exchange currencies");
+//            System.out.println("Invalid exchange currencies");
             return -1;
         }
 
         // Only allow exchange from Monopoly Dollar or to Monopoly Dollar
         if (!fromCurrency.equals(Constants.CURRENCY_NAMES[0]) && !toCurrency.equals(Constants.CURRENCY_NAMES[0])) {
-            System.out.println("Invalid exchange currencies");
+//            System.out.println("Invalid exchange currencies");
             return -1;
         }
 
@@ -93,7 +93,7 @@ public class Bank {
         // Check if the player's money is sufficient to exchange
         int fromAmountOfPlayer = playerMoney.get(fromCurrency);
         if (fromAmountOfPlayer < exchangeAmount) {
-            System.out.println("Money is not sufficient");
+//            System.out.println("Money is not sufficient");
             return -2;
         }
 

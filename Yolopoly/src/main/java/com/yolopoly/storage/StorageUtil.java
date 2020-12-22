@@ -368,8 +368,6 @@ public class StorageUtil {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH-mm");
             String formatDateTime = date.format(formatter);
 
-            System.out.println(formatDateTime);
-
             File file = new File("../saves/" + formatDateTime + "_" + engine.getGameMode() + "_" + engine.getTheme() + ".json");
             FileWriter writer = null;
             try {
