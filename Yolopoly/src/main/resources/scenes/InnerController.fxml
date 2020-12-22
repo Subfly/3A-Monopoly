@@ -16,7 +16,7 @@
                 <Image url="@sources/background-masked.png" />
             </image>
         </ImageView>
-        <ImageView fitHeight="980.0" fitWidth="980.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
+        <ImageView fx:id="board" fitHeight="980.0" fitWidth="980.0" layoutX="50.0" layoutY="50.0" pickOnBounds="true" preserveRatio="true">
             <image>
                 <Image url="@sources/board-semi-filled.png" />
             </image>
@@ -479,7 +479,7 @@
             <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="310.0">
                     <children>
-                        <Label fx:id="test_label" lineSpacing="5" prefWidth="300.0" style="-fx-padding: 0 10 0 0;" text="Label" wrapText="true" />
+                        <Label fx:id="test_label" lineSpacing="5" prefWidth="300.0" style="-fx-padding: 0 10 0 0;" text="Welcome to the Yolopoly!" wrapText="true" />
                     </children>
                 </AnchorPane>
             </content>

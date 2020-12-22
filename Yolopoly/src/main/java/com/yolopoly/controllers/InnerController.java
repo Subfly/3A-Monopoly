@@ -3,6 +3,7 @@ package com.yolopoly.controllers;
 import com.yolopoly.Main;
 import com.yolopoly.enumerations.DrawableCardType;
 import com.yolopoly.enumerations.GameMode;
+import com.yolopoly.enumerations.GameTheme;
 import com.yolopoly.enumerations.SquareType;
 import com.yolopoly.managers.*;
 import com.yolopoly.models.bases.Player;
@@ -102,6 +103,9 @@ public class InnerController {
     @FXML
     Slider music_slider, sound_slider;
 
+    @FXML
+    ImageView board;
+
     ImageView[] deck_card_list;
     ImageView[] pawns;
     ImageView[] player_indexes;
@@ -175,6 +179,8 @@ public class InnerController {
         loan_button = new ImageView();
         chance_button = new ImageView();
         add_field_image = new ImageView();
+
+        board = new ImageView();
 
         currency_eur = new Label();
         currency_usd = new Label();
@@ -294,6 +300,13 @@ public class InnerController {
             eur_balance.setText(igm.getPlayers().get(0).getMoney().get(Constants.CURRENCY_NAMES[2]).toString());
 
             add_field.setText("0K");
+        }
+
+        if (igm.getTheme() == GameTheme.bilkent){
+            set_image_helper(board, "/scenes/sources/bilkent/", "board");
+        }
+        else if(igm.getTheme() == GameTheme.halloween){
+            set_image_helper(board, "/scenes/sources/halloween/", "board");
         }
 
         music_slider.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -847,12 +860,27 @@ public class InnerController {
         String pawn_index = pawns_of_players.get(current_deck).getId().replace("pawn_","");
         set_image_helper(players_pawn,"/scenes/sources/lobby-settings/pawns/", "pawn-" + pawn_index);
 
+        for (ImageView iv : deck_card_list){
+            iv.setVisible(false);
+        }
+
+        String path;
+        if (igm.getTheme() == GameTheme.bilkent){
+            path = "/scenes/sources/bilkent/";
+        }
+        else if(igm.getTheme() == GameTheme.halloween){
+            path = "/scenes/sources/halloween/";
+        }
+        else {
+            path = "/scenes/sources/property-cards/";
+        }
+
         int counter = 0;
         if (cards != null){
             for (PropertyCard c : cards){
                 int index = c.getId();
                 deck_card_list[counter].setVisible(true);
-                set_image_helper(deck_card_list[counter],"/scenes/sources/property-cards/", "index" + index);
+                set_image_helper(deck_card_list[counter],path, "index" + index);
                 deck_card_list[counter].setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 2, 0, 0, 0);");
                 counter++;
             }
@@ -893,7 +921,17 @@ public class InnerController {
             int tmpSquareLevel = tmpSquare.getLevel();
             card_image.setVisible(true);
 //            System.out.println("/scenes/sources/property-cards/index" + cards.get(index).getId() + "");
-            set_image_helper(card_image, "/scenes/sources/property-cards/index", cards.get(index).getId() + "");
+            String path;
+            if (igm.getTheme() == GameTheme.bilkent){
+                path = "/scenes/sources/bilkent/index";
+            }
+            else if(igm.getTheme() == GameTheme.halloween){
+                path = "/scenes/sources/halloween/index";
+            }
+            else {
+                path = "/scenes/sources/property-cards/index";
+            }
+            set_image_helper(card_image, path, cards.get(index).getId() + "");
             set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
             buy_button.setVisible(true);
             sell_button.setVisible(true);
@@ -1161,7 +1199,17 @@ public class InnerController {
         if (is_square(tmpSquare, "buy")) {
             int tmpSquareLevel = tmpSquare.getLevel();
             card_image.setVisible(true);
-            set_image_helper(card_image, "/scenes/sources/property-cards/", last_tmp_index_of_info_card);
+            String path = "";
+            if (igm.getTheme() == GameTheme.bilkent){
+                path = "/scenes/sources/bilkent/";
+            }
+            else if (igm.getTheme() == GameTheme.halloween){
+                path = "/scenes/sources/halloween/";
+            }
+            else {
+                path = "/scenes/sources/property-cards/";
+            }
+            set_image_helper(card_image, path, last_tmp_index_of_info_card);
             set_image_helper(info_card, "/scenes/sources/property-cards/", "info-card");
             buy_button.setVisible(true);
             sell_button.setVisible(true);
