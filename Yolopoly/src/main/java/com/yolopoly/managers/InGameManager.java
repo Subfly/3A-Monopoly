@@ -2,13 +2,13 @@ package com.yolopoly.managers;
 
 import com.yolopoly.enumerations.*;
 import com.yolopoly.models.bases.*;
-import com.yolopoly.models.cards.ChanceCard;
 import com.yolopoly.models.cards.DrawableCard;
 import com.yolopoly.models.cards.PlaceCard;
 import com.yolopoly.models.cards.PropertyCard;
 import com.yolopoly.storage.Constants;
 import com.yolopoly.storage.StorageUtil;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +27,7 @@ public class InGameManager {
     // Variables
     //**
     private ArrayList<String> chat;
+    private ArrayList<String> botChatData;
     private ArrayList<String> log;
     private ArrayList<Player> players;
     private Dice dice;
@@ -79,11 +80,21 @@ public class InGameManager {
         innerEngine = new InGameManager();
     }
 
-    public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players) {
+    public void initializeGame(boolean isSavedGamePlaying, GameMode mode, GameTheme theme, ArrayList<Player> players, String path) {
+        StorageUtil util = new StorageUtil();
         if(isSavedGamePlaying){
-            //TODO: IMPLEMENT SAVED GAME
+            try{
+                util.loadGame(path);
+            }catch (IOException ioe){
+                System.out.println("ERROR (1003): " + ioe.getMessage());
+            }
         }else{
             chat = new ArrayList<>();
+            try{
+                botChatData = util.getBotSentences();
+            }catch (FileNotFoundException fnfe){
+                System.out.println("ERROR (1003): " + fnfe.getMessage());
+            }
             log = new ArrayList<>();
             this.players = players;
             bank = new Bank(theme, mode);
@@ -230,7 +241,7 @@ public class InGameManager {
     }
 
     public void addToChat(String data, String userName){
-        chat.add(userName + ":\n" + data);
+        chat.add(userName + ": " + data);
     }
 
     public void addToLog(String logAction, String userName){
@@ -308,6 +319,9 @@ public class InGameManager {
         int result = startTurn(diceResult, isDouble, multiplier);
 
         Player bot = players.get(currentPlayerId);
+
+        addToChat(botChatData.get((int)(Math.random() * 200)), bot.getName());
+
         if(result == -100){
             int jailDecision = (int) (Math.random() * 2 + 1);
             if(jailDecision == 1){
@@ -729,6 +743,10 @@ public class InGameManager {
         }
 
         Player player = players.get(currentPlayerId);
+
+        if(!player.isHuman()){
+            addToChat(botChatData.get((int)(Math.random() * 200)), player.getName());
+        }
 
         if(player.isGetLoanCurrently() && checkHasToPayLoanBack()){
             player.setBankrupt(true);
