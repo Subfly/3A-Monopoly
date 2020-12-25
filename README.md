@@ -1,6 +1,9 @@
 <h1>3A-Monopoly</h1>
 319 Term Project
 
+<h1>ATTENTION</h1>
+In order to play game properly, a folder named "saves" needed in the root of the game source code placed. For this purpose, a "saves" folder is manually added. If you delete the folder, don't forget to re-create it.
+
 <h2>Description of the game</h2>
 
 The aim of the project is to digitalize a well known board game, Monopoly, to make people play one of the most popular board game on their computer.   
